@@ -65,8 +65,6 @@ uint32_t computeStartTime, computeEndTime;
 // todo: check feedforward and implement all of it if there is any missing code.
 // todo: check gyro overflow.
 
-int test_commit = 0;
-
 int main(void){
 
 	#if USE_H7 == 1
