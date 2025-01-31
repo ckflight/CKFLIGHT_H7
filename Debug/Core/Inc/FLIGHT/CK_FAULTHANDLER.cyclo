@@ -1,0 +1,2 @@
+../Core/Inc/FLIGHT/CK_FAULTHANDLER.c:7:6:HardFault_Handler	1
+../Core/Inc/FLIGHT/CK_FAULTHANDLER.c:20:6:MemManage_Handler	1

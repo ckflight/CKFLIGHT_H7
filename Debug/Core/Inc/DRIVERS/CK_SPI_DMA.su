@@ -1,0 +1,12 @@
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:58:6:CK_SPI_DMA_InitTX	24	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:87:6:CK_SPI_DMA_InitRX	24	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:117:6:CK_SPI_DMA_EnableClock	24	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:127:6:CK_SPI_DMA_SetBuffer	24	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:134:6:CK_SPI_DMA_SetPeripheralAddress	16	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:138:6:CK_SPI_DMA_TCInterruptEnable	16	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:142:6:CK_SPI_DMA_ClearFlag	16	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:163:6:CK_SPI_DMA_ClearTCFlag	16	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:184:6:CK_SPI_DMA_Enable	16	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:189:6:CK_SPI_DMA_Disable	16	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:194:9:CK_SPI_DMA_IsTransferComplete	16	static
+../Core/Inc/DRIVERS/CK_SPI_DMA.c:208:10:CK_SPI_DMA_NumberOfDataLeft	16	static

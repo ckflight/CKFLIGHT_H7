@@ -1,0 +1,8 @@
+../Core/Inc/DRIVERS/CK_GPIO.c:4:6:CK_GPIO_Init	2
+../Core/Inc/DRIVERS/CK_GPIO.c:21:6:CK_GPIO_DeInit	1
+../Core/Inc/DRIVERS/CK_GPIO.c:27:6:CK_GPIO_ClockEnable	1
+../Core/Inc/DRIVERS/CK_GPIO.c:40:6:CK_GPIO_ClockDisable	1
+../Core/Inc/DRIVERS/CK_GPIO.c:53:6:CK_GPIO_SetPin	1
+../Core/Inc/DRIVERS/CK_GPIO.c:61:6:CK_GPIO_ClearPin	1
+../Core/Inc/DRIVERS/CK_GPIO.c:69:6:CK_GPIO_TogglePin	1
+../Core/Inc/DRIVERS/CK_GPIO.c:74:9:CK_GPIO_ReadPin	2

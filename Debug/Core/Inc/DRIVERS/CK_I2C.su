@@ -1,0 +1,16 @@
+../Core/Inc/DRIVERS/CK_I2C.c:50:6:CK_I2C_Init	120	static
+../Core/Inc/DRIVERS/CK_I2C.c:131:10:CK_I2C_IsBusy	16	static
+../Core/Inc/DRIVERS/CK_I2C.c:135:6:CK_I2C_Transfer	112	static
+../Core/Inc/DRIVERS/CK_I2C.c:167:6:CK_I2C_ReadMultiInterrupt	24	static
+../Core/Inc/DRIVERS/CK_I2C.c:171:6:CK_I2C_ReadMulti	128	static
+../Core/Inc/DRIVERS/CK_I2C.c:204:6:CK_I2C_Start	16	static
+../Core/Inc/DRIVERS/CK_I2C.c:209:6:CK_I2C_Stop	16	static
+../Core/Inc/DRIVERS/CK_I2C.c:213:9:CK_I2C_ReadAck	16	static
+../Core/Inc/DRIVERS/CK_I2C.c:217:9:CK_I2C_ReadNack	16	static
+../Core/Inc/DRIVERS/CK_I2C.c:221:13:I2C_CheckEvent	16	static
+../Core/Inc/DRIVERS/CK_I2C.c:225:5:CK_I2C_CheckInitialized	24	static
+../Core/Inc/DRIVERS/CK_I2C.c:248:6:CK_I2C_TimeOutCounter	16	static
+../Core/Inc/DRIVERS/CK_I2C.c:264:10:CK_I2C_GetTimeOut	24	static
+../Core/Inc/DRIVERS/CK_I2C.c:284:6:CK_I2C_ResetTimeOut	16	static
+../Core/Inc/DRIVERS/CK_I2C.c:302:6:CK_I2C_ClockComputeRaw	80	static
+../Core/Inc/DRIVERS/CK_I2C.c:365:10:CK_I2C_ClockTIMINGR	56	static

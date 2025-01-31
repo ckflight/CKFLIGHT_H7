@@ -1,0 +1,4 @@
+../Core/Inc/SENSORS/CK_MAG3110.c:39:6:CK_MAG3110_Init	24	static
+../Core/Inc/SENSORS/CK_MAG3110.c:62:6:CK_MAG3110_AlignMag	24	static
+../Core/Inc/SENSORS/CK_MAG3110.c:72:6:CK_MAG3110_ReadMagRaw	16	static
+../Core/Inc/SENSORS/CK_MAG3110.c:84:6:CK_MAG3110_isMagSensorInitialized	4	static

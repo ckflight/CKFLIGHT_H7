@@ -1,0 +1,8 @@
+../Core/Inc/MOTION/CK_MAGNETO.c:138:6:CK_MAGNETO_Init	24	static
+../Core/Inc/MOTION/CK_MAGNETO.c:175:6:CK_MAGNETO_Init2	24	static
+../Core/Inc/MOTION/CK_MAGNETO.c:238:6:CK_MAGNETO_LoadCalibrationParameters	80	static
+../Core/Inc/MOTION/CK_MAGNETO.c:315:6:CK_MAGNETO_Update	128	static
+../Core/Inc/MOTION/CK_MAGNETO.c:650:6:CK_MAGNETO_SwapXYAxis	16	static
+../Core/Inc/MOTION/CK_MAGNETO.c:660:6:CK_MAGNETO_PerformCalibration	56	static
+../Core/Inc/MOTION/CK_MAGNETO.c:756:6:CK_MAGNETO_CalculateHeading	64	static
+../Core/Inc/MOTION/CK_MAGNETO.c:806:6:CK_MAGNETO_CheckTimeout	8	static

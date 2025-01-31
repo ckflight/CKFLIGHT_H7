@@ -1,0 +1,7 @@
+../Core/Inc/FLIGHT/CK_SBUS.c:26:6:CK_SBUS_Init	40	static
+../Core/Inc/FLIGHT/CK_SBUS.c:50:6:CK_SBUS_Update	24	static
+../Core/Inc/FLIGHT/CK_SBUS.c:91:6:CK_SBUS_Process	16	static
+../Core/Inc/FLIGHT/CK_SBUS.c:112:6:CK_SBUS_Decode	4	static
+../Core/Inc/FLIGHT/CK_SBUS.c:145:6:CK_SBUS_NewByte	16	static
+../Core/Inc/FLIGHT/CK_SBUS.c:169:6:CK_SBUS_IsReady	4	static
+../Core/Inc/FLIGHT/CK_SBUS.c:173:5:CK_SBUS_GetChannelRaw	16	static

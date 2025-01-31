@@ -1,0 +1,5 @@
+../Core/Inc/SENSORS/CK_BMP280.c:86:6:CK_BMP280_Init	2
+../Core/Inc/SENSORS/CK_BMP280.c:120:6:CK_BMP280_Calculate	2
+../Core/Inc/SENSORS/CK_BMP280.c:132:6:CK_BMP280_CalculateTemperature	1
+../Core/Inc/SENSORS/CK_BMP280.c:151:6:CK_BMP280_CalculatePressure	2
+../Core/Inc/SENSORS/CK_BMP280.c:189:6:CK_BMP280_ReadADC	1

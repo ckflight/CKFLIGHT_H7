@@ -1,0 +1,9 @@
+../Core/Inc/DRIVERS/CK_SYSTEM.c:6:6:CK_SYSTEM_SetSystemClock	136	static
+../Core/Inc/DRIVERS/CK_SYSTEM.c:72:10:CK_SYSTEM_GetAPB1Clock	8	static
+../Core/Inc/DRIVERS/CK_SYSTEM.c:76:10:CK_SYSTEM_GetAPB2Clock	8	static
+../Core/Inc/DRIVERS/CK_SYSTEM.c:80:10:CK_SYSTEM_GetHCLKClock	8	static
+../Core/Inc/DRIVERS/CK_SYSTEM.c:84:10:CK_SYSTEM_GetPCLK1Clock	8	static
+../Core/Inc/DRIVERS/CK_SYSTEM.c:88:10:CK_SYSTEM_GetPCLK2Clock	8	static
+../Core/Inc/DRIVERS/CK_SYSTEM.c:92:6:CK_SYSTEM_TIMER_ClockEnable	56	static
+../Core/Inc/DRIVERS/CK_SYSTEM.c:124:10:CK_SYSTEM_GetTIMERClock	24	static
+../Core/Inc/DRIVERS/CK_SYSTEM.c:164:10:CK_SYSTEM_GetUARTClock	24	static

@@ -1,0 +1,5 @@
+../Core/Inc/FLIGHT/CK_ESC.c:14:6:CK_ESC_Init	16	static
+../Core/Inc/FLIGHT/CK_ESC.c:32:6:CK_ESC_SetMotor	24	static
+../Core/Inc/FLIGHT/CK_ESC.c:130:6:CK_ESC_StopMotors	8	static
+../Core/Inc/FLIGHT/CK_ESC.c:149:6:CK_ESC_MOTOR_TEST_MODE_Enable	16	static
+../Core/Inc/FLIGHT/CK_ESC.c:156:6:CK_ESC_MOTOR_TEST_MODE_Disable	4	static

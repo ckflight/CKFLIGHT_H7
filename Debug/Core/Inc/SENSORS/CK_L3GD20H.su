@@ -1,0 +1,4 @@
+../Core/Inc/SENSORS/CK_L3GD20H.c:52:9:CK_L3GD20H_Init	40	static
+../Core/Inc/SENSORS/CK_L3GD20H.c:85:6:CK_L3GD20H_AlignGyro	24	static
+../Core/Inc/SENSORS/CK_L3GD20H.c:95:6:CK_L3GD20H_ReadGyroRaw	16	static
+../Core/Inc/SENSORS/CK_L3GD20H.c:108:6:CK_L3GD20H_isGyroSensorInitialized	4	static

@@ -1,0 +1,6 @@
+../Core/Inc/DRIVERS/CK_LED.c:15:6:CK_LED_Init1	1
+../Core/Inc/DRIVERS/CK_LED.c:25:6:CK_LED_Init2	1
+../Core/Inc/DRIVERS/CK_LED.c:35:6:CK_LED_EnableLed	3
+../Core/Inc/DRIVERS/CK_LED.c:61:6:CK_LED_DisableLed	3
+../Core/Inc/DRIVERS/CK_LED.c:86:6:CK_LED_ToggleLed	5
+../Core/Inc/DRIVERS/CK_LED.c:112:6:CK_LED_ToggleLedForMs	2

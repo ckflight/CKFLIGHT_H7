@@ -1,0 +1,12 @@
+../Core/Inc/SENSORS/CK_IIM42652.c:115:9:CK_IIM42652_GyroInit	40	static
+../Core/Inc/SENSORS/CK_IIM42652.c:180:9:CK_IIM42652_AccInit	40	static
+../Core/Inc/SENSORS/CK_IIM42652.c:239:6:CK_IIM42652_AlignGyro	24	static
+../Core/Inc/SENSORS/CK_IIM42652.c:248:6:CK_IIM42652_AlignAcc	24	static
+../Core/Inc/SENSORS/CK_IIM42652.c:258:6:CK_IIM42652_ReadGyroRaw	16	static
+../Core/Inc/SENSORS/CK_IIM42652.c:271:6:CK_IIM42652_ReadAccRaw	16	static
+../Core/Inc/SENSORS/CK_IIM42652.c:283:6:CK_IIM42652_ReadSensorRaw_DMA	24	static,ignoring_inline_asm
+../Core/Inc/SENSORS/CK_IIM42652.c:323:6:DMA1_Stream6_IRQHandler	8	static
+../Core/Inc/SENSORS/CK_IIM42652.c:336:6:DMA1_Stream7_IRQHandler	24	static,ignoring_inline_asm
+../Core/Inc/SENSORS/CK_IIM42652.c:378:7:CK_IIM42652_ReadTempRaw	24	static
+../Core/Inc/SENSORS/CK_IIM42652.c:386:6:CK_IIM42652_isGyroSensorInitialized	4	static
+../Core/Inc/SENSORS/CK_IIM42652.c:391:6:CK_IIM42652_isAccSensorInitialized	4	static

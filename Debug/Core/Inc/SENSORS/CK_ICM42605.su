@@ -1,0 +1,8 @@
+../Core/Inc/SENSORS/CK_ICM42605.c:41:9:CK_ICM42605_GyroInit	40	static
+../Core/Inc/SENSORS/CK_ICM42605.c:71:9:CK_ICM42605_AccInit	40	static
+../Core/Inc/SENSORS/CK_ICM42605.c:97:6:CK_ICM42605_AlignGyro	24	static
+../Core/Inc/SENSORS/CK_ICM42605.c:106:6:CK_ICM42605_AlignAcc	24	static
+../Core/Inc/SENSORS/CK_ICM42605.c:116:6:CK_ICM42605_ReadGyroRaw	16	static
+../Core/Inc/SENSORS/CK_ICM42605.c:128:6:CK_ICM42605_ReadAccRaw	4	static
+../Core/Inc/SENSORS/CK_ICM42605.c:140:6:CK_ICM42605_isGyroSensorInitialized	4	static
+../Core/Inc/SENSORS/CK_ICM42605.c:145:6:CK_ICM42605_isAccSensorInitialized	4	static

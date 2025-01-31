@@ -1,0 +1,11 @@
+../Core/Inc/COMMON/maths.h:145:21:constrainf	24	static
+../Core/Inc/FLIGHT/pid_init.c:21:13:pidSetTargetLooptime	16	static
+../Core/Inc/FLIGHT/pid_init.c:91:6:pidInit	16	static
+../Core/Inc/FLIGHT/pid_init.c:115:6:pidInitFilters	112	static
+../Core/Inc/FLIGHT/pid_init.c:344:6:pidInitConfig	64	static
+../Core/Inc/FLIGHT/pid_init.c:527:10:pidGetDefaultProfile	32	static
+../Core/Inc/FLIGHT/pid_init.c:550:10:pidGetCurrentProfile	32	static
+../Core/Inc/FLIGHT/pid_init.c:566:6:pidLoadParameter	56	static
+../Core/Inc/FLIGHT/pid_init.c:591:6:pidUpdateParameter	16	static
+../Core/Inc/FLIGHT/pid_init.c:602:6:pidUpdateTPAParameters	16	static
+../Core/Inc/FLIGHT/pid_init.c:612:6:pidInitializeParameters	4	static

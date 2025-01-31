@@ -1,0 +1,14 @@
+../Core/Inc/FLIGHT/CK_CRSF.c:187:6:CK_CRSF_Init	40	static
+../Core/Inc/FLIGHT/CK_CRSF.c:246:6:CK_CRSF_Update	24	static
+../Core/Inc/FLIGHT/CK_CRSF.c:311:6:CK_CRSF_SendTelemetry	24	static
+../Core/Inc/FLIGHT/CK_CRSF.c:332:6:CK_CRSF_AddByte	16	static
+../Core/Inc/FLIGHT/CK_CRSF.c:336:6:CK_CRSF_NewByte	24	static
+../Core/Inc/FLIGHT/CK_CRSF.c:387:6:CK_CRSF_NewByte2	16	static
+../Core/Inc/FLIGHT/CK_CRSF.c:490:6:CK_CRSF_Decode	8	static
+../Core/Inc/FLIGHT/CK_CRSF.c:524:6:CK_CRSF_Decode_11bit_Channels	16	static
+../Core/Inc/FLIGHT/CK_CRSF.c:550:6:CK_CRSF_Decode_LinkStatusFrame	24	static
+../Core/Inc/FLIGHT/CK_CRSF.c:567:5:CK_CRSF_GetChannelRaw	16	static
+../Core/Inc/FLIGHT/CK_CRSF.c:577:9:CK_CRSF_GetRSSI_dBm	4	static
+../Core/Inc/FLIGHT/CK_CRSF.c:581:13:CK_CRSF_GetRFMode	4	static
+../Core/Inc/FLIGHT/CK_CRSF.c:585:9:CK_CRSF_GetLinkQuality	4	static
+../Core/Inc/FLIGHT/CK_CRSF.c:614:6:USART6_IRQHandler	16	static

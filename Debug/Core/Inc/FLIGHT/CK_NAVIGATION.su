@@ -1,0 +1,12 @@
+../Core/Inc/COMMON/maths.h:135:19:constrain	24	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:47:6:CK_NAVIGATION_GPSRescue	8	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:119:6:CK_NAVIGATION_GPSDistancePID	8	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:141:6:CK_NAVIGATION_GPSHeadingHold	16	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:168:6:CK_NAVIGATION_GPSPositionHold	24	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:245:6:CK_NAVIGATION_MAGHeadingHold	16	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:288:7:CK_NAVIGATION_GetGPSHeadingSetpoint	4	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:292:7:CK_NAVIGATION_GetGPSHeadingError	4	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:296:7:CK_NAVIGATION_GetGPSHeadingCorrection	4	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:300:7:CK_NAVIGATION_GetMAGHeadingSetpoint	4	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:304:7:CK_NAVIGATION_GetMAGHeadingError	4	static
+../Core/Inc/FLIGHT/CK_NAVIGATION.c:308:7:CK_NAVIGATION_GetMAGHeadingCorrection	4	static

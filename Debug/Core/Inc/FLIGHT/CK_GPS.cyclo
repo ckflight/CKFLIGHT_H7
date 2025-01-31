@@ -1,0 +1,11 @@
+../Core/Inc/FLIGHT/CK_GPS.c:71:6:CK_GPS_Init	3
+../Core/Inc/FLIGHT/CK_GPS.c:121:6:CK_GPS_Update	4
+../Core/Inc/FLIGHT/CK_GPS.c:202:6:CK_GPS_WaitSatteliteFix	4
+../Core/Inc/FLIGHT/CK_GPS.c:226:6:CK_GPS_SaveDestinationLocationAndStartHeight	3
+../Core/Inc/FLIGHT/CK_GPS.c:247:7:gpsRescueGetImuYawCogGain	1
+../Core/Inc/FLIGHT/CK_GPS.c:252:6:CK_GPS_DecodePacket	3
+../Core/Inc/FLIGHT/CK_GPS.c:326:6:CK_GPS_UBXNewByte	18
+../Core/Inc/FLIGHT/CK_GPS.c:400:6:CK_GPS_CalculateDistanceAndHeading	2
+../Core/Inc/FLIGHT/CK_GPS.c:415:6:CK_GPS_InitConfig	3
+../Core/Inc/FLIGHT/CK_GPS.c:504:6:CK_GPS_SendUBXPacket	2
+../Core/Inc/FLIGHT/CK_GPS.c:514:6:USART1_IRQHandler	3

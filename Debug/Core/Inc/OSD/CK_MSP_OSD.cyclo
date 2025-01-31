@@ -1,0 +1,13 @@
+../Core/Inc/OSD/CK_MSP_OSD.c:60:6:CK_MSP_OSD_Init	1
+../Core/Inc/OSD/CK_MSP_OSD.c:73:6:CK_MSP_OSD_Update	1
+../Core/Inc/OSD/CK_MSP_OSD.c:91:6:CK_MSP_OSD_Timer	2
+../Core/Inc/OSD/CK_MSP_OSD.c:118:6:CK_MSP_OSD_Current	8
+../Core/Inc/OSD/CK_MSP_OSD.c:176:6:CK_MSP_OSD_RSSI	8
+../Core/Inc/OSD/CK_MSP_OSD.c:211:6:CK_MSP_OSD_RSSILQ	6
+../Core/Inc/OSD/CK_MSP_OSD.c:245:6:CK_MSP_OSD_CoreTemperature	6
+../Core/Inc/OSD/CK_MSP_OSD.c:271:6:CK_MSP_OSD_FirmwareFreqPlot	8
+../Core/Inc/OSD/CK_MSP_OSD.c:314:6:CK_MSP_OSD_MahPlot	10
+../Core/Inc/OSD/CK_MSP_OSD.c:388:10:CK_MSP_OSD_PlotCommands	4
+../Core/Inc/OSD/CK_MSP_OSD.c:444:10:CK_MSP_OSD_WriteString	2
+../Core/Inc/OSD/CK_MSP_OSD.c:473:10:CK_MSP_OSD_PacketSequence	17
+../Core/Inc/OSD/CK_MSP_OSD.c:532:6:CK_OSD_DJI_InitLocationParameters	1

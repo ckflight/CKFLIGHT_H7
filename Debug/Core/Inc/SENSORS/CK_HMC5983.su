@@ -1,0 +1,4 @@
+../Core/Inc/SENSORS/CK_HMC5983.c:36:6:CK_HMC5983_Init	16	static
+../Core/Inc/SENSORS/CK_HMC5983.c:53:6:CK_HMC5983_AlignMag	24	static
+../Core/Inc/SENSORS/CK_HMC5983.c:63:6:CK_HMC5983_ReadMagRaw	16	static
+../Core/Inc/SENSORS/CK_HMC5983.c:76:6:CK_HMC5983_isMagSensorInitialized	4	static
