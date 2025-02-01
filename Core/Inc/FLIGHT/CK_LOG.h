@@ -2,6 +2,14 @@
 #ifndef FLIGHT_CK_LOG_H_
 #define FLIGHT_CK_LOG_H_
 
+#if (LOG_SPI_ == 0 && LOG_SDIO_ == 0 && LOG_FLASH_==0)
+#define LOG_BUFFER_SIZE			0
+#define INFO_BUFFER_SIZE		0
+#define WRITE_INFO_SECTOR		0
+#define BLOCK_CACHE_SIZE		0
+#define BYTES_PER_LOG			0
+#endif
+
 #if LOG_SPI_
 
 #if LOG_MULTIWRITE_ == 1
@@ -68,6 +76,11 @@ typedef struct{
 	#endif
 
 	#if LOG_FLASH_
+	uint8_t log_buffer_1[LOG_BUFFER_SIZE];
+	uint8_t info_buffer[INFO_BUFFER_SIZE];
+	#endif
+
+	#if (LOG_SPI_ == 0 && LOG_SDIO_ == 0 && LOG_FLASH_==0)
 	uint8_t log_buffer_1[LOG_BUFFER_SIZE];
 	uint8_t info_buffer[INFO_BUFFER_SIZE];
 	#endif
