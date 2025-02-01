@@ -27,6 +27,10 @@
 #include "config/ckflighth7_v1.h"
 #endif
 
+#if defined(KAKUTE_H7_1v3)
+#include "config/kakuteh7_1v3.h"
+#endif
+
 #if defined(MATEKH743_SLIMV3)
 #include "config/matekh743slim_v3.h"
 #endif
@@ -90,6 +94,7 @@ typedef enum
 	L3GD20H_GYRO,
 	ICM42605_GYRO,
 	IIM42652_GYRO,
+	MPU6000_GYRO,
 
 	ICM20602_ACC,
 	ICM42688P_ACC,
@@ -97,6 +102,7 @@ typedef enum
 	LSM303D_ACC,
 	FXOS8700CQ_ACC,
 	ICM42605_ACC,
+	MPU6000_ACC,
 
 	MAG3110_MAGNETO,
 	LSM303D_MAGNETO,
