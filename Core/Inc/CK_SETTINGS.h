@@ -66,7 +66,7 @@
 
 #define MAG_SPI_				0	// Init peripheral CS important for common SPI
 #define MAG_I2C_				1
-#define USE_MAG_				0
+#define USE_MAG_				1
 
 #define BNO055_					0
 
