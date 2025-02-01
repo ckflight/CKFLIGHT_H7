@@ -66,6 +66,8 @@ uint32_t computeStartTime, computeEndTime;
 // todo: check gyro overflow.
 // todo: gyro yaw spin recory: mostly implemented
 
+int test2 = 0;
+
 int main(void){
 
 	#if USE_H7 == 1
