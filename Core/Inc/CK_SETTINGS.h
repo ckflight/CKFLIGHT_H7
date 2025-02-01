@@ -4,12 +4,13 @@
 #define CURRENT_VERSION_MAJOR	4
 #define CURRENT_VERSION_MINOR	31
 
-#define MATEKH743_SLIMV3
+//#define MATEKH743_SLIMV3
 //#define 		RF_REVOLT
 //#define 		CKBOARD_v2
 //#define 		CKBOARD_v1
-//#define CKFLIGHT_F4
-//#define CKFLIGHT_H7
+//#define 		CKFLIGHT_F4
+//#define 		CKFLIGHT_H7
+#define 		KAKUTE_H7_1v3
 
 #ifdef MATEKH743_SLIMV3
 #define TARGET_BOARD	"MATEKH743_SLIMV3"
@@ -22,6 +23,15 @@
 
 #ifdef CKFLIGHT_H7
 #define TARGET_BOARD	"CKFLIGHT_H7"
+#define TARGET_MCU 		"H7"
+
+// For dma cache etc so copy paste wont create problem
+#define USE_H7	1
+#define USE_F4	0
+#endif
+
+#ifdef KAKUTE_H7_1v3
+#define TARGET_BOARD	"KAKUTE_H7_v1.3"
 #define TARGET_MCU 		"H7"
 
 // For dma cache etc so copy paste wont create problem
@@ -61,8 +71,9 @@
 
 #define ACC_I2C_				0
 
-#define BARO_SPI_				1	// Init peripheral cs etc.
-#define USE_BARO_				1
+#define BARO_SPI_				0	// Init peripheral cs etc.
+#define BARO_I2C_				0	// Init peripheral cs etc.
+#define USE_BARO_				0
 
 #define MAG_SPI_				0	// Init peripheral CS important for common SPI
 #define MAG_I2C_				1
@@ -73,14 +84,14 @@
 #define GPS_					1
 
 #define LOG_SPI_				0
-#define LOG_SDIO_				1
+#define LOG_SDIO_				0
 #define LOG_FLASH_				0
 #define LOG_DUALBUFFER_			0
 #define LOG_MULTIWRITE_			1 // spi f4 works in single mode
 #define TEST_LOG				0
 
-#define BUZZER_PWM				1
-#define BUZZER_DC				0
+#define BUZZER_PWM				0
+#define BUZZER_DC				1
 
 #define OSD_ONBOARD_			1 // Keep it high for H7
 #define OSD_PDB_				0
@@ -89,7 +100,7 @@
 #define RGB_					1
 
 #define LED1_					1
-#define LED2_					1
+#define LED2_					0
 
 #define RX_PWM_					0
 #define SBUS_					0
@@ -203,22 +214,6 @@
 
 #define CURRENT_RESISTOR				90.0f
 #define MAH_CALIBRATION_MULTIPLIER		1.0f
-
-#ifdef CKFLIGHT_F4
-#define VOLT_CALIBRATION_MULTIPLIER		10.09f
-#endif
-
-#ifdef CKFLIGHT_H7
-#define VOLT_CALIBRATION_MULTIPLIER		10.09f
-#endif
-
-#ifdef RF_REVOLT
-#define VOLT_CALIBRATION_MULTIPLIER		10.09f
-#endif
-
-#ifdef MATEKH743_SLIMV3
-#define VOLT_CALIBRATION_MULTIPLIER		11.1f
-#endif
 
 
 #endif
