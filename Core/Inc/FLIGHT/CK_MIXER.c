@@ -110,7 +110,11 @@ void CK_MIXER_Init(void){
 
 	airmodeEnabled = true;
 
+#if MIXER_ESC_REVERSED==true
+	mixerRuntime.yaw_motors_reversed = true;
+#else
 	mixerRuntime.yaw_motors_reversed = false;
+#endif
 	mixerRuntime.crashflip_motor_percent = 0;
 	#ifdef USE_RACE_PRO
 		mixerRuntime.crashflip_rate = 30;

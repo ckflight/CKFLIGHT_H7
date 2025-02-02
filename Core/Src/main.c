@@ -67,6 +67,8 @@ uint32_t computeStartTime, computeEndTime;
 //		 rc is reversing yaw command and mixer is reversing the motor sum result so
 //		 both of them are same
 
+// todo: acc calibration on flight is definitely needed. Imu starts to drift.
+
 // Check each parameter in pid profile. These two needs implementation if their macros are used
 // todo: complete mixer ezlanding related things.
 // todo: implement USE_ADVANCED_TPA if used by betaflight

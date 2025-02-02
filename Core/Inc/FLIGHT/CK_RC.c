@@ -61,7 +61,11 @@ control_rate_config_t rc_config = {
 		.yaw_deadband			= 50,  // yaw ignores movement smaller than deadband
 
 		.midrc					= 1500,
+#if MIXER_ESC_REVERSED==true
+		.yaw_control_reversed	= true,
+#else
 		.yaw_control_reversed	= false,
+#endif
 		.rate_limit[ROLL] 		= SETPOINT_RATE_LIMIT,
 		.rate_limit[PITCH] 		= SETPOINT_RATE_LIMIT,
 		.rate_limit[YAW] 		= SETPOINT_RATE_LIMIT,
