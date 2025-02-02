@@ -112,13 +112,23 @@ void CK_MIXER_Init(void){
 
 	mixerRuntime.motorCount = MAX_SUPPORTED_MOTORS;
 
+	if (pidProfile.motor_output_limit > 100 || pidProfile.motor_output_limit == 0) {
+		pidProfile.motor_output_limit = 100;
+	}
+
+	float motorOutputLimit = 1.0f;
+
+	if (pidProfile.motor_output_limit < 100) {
+		motorOutputLimit = pidProfile.motor_output_limit / 100.0f;
+	}
+
 	if(esc_mode == PWM_MODE){
 
-		CK_PWM_InitEndPoints(&mixerRuntime.motorOutputLow, &mixerRuntime.motorOutputHigh, &mixerRuntime.disarmMotorOutput);
+		CK_PWM_InitEndPoints(motorOutputLimit, &mixerRuntime.motorOutputLow, &mixerRuntime.motorOutputHigh, &mixerRuntime.disarmMotorOutput);
 	}
 	else if(esc_mode == DSHOT_MODE){
 
-		CK_DSHOT_InitEndPoints(&mixerRuntime.motorOutputLow, &mixerRuntime.motorOutputHigh, &mixerRuntime.disarmMotorOutput);
+		CK_DSHOT_InitEndPoints(motorOutputLimit, &mixerRuntime.motorOutputLow, &mixerRuntime.motorOutputHigh, &mixerRuntime.disarmMotorOutput);
 	}
 
 	for(int i = 0; i < MAX_SUPPORTED_MOTORS; i++){
@@ -163,6 +173,10 @@ void CK_MIXER_Init(void){
     mixerRuntime.dynIdleI = 0.0f;
     mixerRuntime.prevMinRps = 0.0f;
 	#endif
+
+    mixerRuntime.ezLandingThreshold = 2.0f * pidProfile.ez_landing_threshold / 100.0f;
+	mixerRuntime.ezLandingLimit = pidProfile.ez_landing_limit / 100.0f;
+	mixerRuntime.ezLandingSpeed = 2.0f * pidProfile.ez_landing_speed / 10.0f;
 
 }
 
@@ -249,6 +263,21 @@ void applyMixerAdjustment(float *motorMix, const float motorMixMin, const float 
 	#endif
 }
 
+static float applyThrottleLimit(float throttle)
+{
+    if (rc_config.throttle_limit_percent < 100 && !RPM_LIMIT_ACTIVE) {
+        const float throttleLimitFactor = rc_config.throttle_limit_percent / 100.0f;
+        switch (rc_config.throttle_limit_type) {
+            case THROTTLE_LIMIT_TYPE_SCALE:
+                return throttle * throttleLimitFactor;
+            case THROTTLE_LIMIT_TYPE_CLIP:
+                return MIN(throttle, throttleLimitFactor);
+        }
+    }
+
+    return throttle;
+}
+
 void CK_MIXER_MixTable(uint32_t currentTimeUs){
 
 	CK_MIXER_CalculateThrottleAndMotorRange();
@@ -256,6 +285,11 @@ void CK_MIXER_MixTable(uint32_t currentTimeUs){
 	// FlipOverAfterCrash
 
 	// Launch Control
+	#ifdef USE_LAUNCH_CONTROL
+    if (launchControlActive && (currentPidProfile->launchControlMode == LAUNCH_CONTROL_MODE_PITCHONLY)) {
+        activeMixer = &mixerRuntime.launchControlMixer[0];
+    }
+	#endif
 
 	const float scaledPidRollSum  = constrainf(pidData[FD_ROLL].Sum,  -pidProfile.pidSumLimit, pidProfile.pidSumLimit) / PID_MIXER_SCALING;
 	const float scaledPidPitchSum = constrainf(pidData[FD_PITCH].Sum, -pidProfile.pidSumLimit, pidProfile.pidSumLimit) / PID_MIXER_SCALING;
@@ -271,7 +305,14 @@ void CK_MIXER_MixTable(uint32_t currentTimeUs){
 
     float scaledPidYawSum = constrainf(pidData[FD_YAW].Sum, -yawPidSumLimit, yawPidSumLimit) / PID_MIXER_SCALING;
 
-	// Throttle limit
+    //if (!mixerConfig()->yaw_motors_reversed) {
+	//	scaledAxisPidYaw = -scaledAxisPidYaw;
+	//}
+
+    // Apply the throttle_limit_percent to scale or limit the throttle based on throttle_limit_type
+    if (rc_config.throttle_limit_type != THROTTLE_LIMIT_TYPE_OFF) {
+        throttle = applyThrottleLimit(throttle);
+    }
 
 	// use scaled throttle, without dynamic idle throttle offset, as the input to antigravity
 	pidUpdateAntiGravityThrottleFilter(throttle);
@@ -333,6 +374,14 @@ void CK_MIXER_MixTable(uint32_t currentTimeUs){
     }
 	#endif
 
+#ifdef USE_LAUNCH_CONTROL
+    // While launch control is active keep the throttle at minimum.
+    // Once the pilot triggers the launch throttle control will be reactivated.
+    if (launchControlActive) {
+        throttle = 0.0f;
+    }
+#endif
+
 
     motorMixRange = motorMixMax - motorMixMin;
 
@@ -360,7 +409,9 @@ void CK_MIXER_ApplyMixToMotors(void){
 
 		float motorOutput = motorMix[currentMotor] + throttle;
 
-		//motorOutput = pidApplyThrustLinearization
+	#ifdef USE_THRUST_LINEARIZATION
+			motorOutput = pidApplyThrustLinearization(motorOutput);
+	#endif
 
 		// else below
 		motorOutput = motorOutputMin + motorOutputRange * motorOutput;

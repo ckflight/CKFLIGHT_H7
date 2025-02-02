@@ -52,19 +52,19 @@ uint32_t loopTimer = 0;
 
 uint32_t computeStartTime, computeEndTime;
 
-// todo: add USE_DMA_SENSOR_MPU6000, correct GYRO1_SPI_CLOCK according to the datasheet
-// todo: SPI microcard will be corrected kakute uses spi not sdio
-// todo: implement BMP280 i2c
-
-// todo: check each added parameter with sublime shift cmd F
 // todo: add motor stop when radio is off or check if it creates failsafe
-// todo: add acc trim calibration
 // todo: implement elrs library as well and check if it has new features.
-// todo: check attitude.values and raw union
+
 // todo: add simplified tuning code
 // todo: check feedforward and implement all of it if there is any missing code.
 // todo: check gyro overflow.
 // todo: gyro yaw spin recory: mostly implemented
+// todo: mixer 278 yaw reverse implement according to rc yaw revers true option
+//		 this could be the reason of yaw overshoot after fast yaw turn
+
+// Check each parameter in pid profile. These two needs implementation if their macros are used
+// todo: complete mixer ezlanding related things.
+// todo: implement USE_ADVANCED_TPA if used by betaflight
 
 
 int main(void){
@@ -209,12 +209,8 @@ int main(void){
     CK_MAGNETO_Init2(MAG_I2C, TARGET_MAG, TARGET_10HZ_US, TARGET_MAIN_TIME_US);
 #endif
 
-#if BARO_SPI_
+#if USE_BARO_
     CK_BAROMETER_Init(BARO_SPI, BARO_CS_PORT, BARO_CS_PIN, TARGET_BARO, TARGET_100HZ_US, TARGET_MAIN_TIME_US);
-#endif
-
-#if BARO_I2C_
-    CK_BAROMETER_Init2(BARO_I2C, TARGET_BARO, TARGET_10HZ_US, TARGET_MAIN_TIME_US);
 #endif
 
 #if BNO055_

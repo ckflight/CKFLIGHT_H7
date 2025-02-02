@@ -21,9 +21,7 @@ typedef enum{
 
 void CK_DSHOT_Init(DSHOT_Mode_t mode, targetFreq_e target_period);
 
-void CK_DSHOT_InitEndPoints(float* outputLow, float* outputHigh, float* disarmMotorOutput);
-
-float CK_DSHOT_GetDigitalIdleOffset(void);
+void CK_DSHOT_InitEndPoints(float outputLimit, float* outputLow, float* outputHigh, float* disarmMotorOutput);
 
 void CK_DSHOT_SetMotor1(int num);
 

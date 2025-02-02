@@ -51,13 +51,16 @@ void CK_PWM_Init(CK_PWM_Mode md){
 
 }
 
-void CK_PWM_InitEndPoints(float* outputLow, float* outputHigh, float* disarmMotorOutput){
-
-	*outputLow = PWM_MIN_THROTTLE;
-
-	*outputHigh = PWM_MAX_THROTTLE;
+void CK_PWM_InitEndPoints(float outputLimit, float* outputLow, float* outputHigh, float* disarmMotorOutput){
 
 	*disarmMotorOutput = PWM_DISARM_VALUE;
+
+	//const float minThrottle = PWM_DISARM_VALUE + motorConfig->motorIdle * 0.1f; // 1000 + some idle
+	const float minThrottle = PWM_MIN_THROTTLE;
+	*outputLow = minThrottle;
+
+	const float maxThrottle = PWM_MAX_THROTTLE;
+	*outputHigh = maxThrottle - ((maxThrottle - minThrottle) * (1 - outputLimit));
 
 }
 

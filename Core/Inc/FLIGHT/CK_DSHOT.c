@@ -133,23 +133,16 @@ void CK_DSHOT_Init(DSHOT_Mode_t mode, targetFreq_e target_period){
 
 }
 
-void CK_DSHOT_InitEndPoints(float* outputLow, float* outputHigh, float* disarmMotorOutput){
-
-	uint8_t outputLimit = 1;
+void CK_DSHOT_InitEndPoints(float outputLimit, float* outputLow, float* outputHigh, float* disarmMotorOutput){
 
 	float outputLimitOffset = DSHOT_RANGE * (1 - outputLimit);
-
-	*outputLow = DSHOT_MIN_THROTTLE + CK_DSHOT_GetDigitalIdleOffset() * DSHOT_RANGE;
-
-	*outputHigh = DSHOT_MAX_THROTTLE - outputLimitOffset;
+	const float motorIdlePercent = CONVERT_PARAMETER_TO_PERCENT(digitalIdleOffsetValue * 0.01f);
 
 	*disarmMotorOutput = DSHOT_COMMAND_MOTOR_STOP;
 
-}
+	*outputLow = DSHOT_MIN_THROTTLE + motorIdlePercent * DSHOT_RANGE;
+	*outputHigh = DSHOT_MAX_THROTTLE - outputLimitOffset;
 
-float CK_DSHOT_GetDigitalIdleOffset(void){
-
-    return CONVERT_PARAMETER_TO_PERCENT(digitalIdleOffsetValue * 0.01f);
 }
 
 void CK_DSHOT_SetMotor1(int num){

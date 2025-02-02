@@ -307,16 +307,6 @@ void CK_ACC_Update(void){
 				// Align Acc Axises
 				acc.accADC.v[axis] *= acc.accSign[axis];
 
-
-				// Apply calibration values Z need 1G gravity
-				/*if(axis != Z){
-					acc.accADCf[axis] = acc.accADCRaw[axis] - acc.accADCZero[axis];
-				}
-				else{
-					acc.accADCf[axis] = acc.accADCRaw[axis];
-				}
-				*/
-
 				acc.accADC.v[axis] -= acc.accADCZero[axis];
 
 				// Filter

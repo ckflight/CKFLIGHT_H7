@@ -250,9 +250,62 @@ void CK_RECEIVER_Update(uint32_t current_time){
 
         if(rxSignalReceivedValid){
 
+    		// ProcessRx
+
         	updateRcRefreshRate(CK_TIME_GetMicroSec(), rxSignalReceivedValid);
 
     		CK_RECEIVER_CheckAndSetFlags();
+
+    	    const bool throttleActive = calculateThrottleStatus() != THROTTLE_LOW;
+    		const uint8_t throttlePercent = calculateThrottlePercentAbs();
+    		//const bool launchControlActive = isLaunchControlActive();
+    		const bool launchControlActive = false;
+    		static bool isAirmodeActive;
+
+    	    if (flags.ARMED) {
+    	        if (throttlePercent >= 25) {
+    	            throttleRaised = true; // Latch true until disarm
+    	        }
+    	        if (isAirmodeEnabled() && !launchControlActive) {
+    	            isAirmodeActive = throttleRaised;
+    	        }
+    	    } else {
+    	        throttleRaised = false;
+    	        isAirmodeActive = false;
+    	    }
+
+    	    // Note: If Airmode is enabled, on arming, iTerm and PIDs will be off until throttle exceeds the threshold (OFF while disarmed)
+    	    // If not, iTerm will be off at low throttle, with pidStabilisationState determining whether PIDs will be active
+    	    if (flags.ARMED && (isAirmodeActive || throttleActive || launchControlActive)) {
+    	        pidSetItermReset(false);
+    	        pidStabilisationState(PID_STABILISATION_ON);
+    	    } else {
+    	        pidSetItermReset(true);
+    	        pidStabilisationState(pidProfile.pidAtMinThrottle ? PID_STABILISATION_ON : PID_STABILISATION_OFF);
+    	    }
+
+			#ifdef USE_LAUNCH_CONTROL
+			if (ARMING_FLAG(ARMED)) {
+				if (launchControlActive && (throttlePercent > currentPidProfile->launchControlThrottlePercent)) {
+					// throttle limit trigger reached, launch triggered
+					// reset the iterms as they may be at high values from holding the launch position
+					launchControlState = LAUNCH_CONTROL_TRIGGERED;
+					pidResetIterm();
+				}
+			} else {
+				if (launchControlState == LAUNCH_CONTROL_TRIGGERED) {
+					// If trigger mode is MULTIPLE then reset the state when disarmed
+					// and the mode switch is turned off.
+					// For trigger mode SINGLE we never reset the state and only a single
+					// launch is allowed until a reboot.
+					if (currentPidProfile->launchControlAllowTriggerReset && !IS_RC_MODE_ACTIVE(BOXLAUNCHCONTROL)) {
+						launchControlState = LAUNCH_CONTROL_DISABLED;
+					}
+				} else {
+					launchControlState = LAUNCH_CONTROL_DISABLED;
+				}
+			}
+			#endif
 
         }
         else{
@@ -261,34 +314,6 @@ void CK_RECEIVER_Update(uint32_t current_time){
 
         }
 
-    }
-
-    const bool throttleActive = calculateThrottleStatus() != THROTTLE_LOW;
-	const uint8_t throttlePercent = calculateThrottlePercentAbs();
-	//const bool launchControlActive = isLaunchControlActive();
-	const bool launchControlActive = false;
-	static bool isAirmodeActive;
-
-    if (flags.ARMED) {
-        if (throttlePercent >= 25) {
-            throttleRaised = true; // Latch true until disarm
-        }
-        if (isAirmodeEnabled() && !launchControlActive) {
-            isAirmodeActive = throttleRaised;
-        }
-    } else {
-        throttleRaised = false;
-        isAirmodeActive = false;
-    }
-
-    // Note: If Airmode is enabled, on arming, iTerm and PIDs will be off until throttle exceeds the threshold (OFF while disarmed)
-    // If not, iTerm will be off at low throttle, with pidStabilisationState determining whether PIDs will be active
-    if (flags.ARMED && (isAirmodeActive || throttleActive || launchControlActive)) {
-        pidSetItermReset(false);
-        pidStabilisationState(PID_STABILISATION_ON);
-    } else {
-        pidSetItermReset(true);
-        pidStabilisationState(pidProfile.pidAtMinThrottle ? PID_STABILISATION_ON : PID_STABILISATION_OFF);
     }
 
     #if defined(DEBUG_TIMING)

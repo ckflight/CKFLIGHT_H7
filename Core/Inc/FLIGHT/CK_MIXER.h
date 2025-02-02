@@ -13,6 +13,12 @@ typedef enum mixerType
     MIXER_DYNAMIC = 2,
 } mixerType_e;
 
+#ifdef USE_RPM_LIMIT
+#define RPM_LIMIT_ACTIVE mixerConfig()->rpm_limit
+#else
+#define RPM_LIMIT_ACTIVE false
+#endif
+
 typedef struct{
 
     uint8_t motorCount;
@@ -38,6 +44,10 @@ typedef struct{
     bool useDshotTelemetry;
 
 	#endif
+
+    float ezLandingThreshold;
+	float ezLandingLimit;
+	float ezLandingSpeed;
 
 }mixerRuntime_t;
 

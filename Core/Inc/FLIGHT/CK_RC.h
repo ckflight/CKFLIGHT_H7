@@ -32,6 +32,13 @@ typedef enum rc_alias {
 
 #define TOTAL_CHANNEL_COUNT (AUX12_RSSI + 1)
 
+typedef enum {
+    THROTTLE_LIMIT_TYPE_OFF = 0,
+    THROTTLE_LIMIT_TYPE_SCALE,
+    THROTTLE_LIMIT_TYPE_CLIP,
+    THROTTLE_LIMIT_TYPE_COUNT   // must be the last entry
+} throttleLimitType_e;
+
 typedef struct{
 
 	uint8_t deadband;
@@ -59,11 +66,12 @@ typedef struct{
 
     uint8_t levelExpo[2];                   	// roll/pitch level mode expo
 
-    uint8_t fpvCamAngleDegrees;                // Camera angle to be scaled into rc commands
+    uint8_t fpvCamAngleDegrees;                	// Camera angle to be scaled into rc commands
+
+    uint8_t throttle_limit_type;            	// Sets the throttle limiting type - off, scale or clip
+    uint8_t throttle_limit_percent;         	// Sets the maximum pilot commanded throttle limit
 
 }control_rate_config_t;
-
-
 
 typedef struct rcSmoothingFilterTraining_s {
     float sum;

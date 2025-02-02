@@ -7,7 +7,7 @@
 #define PWM_MIN_RANGE		1000
 #define PWM_MAX_RANGE		2000
 
-#define PWM_MIN_THROTTLE	1100
+#define PWM_MIN_THROTTLE	1050
 #define PWM_MAX_THROTTLE	2000
 
 #define PWM_DISARM_VALUE	1000
@@ -21,7 +21,7 @@ typedef enum
 
 void CK_PWM_Init(CK_PWM_Mode md);
 
-void CK_PWM_InitEndPoints(float* outputLow, float* outputHigh, float* disarmMotorOutput);
+void CK_PWM_InitEndPoints(float outputLimit, float* outputLow, float* outputHigh, float* disarmMotorOutput);
 
 void CK_PWM_Init1(void);
 

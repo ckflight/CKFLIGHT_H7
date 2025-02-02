@@ -100,6 +100,9 @@ control_rate_config_t rc_config = {
 
 		.fpvCamAngleDegrees		= 25,
 
+		.throttle_limit_type 	= THROTTLE_LIMIT_TYPE_OFF,
+		.throttle_limit_percent = 100,
+
 };
 
 int rcDataRaw[TOTAL_CHANNEL_COUNT];
