@@ -203,7 +203,7 @@
  */
 
 #define MIXER_ORIENTATION				3     // 2 false, 3 true is correct combination
-#define MIXER_ESC_REVERSED				true  // select this if esc is pointing 180 degree opposite
+#define MIXER_ESC_REVERSED				true  // select this if esc is pointing 180 degree opposite CK_ESC
 
 #if USE_H7 == 1
 #define ADC_BITS						16

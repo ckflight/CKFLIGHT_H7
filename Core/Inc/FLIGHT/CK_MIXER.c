@@ -110,6 +110,14 @@ void CK_MIXER_Init(void){
 
 	airmodeEnabled = true;
 
+	mixerRuntime.yaw_motors_reversed = false;
+	mixerRuntime.crashflip_motor_percent = 0;
+	#ifdef USE_RACE_PRO
+		mixerRuntime.crashflip_rate = 30;
+	#else
+		mixerRuntime.crashflip_rate = 0;
+	#endif
+
 	mixerRuntime.motorCount = MAX_SUPPORTED_MOTORS;
 
 	if (pidProfile.motor_output_limit > 100 || pidProfile.motor_output_limit == 0) {
@@ -305,9 +313,9 @@ void CK_MIXER_MixTable(uint32_t currentTimeUs){
 
     float scaledPidYawSum = constrainf(pidData[FD_YAW].Sum, -yawPidSumLimit, yawPidSumLimit) / PID_MIXER_SCALING;
 
-    //if (!mixerConfig()->yaw_motors_reversed) {
-	//	scaledAxisPidYaw = -scaledAxisPidYaw;
-	//}
+    if (!mixerRuntime.yaw_motors_reversed) {
+    	scaledPidYawSum = -scaledPidYawSum;
+	}
 
     // Apply the throttle_limit_percent to scale or limit the throttle based on throttle_limit_type
     if (rc_config.throttle_limit_type != THROTTLE_LIMIT_TYPE_OFF) {

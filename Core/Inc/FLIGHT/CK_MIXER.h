@@ -30,6 +30,10 @@ typedef struct{
 
     uint8_t mixer_type;
 
+    uint8_t crashflip_motor_percent;
+    uint8_t crashflip_rate;
+    bool yaw_motors_reversed;
+
 	#ifdef USE_DYN_IDLE
     float dynIdleMaxIncrease;
     float idleThrottleOffset;

@@ -59,8 +59,13 @@ uint32_t computeStartTime, computeEndTime;
 // todo: check feedforward and implement all of it if there is any missing code.
 // todo: check gyro overflow.
 // todo: gyro yaw spin recory: mostly implemented
+
+// todo: F1000 elrs mixer values at idle become 600 from 160 so fast
+//		 F500 is fine. Solve that missing package fault
+
 // todo: mixer 278 yaw reverse implement according to rc yaw revers true option
-//		 this could be the reason of yaw overshoot after fast yaw turn
+//		 rc is reversing yaw command and mixer is reversing the motor sum result so
+//		 both of them are same
 
 // Check each parameter in pid profile. These two needs implementation if their macros are used
 // todo: complete mixer ezlanding related things.
