@@ -395,13 +395,14 @@ uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 
 	    CK_PRINTER_PrintlnString("ACC Calibration");
 
-	    int16_t acc_buffer[2];
+	    int16_t acc_buffer[3];
 		CK_ACC_PerformCalibration(acc_buffer);
 
 		CK_CONFIGURATION_SaveAccCalibration(acc_buffer);
 		CK_PRINTER_PrintlnString("");
 		CK_PRINTER_PrintString("Acc X Axis:");CK_PRINTER_PrintlnInt(acc_buffer[X]);
 		CK_PRINTER_PrintString("Acc Y Axis:");CK_PRINTER_PrintlnInt(acc_buffer[Y]);
+		CK_PRINTER_PrintString("Acc Z Axis:");CK_PRINTER_PrintlnInt(acc_buffer[Z]);
 
 		resp = 1;
 	}
@@ -587,9 +588,11 @@ void CK_CONFIGURATION_SaveAccCalibration(int16_t* acc_buffer){
 
 	// Update axis parameters on its buffer location
 	config.config_buffer[CONFIG_ACC_OFFSET] 	= (acc_buffer[0] >> 8) & 0xFF;
-	config.config_buffer[CONFIG_ACC_OFFSET + 1] = acc_buffer[0] & 0xFF;
+	config.config_buffer[CONFIG_ACC_OFFSET + 1] =  acc_buffer[0] & 0xFF;
 	config.config_buffer[CONFIG_ACC_OFFSET + 2] = (acc_buffer[1] >> 8) & 0xFF;
-	config.config_buffer[CONFIG_ACC_OFFSET + 3] = acc_buffer[1] & 0xFF;
+	config.config_buffer[CONFIG_ACC_OFFSET + 3] =  acc_buffer[1] & 0xFF;
+	config.config_buffer[CONFIG_ACC_OFFSET + 4] = (acc_buffer[2] >> 8) & 0xFF;
+	config.config_buffer[CONFIG_ACC_OFFSET + 5] =  acc_buffer[2] & 0xFF;
 
 	CK_FLASH_WriteParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE);
 
