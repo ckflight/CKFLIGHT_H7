@@ -458,7 +458,7 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 						// All axis of acc for filtered results (6 bytes)
 						for(int axis = 0; axis < XYZ_AXIS_COUNT; axis++){
 
-							int16_t accFiltered = (int16_t)(acc.accAccumulate[axis] / acc.accAccumulateCount);
+							int16_t accFiltered = acc.accADC.v[axis];
 
 							flightLog.log_buffer_1[flightLog.buffer_index++] = (uint8_t)(accFiltered >> 8);   // HighByte
 							flightLog.log_buffer_1[flightLog.buffer_index++] = (uint8_t)(accFiltered & 0xFF); // LowByte
