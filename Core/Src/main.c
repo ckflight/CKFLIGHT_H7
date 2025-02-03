@@ -67,12 +67,16 @@ uint32_t computeStartTime, computeEndTime;
 //		 rc is reversing yaw command and mixer is reversing the motor sum result so
 //		 both of them are same
 
-// todo: acc calibration on flight is definitely needed. Imu starts to drift.
-
 // Check each parameter in pid profile. These two needs implementation if their macros are used
 // todo: complete mixer ezlanding related things.
 // todo: implement USE_ADVANCED_TPA if used by betaflight
 
+// Version Notes: Imu is working but after high gyro activity like acro flight
+// it cannot approach to idle point so level mode tilts.
+// I have implemented a code where it again uses high kp for some when level mode is selected.
+// I is working.
+
+// todo: decrease motor idle speed. Betaflight runs slower whem first armed
 
 int main(void){
 

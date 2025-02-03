@@ -124,8 +124,10 @@ static float calculateThrottleAngleScale(uint16_t throttle_correction_angle)
 void imuConfigure(uint16_t throttle_correction_angle, uint8_t throttle_correction_value)
 {
     // current default for imu_dcm_kp is 2500; our 'normal' or baseline value for imuDcmKp is 0.25
-    imuRuntimeConfig.imuDcmKp = imuConfig.imu_dcm_kp / 10000.0f;
-    imuRuntimeConfig.imuDcmKi = imuConfig.imu_dcm_ki / 10000.0f;
+
+	imuRuntimeConfig.imuDcmKp = imuConfig.imu_dcm_kp / 10000.0f;
+
+	imuRuntimeConfig.imuDcmKi = imuConfig.imu_dcm_ki / 10000.0f;
     // magnetic declination has negative sign (positive clockwise when seen from top)
     const float imuMagneticDeclinationRad = DEGREES_TO_RADIANS(imuConfig.mag_declination / 10.0f);
     north_ef.x = cos_approx(imuMagneticDeclinationRad);
@@ -297,7 +299,14 @@ static float imuCalcKpGain(timeUs_t currentTimeUs, bool useAcc, float *gyroAvera
         stDisarmed
     } arState = stDisarmed;
 
+    static enum {
+		st1,
+		st2,
+		st3
+	} levelSt = st1;
+
     static timeUs_t stateTimeout;
+    static timeUs_t startTime;
 
     const bool armState = flags.ARMED;
 
@@ -338,8 +347,36 @@ static float imuCalcKpGain(timeUs_t currentTimeUs, bool useAcc, float *gyroAvera
             return imuRuntimeConfig.imuDcmKp * 10.0f;
         }
     } else {
-        arState = stArmed;
-        return imuRuntimeConfig.imuDcmKp;
+
+    	// My implementation
+    	if(flags.ANGLE_MODE || flags.HORIZON_MODE){
+
+        	switch (levelSt) {
+			default: // should not happen, safeguard only
+			case st1:
+				startTime = currentTimeUs;
+				levelSt = st2;
+				// high gain, 100x greater than normal, or 25, after quiet period
+				 return imuRuntimeConfig.imuDcmKp * 100.0f;
+			case st2:
+				if (cmpTimeUs(currentTimeUs, startTime) >= 1000000) {
+					levelSt = st3;
+					return imuRuntimeConfig.imuDcmKp;
+				}
+				else{
+					return imuRuntimeConfig.imuDcmKp * 100.0f;
+				}
+			case st3:
+				return imuRuntimeConfig.imuDcmKp;
+        	}
+    	}
+    	else{
+			// Betaflight
+			arState = stArmed;
+			levelSt = st1;
+			return imuRuntimeConfig.imuDcmKp;
+    	}
+    	return imuRuntimeConfig.imuDcmKp;
     }
 }
 
@@ -470,7 +507,7 @@ static void imuDebug_GPS_RESCUE_HEADING(void)
 #ifdef USE_MAG
 // Calculate heading error derived from magnetometer
 // return value rotation around earth Z axis, pointing in directipon of smaller error, [rad/s]
-STATIC_UNIT_TESTED float imuCalcMagErr(void)
+float imuCalcMagErr(void)
 {
     // Use measured magnetic field vector
     vector3_t mag_bf = mag.magADC;
