@@ -197,13 +197,14 @@ void CK_ACC_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, se
 
 	acc.accADCZero[X] = (acc_buffer[0] << 8) | acc_buffer[1];
 	acc.accADCZero[Y] = (acc_buffer[2] << 8) | acc_buffer[3];
+	acc.accADCZero[Z] = (acc_buffer[4] << 8) | acc_buffer[5];
 
-	// Performe calibration only on z axis.
-	CK_ACC_PerformCalibration_Z_Axis();
+	// Do not calibrate acc at start because quadcopter can start from a tilted surface
+	// Calibrate the quad using the terminal to save that to eeprom
+	//int16_t temp_buf[3];
+	//CK_ACC_PerformCalibration(temp_buf);
 
 	CK_ACC_ResetAccEarthSum();
-
-	CK_ACC_ResetAccumulateSum();
 
 	acc.is_acc_init = true;
 
@@ -272,12 +273,12 @@ void CK_ACC_Init2(I2C_TypeDef* i2cn_, sensorModel_e sensor, accSensorG_e g, uint
 	acc.accADCZero[X] = (acc_buffer[0] << 8) | acc_buffer[1];
 	acc.accADCZero[Y] = (acc_buffer[2] << 8) | acc_buffer[3];
 
-	// Performe calibration only on z axis.
-	CK_ACC_PerformCalibration_Z_Axis();
+	// Do not calibrate acc at start because quadcopter can start from a tilted surface
+	// Calibrate the quad using the terminal to save that to eeprom
+	//int16_t temp_buf[3];
+	//CK_ACC_PerformCalibration(temp_buf);
 
 	CK_ACC_ResetAccEarthSum();
-
-	CK_ACC_ResetAccumulateSum();
 
 	acc.is_acc_init = true;
 
@@ -307,20 +308,21 @@ void CK_ACC_Update(void){
 				// Align Acc Axises
 				acc.accADC.v[axis] *= acc.accSign[axis];
 
-				acc.accADC.v[axis] -= acc.accADCZero[axis];
-
+				if(axis != Z){
+					acc.accADC.v[axis] -= acc.accADCZero[axis];
+				}
 				// Filter
 				if(ACC_FILTERCUTOFF_IMU_100HZ){
 					acc.accADC.v[axis] = pt2FilterApply(&acc_pt2filter[axis], acc.accADC.v[axis]);
-
 				}
 
 				// Calculate derivative of acc (jerk)
 				acc.jerk.v[axis] = (acc.accADC.v[axis] - accAdcPrev.v[axis]) * acc.sampleRateHz;
 				accAdcPrev.v[axis] = acc.accADC.v[axis];
 
+				acc.accADCf[axis] = acc.accADC.v[axis];
 				// Add to sum for IMU
-				acc.accAccumulate[axis] += acc.accADCf[axis];
+				//acc.accAccumulate[axis] += acc.accADCf[axis];
 
 			}
 
@@ -328,7 +330,7 @@ void CK_ACC_Update(void){
 			acc.accMagnitude = vector3Norm(&acc.accADC) * acc.acc_1G_rec;
 			acc.jerkMagnitude = vector3Norm(&acc.jerk) * acc.acc_1G_rec;
 
-			acc.accAccumulateCount++;
+			//acc.accAccumulateCount++;
 
 			CK_ACC_CheckTimeout();
 
@@ -418,15 +420,6 @@ void CK_ACC_ResetAccEarthSum(void){
 	acc.accADCEarthSumCounter = 0;
 }
 
-void CK_ACC_ResetAccumulateSum(void){
-
-	acc.accAccumulate[X] = 0.0f;
-	acc.accAccumulate[Y] = 0.0f;
-	acc.accAccumulate[Z] = 0.0f;
-	acc.accAccumulateCount = 0;
-
-}
-
 void CK_ACC_PerformCalibration(int16_t* acc_buffer){
 
 	int32_t sum[XYZ_AXIS_COUNT] = {0,0,0};
@@ -435,7 +428,7 @@ void CK_ACC_PerformCalibration(int16_t* acc_buffer){
 	int32_t num_of_calibration = 1000000 / acc.sync.targetLoopTime;
 
 	// Start calibration
-	for(int i = FD_ROLL; i < num_of_calibration; i++){
+	for(int i = 0; i < num_of_calibration; i++){
 
 		// Read Raw Acc values
 		// Read calibration with normal spi
@@ -485,65 +478,14 @@ void CK_ACC_PerformCalibration(int16_t* acc_buffer){
 
 	}
 
-	acc_buffer[0] = acc.accADCZero[0];
-	acc_buffer[1] = acc.accADCZero[1];
+	// Calculate average, shift Z down by acc_1G and store values in EEPROM at end of calibration
+	acc.accADCZero[X] = (sum[X] + (num_of_calibration / 2)) / num_of_calibration;
+	acc.accADCZero[Y] = (sum[Y] + (num_of_calibration / 2)) / num_of_calibration;
+	acc.accADCZero[Z] = (sum[Z] + (num_of_calibration / 2)) / num_of_calibration - acc.acc1G;
 
-}
-
-void CK_ACC_PerformCalibration_Z_Axis(void){
-
-    CK_PRINTER_PrintString("ACC Z Axis Calibration");
-    int32_t sum = 0;
-
-	// 1 second read
-	int32_t num_of_calibration = 1000000 / acc.sync.targetLoopTime;
-
-	num_of_calibration /= 4;
-
-	// Start calibration
-	for(int i = FD_ROLL; i < num_of_calibration; i++){
-
-        // Read Raw Acc values
-		// Read calibration with normal spi
-		if(acc.sensor == ICM20602_ACC){
-
-			CK_ICM20602_ReadAccRaw();
-
-		}
-		else if(acc.sensor == IIM42652_ACC){
-
-			CK_IIM42652_ReadAccRaw();
-
-		}
-		else if(acc.sensor == ICM42688P_ACC){
-
-			CK_ICM42688P_ReadAccRaw();
-
-		}
-		else if(acc.sensor == LSM303D_ACC){
-
-			CK_LSM303D_ReadAccRaw();
-
-		}
-		else if(acc.sensor == FXOS8700CQ_ACC){
-
-			CK_FXOS8700CQ_ReadAccRaw();
-
-		}
-
-        // Accumulate sum
-        sum += acc.accADCRaw[Z];
-
-        CK_TIME_DelayMicroSec(acc.sync.targetLoopTime);
-        if(i % 100 == 0){
-            CK_PRINTER_PrintString(".");
-        }
-    }
-
-    // Get Final Calibration Values
-    acc.accADCZero[Z]  = sum / num_of_calibration;
-
-    CK_PRINTER_PrintlnString("");
+	acc_buffer[0] = acc.accADCZero[X];
+	acc_buffer[1] = acc.accADCZero[Y];
+	acc_buffer[2] = acc.accADCZero[Z];
 
 }
 

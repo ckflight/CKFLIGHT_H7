@@ -36,8 +36,8 @@ typedef struct accelSensor_s{
     float 		acc_1G_rec;
     int         accSign[XYZ_AXIS_COUNT];
 
-    float       accAccumulate[XYZ_AXIS_COUNT];
-    int         accAccumulateCount;
+    //float       accAccumulate[XYZ_AXIS_COUNT];
+    //int         accAccumulateCount;
 
     float       accADCEarthSum[XYZ_AXIS_COUNT];
     int         accADCEarthSumCounter;
@@ -85,11 +85,7 @@ void CK_ACC_ReadACCRaw(void);
 
 void CK_ACC_ResetAccEarthSum(void);
 
-void CK_ACC_ResetAccumulateSum(void);
-
 void CK_ACC_PerformCalibration(int16_t* acc_buffer);
-
-void CK_ACC_PerformCalibration_Z_Axis(void);
 
 void CK_ACC_BiquadLPFInit(biquadFilter_t* filterType, uint16_t filterFreq1, uint16_t filterFreq2, uint16_t refreshRate);
 
