@@ -157,7 +157,7 @@ void CK_PRINTER_Update(CK_PRINT_TIMEx print_freq, uint32_t compT){
 	}
 	else if(print_cmd == 'a' && is_printer_motor_mode_enabled == false){
 		CK_PRINTER_PrintlnString("Accelerometer Calibration. Place on a flat surface");
-		int16_t acc_buffer[2];
+		int16_t acc_buffer[3];
 		CK_ACC_PerformCalibration(acc_buffer);
 		CK_PRINTER_PrintlnString("Accelerometer is calibrated");
 		CK_CONFIGURATION_SaveAccCalibration(acc_buffer);
