@@ -4,7 +4,7 @@
 
 #include "CK_DEFINITIONS.h"
 #include "COMMON/CK_FILTERS.h"
-#include "common/axis.h"
+#include "COMMON/axis.h"
 
 #define RX_INTERVAL_MIN_US     950 // 0.950ms to fit 1kHz without an issue
 #define RX_INTERVAL_MAX_US   65500 // 65.5ms or 15.26hz

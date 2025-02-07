@@ -1,5 +1,5 @@
-#include <COMMON/maths.h>
-#include "common/crc.h"
+#include "COMMON/maths.h"
+#include "COMMON/crc.h"
 
 #include "DRIVERS/CK_UART.h"
 #include "DRIVERS/CK_GPIO.h"

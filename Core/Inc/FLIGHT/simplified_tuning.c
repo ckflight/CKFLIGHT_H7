@@ -1,9 +1,9 @@
 
-#include <math.h>
-#include "common/axis.h"
-#include "common/maths.h"
+#include "math.h"
+#include "COMMON/axis.h"
+#include "COMMON/maths.h"
 
-#include "flight/simplified_tuning.h"
+#include "FLIGHT/simplified_tuning.h"
 
 #ifdef USE_SIMPLIFIED_TUNING
 

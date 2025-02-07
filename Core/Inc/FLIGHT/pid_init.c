@@ -1,6 +1,6 @@
 
-#include <COMMON/maths.h>
-#include "motion/ck_gyro.h"
+#include "COMMON/maths.h"
+#include "MOTION/CK_GYRO.h"
 
 #include "FLIGHT/pid_init.h"
 #include "FLIGHT/CK_RECEIVER.h"

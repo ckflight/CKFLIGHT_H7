@@ -4,7 +4,7 @@
 #pragma once
 
 //#include <stdbool.h>
-#include "ck_definitions.h"
+#include "CK_DEFINITIONS.h"
 
 typedef union vector2_u {
     float v[2];

@@ -1,6 +1,6 @@
 
 #include <stdint.h>
-#include "common/crc.h"
+#include "COMMON/crc.h"
 #include "streambuf.h"
 
 uint16_t crc16_ccitt(uint16_t crc, unsigned char a)

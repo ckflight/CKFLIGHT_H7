@@ -3,7 +3,7 @@
 #define CK_ACC_H_
 
 #include "COMMON/CK_FILTERS.h"
-#include "common/vector.h"
+#include "COMMON/vector.h"
 
 #define ACC_READ_ARRAY_SIZE		16
 

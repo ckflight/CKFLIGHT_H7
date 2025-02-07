@@ -2,8 +2,8 @@
 
 #include <math.h>
 
-#include "common/axis.h"
-#include "common/maths.h"
+#include "COMMON/axis.h"
+#include "COMMON/maths.h"
 
 #include "vector.h"
 

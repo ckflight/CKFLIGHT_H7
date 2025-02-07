@@ -7,8 +7,8 @@
 #include "FLIGHT/CK_PID.h"
 #include "FLIGHT/CK_MIXER.h"
 #include "FLIGHT/CK_RC.h"
-#include "flight/pid_init.h"
-#include "flight/simplified_tuning.h"
+#include "FLIGHT/pid_init.h"
+#include "FLIGHT/simplified_tuning.h"
 
 #include "MOTION/CK_GYRO.h"
 

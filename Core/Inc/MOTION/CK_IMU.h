@@ -3,7 +3,7 @@
 #define CK_IMU_H_
 
 #include "CK_DEFINITIONS.h"
-#include "common/vector.h"
+#include "COMMON/vector.h"
 
 
 typedef struct throttleCorrectionConfig_s {

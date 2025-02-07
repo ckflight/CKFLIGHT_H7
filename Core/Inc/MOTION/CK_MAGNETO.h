@@ -3,7 +3,7 @@
 #define CK_MAGNETO_H_
 
 #include "CK_DEFINITIONS.h"
-#include "common/axis.h"
+#include "COMMON/axis.h"
 
 #define MAG_READ_ARRAY_SIZE	16
 

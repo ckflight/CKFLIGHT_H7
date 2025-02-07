@@ -3,7 +3,7 @@
 #define CK_BNO055_H_
 
 #include "CK_DEFINITIONS.h"
-#include "common/axis.h"
+#include "COMMON/axis.h"
 
 typedef struct{
 

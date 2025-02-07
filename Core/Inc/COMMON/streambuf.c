@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "streambuf.h"
-#include "common/maths.h"
+#include "COMMON/maths.h"
 
 sbuf_t *sbufInit(sbuf_t *sbuf, uint8_t *ptr, uint8_t *end)
 {
