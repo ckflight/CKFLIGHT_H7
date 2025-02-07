@@ -76,7 +76,7 @@ uint32_t computeStartTime, computeEndTime;
 // I have implemented a code where it again uses high kp for some when level mode is selected.
 // I is working.
 
-// todo: decrease motor idle speed. Betaflight runs slower whem first armed
+// todo: decrease motor idle speed. Betaflight runs slower whem first armed !!
 
 int main(void){
 
