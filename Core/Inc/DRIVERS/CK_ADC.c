@@ -48,9 +48,6 @@ ADC_HandleTypeDef temp_sensor;
 ADC_HandleTypeDef lipo_adc;
 ADC_HandleTypeDef current_adc;
 
-int is_done1 = 0;
-int is_done2 = 0;
-
 void CK_ADC_Init(void){
 
 	adc.lipo_adc_result = 0.0f;
