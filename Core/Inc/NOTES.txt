@@ -1,0 +1,577 @@
+
+##########                ##########
+#								   #
+#		   GENERAL NOTES           #
+#							       #
+##########                ########## 
+
+* IMPORTANT: Header file declerations are changed. A header file should include the things like function names.
+  Every internally needed header files should be included in .c file not in .h file.
+  For example: SPI needs CK_TIME_HAL, CK_GPIO functions so these are included in CK_SPI.c not .h file because
+  when a sensor uses SPI it does not need CK_GPIO functions it needs CK_SPI functions. 
+  If a sensor needs to use delay function too for example then it should include CK_TIME_HAL.h in its c file.
+  In this way complexity and wrong definitions are prevented.
+  
+  ONLY EXCEPTION TO ABOVE IS: Only include .h file in .h file if others need to see the functions of that included file. 
+  For example CK_MATH library does not implement every kind of matematical functions like sqrtf(), pow() etc. 
+  So if for example MS5607 includes CK_MATH file then it should be able to reach the  sqrtf(), pow()
+  function over CK_MATH.
+
+* To print sprinf float %f i added -u _printf_float to 
+  project properties->c/c++ build->setting->tool setting(tab)->mcu gcc linker->miscellaneous->link flag
+  
+* To create .hex file of code
+ Project Right Click -> Properties -> C/C++ Build -> Setting -> Build Step paste below line
+ arm-none-eabi-objcopy -O binary "${BuildArtifactFileBaseName}.elf" "${BuildArtifactFileBaseName}.bin" && arm-none-eabi-objcopy -O ihex "${BuildArtifactFileBaseName}.elf" "${BuildArtifactFileBaseName}.hex" && arm-none-eabi-size "${BuildArtifactFileName}"
+
+##########                ##########
+#								   #
+#			 v1.4 NOTES            #
+#							       #
+##########                ##########
+
+* IMC20602 Accelerometer and IMU is added
+
+* Sensors are aligned for IMU as Gyro(1,1,1) Acc(1,1,1) giving really good result on all axises.
+  But quad need Gyro Alignment of (-1, -1, -1) to fly 
+  so this alignment cannot be used even the results are good in imu
+
+##########                ##########
+#								   #
+#			 v1.5 NOTES            #
+#							       #
+##########                ##########
+
+* MAG3110 support is added.
+
+* IMU now have two methods IMU_Update() and IMU_Update2()
+
+* IMU_Update2() uses gyro, acc and mag but not so stable. (Thinking BNO055 for short term solution)
+
+* IMU_Update() which is providing roll and pitch is more reliable and levels quadcopter
+
+* Mahony filter seems using North, West, Up notation 
+  since when Gyro is aligned (-1,-1,-1) and Acc is aligned (-1, -1, 1) 
+  best result is obtained without drifitng in roll and pitch angles  
+
+##########                ##########
+#								   #
+#			 v1.6 NOTES            #
+#							       #
+##########                ##########
+
+* MicroCard support is added.
+
+* MS5607 GPIOC-10 is set to high. It was blocking microCard.
+
+* Led indicator is added. (Light On at card write, Off when unmounted)
+
+* Card is creating delay every 10-20 loop time and quadcopter cannot fly like this. 
+  Data should be buffered and transfered once (not every loop cycle)
+  
+* IMU is now pretty reliable with Gyro(-1,-1,-1) and Acc(-1,-1,1) North West Up convention
+  It does not drift much during flight Kp 2.5 is important for proper working 
+  Up acceleration limit is necessary since during throttle punch acceleration drift imu alot.
+   
+##########                ##########
+#								   #
+#			 v1.7 NOTES            #
+#							       #
+##########                ##########
+
+* Magnetometer soft iron compensation is added
+  
+* MS5607 and BMP280 barometer support is added. BMP280 working with SPI when writing registers 
+  or reading 16 bit Calibration results but creating problem when reading 240 bit ADC over SPI.
+  I2C speed is around 250uSec. I2C speed can be changed to 800KHz which gives around 150uSec result.
+  MS5607 has 100Hz update rate but its reading procedure makes its rate around 33Hz 
+  where BMP280 has reading procedure like normal sensor at 25Hz with High Precision or 100-150 Hz with low resolution.
+  
+* New reading method CK_SPI_ReadRegisterMulti added which reads in burst mode from a read register.
+  In ternally it sends the read register with | 0x80 READ COMMAND. 
+  
+* To test and try to solve BMP280 SPI problem CK_SWSPI implemented. It is software spi library and works.
+  But BMP280's 20bit SPI read still not working. Later will be analyzed with Logic Analayzer.  
+
+
+##########                ##########
+#								   #
+#			 v1.8 NOTES            #
+#							       #
+##########                ##########
+
+* MS5607 implementation corrected and reverted back to int implementation. 
+  MS5611 MS5607 hs multiplier difference be carefull in calculation shifitng etc.
+  
+* Altitude hold pid added. However altitude reading are extremely noisy and unreliable. 
+  Now it is not working properly. More filtering needed.
+  
+* Throttle idle position check is added.
+
+* SBUS check time and int circularBufferSize is changed to 64 and interval is 6ms works fine.
+  Check interval with logic analyzer later to decide final interval values
+  
+* Loop tested and works properly at ACRO, LEVEL, HORIZON modes.
+  Altitude hold implementation is not preventing or musfunctioning anything when inactive.
+
+* //DELETED FOR NOW. MISTAKENLY CAN BE CLOSED DURING FLIGHT INCREASES CRASH POSIBILITY
+  After disarming in flight same double arming procedure is added. It wont start directly with switch arming.
+  Throtle must be at idle and arming must be done 2 times as in first start.  
+
+* Acc and gyro data summed and used the average of these sums at imu and altitude pids for best results.
+
+##########                ##########
+#								   #
+#			 v1.9 NOTES            #
+#							       #
+##########                ##########
+
+* GPS added. Works with UBX binary mode where it sends longitude latitude in degrees. Also altitude informations.
+
+* Distance and course calculation is added based on GPS locations.
+
+* Failsafe mechanism and flag order is completed. Now failsafe works. Accelerometer is used for determining the
+  ascending descending condition and throttle is smoothed accordingly.
+
+* To test failsafe is activated at level mode (normal failsafe does aswell). I cannot close the transmistter 
+  everytime since crash possiblity is high. FAILSAFE_DEBUG named flag is created and || with FAILSAFE later
+  this temporary flag will be deleted.
+  
+* Flag named IS_FIRST_ARMING_DONE is added since the code should not go to failsafe during first arming procedure.
+
+##########                ##########
+#								   #
+#			 v2.0 NOTES            #
+#							       #
+##########                ##########
+
+* IMU now works perfectly fine both Mahony and Madgwick. IMU frequency is increased to 500Hz works better in this way.
+
+* MAG3110 problem solved. It turned out that it needs soft and hard correction to work actually and give meaningfull
+  microTesla data. Other magnetometer sensors were giving at default and compensation was making them more precise in
+  the case of yaw angle but not MAG3110
+  
+* Slower main frequency makes 6 inch copter oscillate more. Higher is better. If not magnetometer used 4KHz is good.
+  If altitude hold magnetometer gps is used 2KHz look enough room for all of it. 1KHz works perfectly fine but
+  why not have extra speed in loop. 
+
+##########                ##########
+#								   #
+#			 v2.1 NOTES            #
+#							       #
+##########                ##########
+
+* IMU works fine but eloctromagnetic interference is shifting heading so roll pitch angle drifts along with it.
+  GPS mag must be together and isolated.
+
+* Landing and failsafe is now working correctly. And during landing if i cancel and turn switch to flying mode
+  then it resets the variables so in another landing attempt drone does not fall.
+
+* Landing have not been tried on high altitude (outside).
+
+
+##########                ##########
+#								   #
+#			 v3.1 NOTES            #
+#							       #
+##########                ##########
+
+* Buzzer is finally added.
+
+* Microcard implementation is added.
+
+* MSP protocol for usb setup is added but will be changed to a better protocol like sbus.
+
+* UART3 (I2C pins) added for OSD communication. OSD not plots lots of flight controller information
+  such as flight mode, rssi, gps data, armed, failsafe, altitude mode and navigation mode etc.
+
+* RSSI is now received over SBUS' 16th channel.
+
+* GPS distance and bearing calculation are changed. Now they took only 5usec and correct. 
+
+##########                ##########
+#								   #
+#			 v3.2 NOTES            #
+#							       #
+##########                ##########
+
+* GPS configuration and packet handle is updated.
+
+##########                ##########
+#								   #
+#			 v3.3 NOTES            #
+#							       #
+##########                ##########
+
+* GPS ubx reception method is changed. Previous version taking 100usec long.
+* Instead of decoding whole received buffer of data, i created state machine so each
+  byte is processed as soon as they are received. In this way no need to spend time to 
+  decode. 
+  
+* NAV_PVT packet gives every information needed. Gps now fully featured giving every necessary data.
+
+* Until gps is fixed and connected to determined number of sattelites drone will wait. 
+  After it is fixed, it will save the start location and start altitude.
+  
+* GPS altitude is fused to altitude calculation. 
+
+* Micro card is now working without creating delay. DMA interrupt is used and busy condition is checked
+  over time. Code does not waits for it.
+
+* The code is tested with real flight.
+
+##########                ##########
+#								   #
+#			 v3.4 NOTES            #
+#							       #
+##########                ##########
+
+* SBUS now have interrupt based reception and decoding. It seems more responsive to sticks
+  without interfering the code for 35usec of previous version.
+  Interrupt or polling can be selected.
+
+* GPS ublox 7 support is added. It is working just like ublox 8.
+
+* IMU kp gain is key of correct operation. If it is high (around 100) it convergeces instantly.
+  It turned out that the imu problems were because of low kp gain. 
+  Now imu has a mechanism to set high gain at start for a second which is enough for converging.
+  Then it will use smaller gain. If mag. is calibrated correctly works great from start no need to wait anymore.
+  
+  
+##########                ##########
+#								   #
+#			 v4.0 NOTES            #
+#							       #
+##########                ##########
+
+* Altitude Hold class improved codewise.
+
+* Features like landing, gps rescue etc. all updates RCCommand.
+  So they must be updated after rccommand is initially calculated and before rcsetpoint is calculated.
+
+* Design hierarchy is developed. CK_Definitions will be deleted and each flight controller board
+  will have its own config definition file.
+  
+* Gps pos hold and gps rescue functions are added and needs to be tested.
+
+* Magnetometer and imu working reliably now.
+
+* Start up calibration of acc and mag is disabled since they need to be calibrated once.
+  Acc must be calibrated on flat surface. Calibration on field creates leveling problems.
+
+* Flight feature flag setup system is changed. Now force flags are changin the radio flags so
+  each update methode reaches the flags at the next cycle loop.
+
+##########                ##########
+#								   #
+#			 v4.2 NOTES            #
+#							       #
+##########                ##########
+
+* USBD_CDC implemented with the help of CUBEMX. Now it is our own code.
+
+* Files are located at related folders. 
+
+##########                ##########
+#								   #
+#			 v4.3 NOTES            #
+#							       #
+##########                ##########
+
+* USB Device and Host mode implemented and working.
+
+* After cubemx the i2c started to create problem (still wokring on eclipse).
+  HAL implementation is added. Later i will try to implement baremetal solution.
+  
+##########                ##########
+#								   #
+#			 v4.7 NOTES            #
+#							       #
+##########                ##########
+
+* Microcard fully implemented
+
+* Flash memory implemented.
+
+* Input stream class to combine classes uses usb input like printer, msp etc are combined together.
+
+* Init and update methods are changed. Now internally each one checks if sensor is used
+  and if it is initialized it enter to update so in main file i do no longer need to
+  use if defined macros except the gps rescu altitude hold methods.
+     
+##########                ##########
+#								   #
+#			 v4.8 NOTES            #
+#							       #
+##########                ##########
+
+* In real life test, level mode was oscillating and it needs pid parameters for each flight mode.
+  Therefore, pid parameters for level and horizon mode will be added.
+  
+* Level mode is approaching and correcting itself slowly. Check with its pid values (it has higher p value)
+  Implement a multiplier for one second like imu approach at startup.  
+  
+* Failsafe is behaving different compared to landing mode such as not stopping motors after landing.
+  And it seem drifting more compared to level mode.
+
+##########                ##########
+#								   #
+#			 v4.9 NOTES            #
+#							       #
+##########                ##########
+
+* Eeprom feature is added. Settings are stored in sector 11 of the flash. After mcu is mass erased
+  firmware configures the eeprom content with default parameters for once. Firmware uses these settings.
+  Parameters can be updated with 3 methods below:
+  1. USB Configurator commands
+  2. MSP Protocol
+  3. In_flight adjustments
+  
+* USB Configuration is added pid, accelerometer calibration rc rates are all can be configured.
+
+##########                ##########
+#								   #
+#			 v4.10 NOTES           #
+#							       #
+##########                ##########
+
+* In-flight adjustment mode is added.
+* Digital esc protocol is added with both blocking and inline methods.
+
+* RGB led driver is added. Remote adjust will be added.
+
+* Microcard logging is corrected. 
+
+* Definitions are corrected. Code does not need manual adjustement to work for different boards.
+
+* Magnetometer sensor added and works with calibration each board with same sensor needs different calibration.
+
+* OSD is implemented with both spi and dma spi. OSD needs seperate spi with dma.
+
+* OSD Font updater is added.
+
+##########                ##########
+#								   #
+#			 v4.11 NOTES           #
+#							       #
+##########                ##########
+
+* Quad X and Quad X1234 mixer config is checked.
+
+* This mode is tested with checks and adjustment so i will add new features at 4.12
+
+* Microcard end has 2 spi 0xff. it did not write info sector with other sd card. 
+* I added total of 4 spi 0xff, now microcard log is working.
+
+* Level mode high strength for 0.5 sec is added and then it uses normal strength value.
+* level mode is not perfect yet.
+
+* Temperature sensor reading and osd plot is added.
+
+##########                ##########
+#								   #
+#			 v4.12 NOTES           #
+#							       #
+##########                ##########
+
+* Crossfire protocol is implemented. It does not need telemetry output to work. Receive only mode works fine.
+* But after adding crossfire protocol since its update rate is high 250Hz now mcu cannot handle all interrupts.
+* When i use usb print to check gyro etc. on terminal mcu can stuck sometimes. If i get rid of some interrupt
+* intesive functions such as pwm rather than dshot or not logging it does not stuck.
+* HOWEVER without using usb log print it is working fine and usb is not related to flight.
+* As a result: dshot, log, receiver, adc, osd etc. they are all cpu intesive interrupts and optimization is required.
+
+* Crossfire link quality frame and dbm link quality osd plot is added.
+
+* OSD Plot orientation is assigned to parameters. Now the options can be moved in screen without manual modification.
+
+* Anti gravity smooth mode is added. Smooth mode does not need a threshold parameter.
+
+* PID calculate method is updated and improved.
+
+* 4K loop time has x2 multiplier for pid and it is now similar to betaflight.
+
+* D term min added.
+
+* Throttle Booster is added.
+
+##########                ##########
+#								   #
+#			 v4.14 NOTES           #
+#							       #
+##########                ##########
+
+* Airmode is added. The else statement of mixer calculation is added. Now drone ascends faster
+  and behaves more similar to betaflight. Bounces on ground.
+
+* Dshot range is corrected. Dshot and Pwm end points are created.
+
+* 4.14 with current parameters is working great. It can compete with betaflight.
+  Multiplier 1.6f, 4000 antigravity, 200 Iterm Limit, betaflight p,i,d scale constats.
+  Antigravity cutoff 3 and 15.
+  Throttle boost 5 and cutoff 15.
+  [AXIS_ROLL] 	= {50,  85,  35},
+  [AXIS_PITCH] 	= {58,  90,  38},
+  [AXIS_YAW] 	= {60,  90,   0},
+
+##########                ##########
+#								   #
+#			 v4.15 NOTES           #
+#							       #
+##########                ##########
+
+* In flight adjustment TPA parameters set is implemented.
+
+* In flight adjustment Dmin parameters set is implemented.
+
+* TPA osd display is added.
+
+* Dmin osd display is added.
+
+* Feedforward will be implemented.
+
+* CK_RGB.c file for loop is corrected.
+
+* This version works great really close to betaflight characteristics!
+
+##########                ##########
+#								   #
+#			 v4.16 NOTES           #
+#							       #
+##########                ##########
+
+* Feedforward is implemented. Testing! Feedforward needs rc input filtering.
+  because it is causing fast oscillation when stick is moved quick around center.
+
+##########                ##########
+#								   #
+#			 v4.21 NOTES           #
+#							       #
+##########                ##########
+
+* All the improvements done on 4.21_H7 is applied to F4 as well
+* Log and Microcard is working
+* Fault Handler is added so it will not wait in while1 loop with motors are running
+
+* Gyro and acc calibration is done for 1 second. It prevents motor getting faster in idle with no input.
+* The reason of this is that the calibration result is better when more data is read.
+
+* Feedforward and pid init is updated now it is working without oscillation.
+
+* Smart Audio protocol is implemented and working.
+
+* RC related parameters are reached and updated through related get and set methods.
+
+
+##########                ##########
+#								   #
+#			 v4.22 NOTES           #
+#							       #
+##########                ##########
+
+* Feedforward is and init method in pid is updated now it flies without any stick osc. etc.
+
+* Smart Audio protocol is implemented and working.
+
+* RC related parameters are reached and updated through related get and set methods.
+
+* RC Smoothing filter is implemented.
+
+* Airmode's filter and rest is implemented.
+
+* 1 point filter and the functions using them are updated.
+
+* TPA is moved to PID and Mixer
+
+* Adjustment is corrected according to the changes made on the code.
+
+* IMU update rate changes with Level and Horizon mode to 500 Hz which corrected drifting problem
+ But cannot move drone around after this update. It will be corrected.
+
+* ACC filtering has changed and its cutoff can be changed by level and horizon modes.
+ 
+* Configuration is corrected and working.
+
+* LOG is corrected not 100 percent yet like 4.16 dual buffering multi not working as well
+
+* Microcard read offset once and save it to the configuration flash and reads it
+
+* MAJOR UPDATE: all of the Betaflight pid algorithm and variable definitions are imported and working better
+
+##########                ##########
+#								   #
+#			 v4.24 NOTES           #
+#							       #
+##########                ##########
+
+* This version is tested, it flies great the tuning is also great (2207.5 motors 5.1 propellers)
+
+* The lisam frame's roll is different roll axis is not tuned perfectly on H7.
+
+* Betaflight pid feedforward etc mechanisms are working great.
+
+* The yaw twitching problem is feedforward and smoothing related. By changing the below parameters
+  it is not twitching.
+  
+.feedforward_smooth_factor 				= 70,// default 25, 40-50 250 Hz, 65-70 for 500 Hz
+.feedforward_jitter_factor 				= 8,// 7
+.feedforward_boost 						= 16, //15
+
+Current good pids 
+
+	[AXIS_ROLL] 			= {40,  80,  50},
+	[AXIS_PITCH] 			= {50,  84,  42},
+	[AXIS_YAW] 				= {50,  80,  0},
+	[AXIS_ALTHOLD] 			= {68,  10,  0},
+	[AXIS_VELOCITY]			= {70,  60,  10},
+	[AXIS_NAVIGATION]		= {50,  0,   0},
+	[AXIS_LEVELMODE]		= {30,  70,  0},
+	[AXIS_HORIZONMODE]		= {40,  20,  5},
+	  	  	  	  	  	  	// ROLL PITCH YAW
+	[AXIS_DMIN]				= {34,  40,  0}, // {30,  34,  0},
+	[AXIS_FEEDFORWARD]		= {120, 125, 120}
+	
+
+##########                ##########
+#								   #
+#			 v4.25 NOTES           #
+#							       #
+##########                ##########
+
+* SD Card logging is working in spi multi and single mode.
+* SD Card logging is working in sdio mode.
+* F4 and H7 codes are working together. Only driverst and USB files are different.
+  Check the firmware_notes for the details.
+
+##########                ##########
+#								   #
+#			 v4.26 NOTES           #
+#							       #
+##########                ##########
+
+* PID and imu all implemented and working great like betaflight.
+* Level mode works great without even calibraiton.
+
+
+
+
+***** Important Observations: *****
+
+Antigravity solved slow wobble in the air.
+
+Good pid tune also affects throttle ascend.
+
+After implementing the airmode and else statement of mixer, throttle boosts but goes up more than neeeded.
+My x2 pids are causing that. Trying to remove this affect by antigravity and thr. boost cutoff.
+Increasing them from 15 to 25 is not worked. Decrease makes it worst. Definitly increase.
+Decreased iTermAccGain from 4500 to 3500 and it is better now.
+Pid multiplier = 2.0f is the cause of the problem. I lowered it to 1.5f.
+I think when i implement feedforward x1 pids will be fine.
+
+!!!!!!!!!!!!! LATER UPDATE: Without implementing the feedforward, pid multiplier = 1.0f works great.
+Mixer else statement and 0.5f offset is i think is now relaxing the motor output so
+pid corrections are more effective now because there is much more room for motors to response
+and motors do not saturate. 
+
+
+

@@ -1,0 +1,60 @@
+CK_SETTINGS.h is same
+CK_DEFINITIONS.h is same h7 or f4 specific libraries are macro defined.
+CK_FLASH.h is same
+main.c is same with f4 and h7 macros
+
+COMMON/CK_FILTER is same
+COMMON/CK_MATH is same
+COMMON is same
+
+COMMUNICATION/CK_CONFIGURATION is same
+COMMUNICATION/CK_INPUTSTREAM is same ( host is not supported anymore)
+COMMUNICATION/CK_MSP is same
+COMMUNICATION/CK_OSD is same
+COMMUNICATION/CK_PRINTER is same
+COMMUNICATION is same except usb and blhelipass
+
+FLASH/CK_FLASH_INTERNAL is same
+FLASH/CK_FLASH_W25Q is same
+FLASH/CK_FLASH is same
+FLASH is same
+
+FLIGHT/CK_ADJUSTMENT is same
+FLIGHT/CK_ALTITUDE is same
+FLIGHT/CK_CRSF is same
+FLIGHT/CK_DSHOT is same and generic
+FLIGHT/CK_ESC is same
+FLIGHT/CK_FAULTHANDLER is same
+FLIGHT/CK_PERIPHERAL is same
+FLIGHT/CK_FEEDFORWARD is same
+FLIGHT/CK_GPS is same
+FLIGHT/CK_LAND is same
+FLIGHT/CK_LOG is same
+FLIGHT/CK_MIXER is same
+FLIGHT/CK_NAVIGATION is same
+FLIGHT/CK_PID is same
+FLIGHT/CK_PWM is same
+FLIGHT/CK_RC is same
+FLIGHT/CK_RECEIVER is same
+FLIGHT/CK_SBUS is same
+FLIGHT/CK_SMARTAUDIO is same
+FLIGHT is same
+
+FONT is same
+
+MOTION/CK_ACC is same
+MOTION/CK_BAROMETER is same
+MOTION/CK_BNO055 is same
+MOTION/CK_GYRO is same
+MOTION/CK_IMU is same
+MOTION/CK_MAGNETO is same
+MOTION is same
+
+SENSORS are same implement SPI DMA for F4
+
+DRIVERS/GPIO same
+DRIVERS/MICROCARD same
+DRIVERS/BUZZER same
+DRIVERS/ADC---> NOT same!!!
+
+
