@@ -6,6 +6,7 @@
 #include "DRIVERS/CK_GPIO.h"
 #include "DRIVERS/CK_SYSTEM.h"
 #include "DRIVERS/CK_TIME_HAL.h"
+#include "DRIVERS/CK_ADC.h"
 
 TIM_HandleTypeDef htim_main_interrupt;
 
@@ -195,17 +196,10 @@ void CK_PERIPHERAL_Init(targetFreq_e target_period){
 	CK_GPIO_ClockEnable(ADC_LIPO_GPIO);
 	CK_GPIO_ClockEnable(ADC_CURRENT_GPIO);
 
-	/*
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-	GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1;
-	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-	*/
-
 	CK_GPIO_Init(ADC_LIPO_GPIO, ADC_LIPO_GPIO_PIN, CK_GPIO_ANALOG, CK_GPIO_NOAF, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);
 	CK_GPIO_Init(ADC_CURRENT_GPIO, ADC_CURRENT_GPIO_PIN, CK_GPIO_ANALOG, CK_GPIO_NOAF, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);
+
+	CK_ADC_Init();
 
 #if OSD_ONBOARD_
 

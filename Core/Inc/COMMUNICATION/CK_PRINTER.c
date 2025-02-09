@@ -193,7 +193,7 @@ void CK_PRINTER_Update(CK_PRINT_TIMEx print_freq, uint32_t compT){
 		NVIC_SystemReset();
 	}
 	else if(print_cmd == 'i' && is_printer_motor_mode_enabled == false){
-		CK_PRINTER_PrintADC();
+		CK_PRINTER_PrintADC(EVERY_250MS, compT);
 	}
 	else if(print_cmd == 'o' && is_printer_motor_mode_enabled == false){
 		CK_PRINTER_PrintlnString("OSD CHAR UPDATE IS INITIALIZED");
@@ -327,14 +327,22 @@ void CK_PRINTER_PrintlnFloatDecimal(float num, int dec){
 	CK_USBD_Transmit();
 }
 
-void CK_PRINTER_PrintADC(void){
+void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t){
 
-	CK_USBD_StringPrint("ADC_LIPO:    ");CK_USBD_FloatPrintln(CK_ADC_GetLipoResult());
-	CK_USBD_StringPrint("ADC_CURRENT: ");CK_USBD_FloatPrintln(CK_ADC_GetCurrentResult());
-	CK_USBD_StringPrint("ADC_TEMPERATUR: ");CK_USBD_FloatPrintln(CK_ADC_GetTemperatureResult());
-	CK_USBD_StringPrintln("");
+	printerCounter++;
 
-	CK_USBD_Transmit();
+	if(printerCounter >= (time/loopTime)){
+
+		printerCounter = 0;
+
+		CK_USBD_StringPrint("ADC_LIPO:    ");CK_USBD_FloatPrintln(CK_ADC_GetLipoResult());
+		CK_USBD_StringPrint("LIPO VOLT:    ");CK_USBD_FloatPrintln(CK_ADC_GetLipoResult() * VOLT_CALIBRATION_MULTIPLIER);
+		CK_USBD_StringPrint("ADC_CURRENT: ");CK_USBD_FloatPrintln(CK_ADC_GetCurrentResult());
+		CK_USBD_StringPrint("ADC_TEMPERATUR: ");CK_USBD_FloatPrintln(CK_ADC_GetTemperatureResult());
+		CK_USBD_StringPrintln("");
+
+		CK_USBD_Transmit();
+	}
 
 }
 

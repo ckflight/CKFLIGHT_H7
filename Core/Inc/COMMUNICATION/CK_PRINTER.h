@@ -80,7 +80,7 @@ void CK_PRINTER_PrintFloatDecimal(float num, int dec);
 
 void CK_PRINTER_PrintlnFloatDecimal(float num, int dec);
 
-void CK_PRINTER_PrintADC(void);
+void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t);
 
 void CK_PRINTER_PrintPID(void);
 

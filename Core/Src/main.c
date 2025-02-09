@@ -9,7 +9,6 @@
 
 #include "DRIVERS/CK_SYSTEM.h"
 #include "DRIVERS/CK_TIME_HAL.h"
-#include "DRIVERS/CK_ADC.h"
 #include "DRIVERS/CK_LED.h"
 #include "DRIVERS/CK_BUZZER.h"
 #include "DRIVERS/CK_MICROCARD.h"
@@ -40,6 +39,7 @@
 #include "FLIGHT/CK_DSHOT.h"
 #include "FLIGHT/CK_PERIPHERAL.h"
 #include "FLIGHT/CK_SMARTAUDIO.h"
+#include "FLIGHT/flight_monitor.h"
 
 #include "COMMON/CK_FILTERS.h"
 
@@ -75,8 +75,6 @@ uint32_t computeStartTime, computeEndTime;
 // it cannot approach to idle point so level mode tilts.
 // I have implemented a code where it again uses high kp for some when level mode is selected.
 // I is working.
-
-// todo: decrease motor idle speed. Betaflight runs slower whem first armed !!
 
 int main(void){
 
@@ -241,7 +239,7 @@ int main(void){
     CK_OSD_Init(TARGET_200HZ_US, TARGET_MAIN_TIME_US);
 #endif
 
-    CK_ADC_Init(TARGET_100HZ_US, TARGET_MAIN_TIME_US);
+    flight_monitor_init(TARGET_250HZ_US, TARGET_MAIN_TIME_US);
 
     CK_PRINTER_Init(TARGET_MAIN_TIME_US);
 
@@ -331,15 +329,13 @@ int main(void){
 
 		#endif
 
-        CK_ADC_Update();
-
 		#if LOG_SPI_ || LOG_SDIO_ || LOG_FLASH_
 
 		CK_LOG_Update(computeEndTime);
 
 		#endif
 
-        CK_BUZZER_CheckBuzzer();
+		flight_monitor_update();
 
         computeEndTime = CK_TIME_GetMicroSec() - computeStartTime;
 

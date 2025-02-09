@@ -13,30 +13,51 @@
 #define BUZZER_TIME2    25
 
 // Buzzer is active low HAL library makes it BUZZER_ACTIVE_PWM_DUTY percent low which is what we want
-#define BUZZER_ACTIVE_PWM_DUTY		90
+#define BUZZER_ACTIVE_PWM_DUTY		70
 
-int is_buzzer_init;
+typedef enum{
 
-CK_BUZZER_Mode buzzer_mode_;
+	BUZZER_ENABLED,
+	BUZZER_DISABLED,
+}buzzer_state_e;
+
+typedef struct{
+
+	bool is_init;
+	buzzer_state_e state;
+	buzzer_state_e toggle_state;
+
+	syncTimer_t sync;
+
+	buzzer_mode_e mode;
+
+	uint32_t pwm_frequency;
+
+}buzzer_s;
 
 GPIO_TypeDef* _BUZZER_GPIO;
 uint8_t _BUZZER_GPIO_PIN;
-
 TIM_HandleTypeDef htim_buzzer;
 
-void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, CK_BUZZER_Mode md){
+buzzer_s buzzer;
+
+void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, buzzer_mode_e md){
 
 	_BUZZER_GPIO = gpio_;
 
 	_BUZZER_GPIO_PIN = gpio_pin_;
 
-	is_buzzer_init = false;
+	buzzer.is_init = false;
 
-	buzzer_mode_ = md;
+	buzzer.mode = md;
+
+	buzzer.state = BUZZER_DISABLED;
+
+	buzzer.toggle_state = BUZZER_DISABLED;
 
 #if BUZZER_PWM
 
-    uint32_t frequency = 2500;
+    buzzer.pwm_frequency = 4000;
 
     /*
     BUZZER_TIM->PSC = 0; 				// Main clock prescalar
@@ -82,10 +103,10 @@ void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, CK_BUZZER_Mode md){
     htim_buzzer.Instance 				= BUZZER_TIM;
     htim_buzzer.Init.Prescaler 			= 0;
     htim_buzzer.Init.CounterMode 		= TIM_COUNTERMODE_UP;
-    htim_buzzer.Init.Period 			= (CK_SYSTEM_GetTIMERClock(BUZZER_TIM) / frequency) - 1;
-    htim_buzzer.Init.ClockDivision 		= TIM_CLOCKDIVISION_DIV1;
+    htim_buzzer.Init.Period 			= (CK_SYSTEM_GetTIMERClock(BUZZER_TIM) / buzzer.pwm_frequency) - 1;
+    htim_buzzer.Init.ClockDivision 		= TIM_CLOCKDIVISION_DIV2;
     htim_buzzer.Init.RepetitionCounter 	= 0;
-    htim_buzzer.Init.AutoReloadPreload 	= TIM_AUTORELOAD_PRELOAD_DISABLE;
+    htim_buzzer.Init.AutoReloadPreload 	= TIM_AUTORELOAD_PRELOAD_ENABLE;
 	HAL_TIM_Base_Init(&htim_buzzer);
 
 	HAL_TIM_PWM_Init(&htim_buzzer);
@@ -100,27 +121,40 @@ void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, CK_BUZZER_Mode md){
 	sConfigOC.OCNIdleState 		= TIM_OCNIDLESTATE_RESET;
 	HAL_TIM_PWM_ConfigChannel(&htim_buzzer, &sConfigOC, BUZZER_TIM_CH);
 
-	HAL_TIM_PWM_Start(&htim_buzzer, BUZZER_TIM_CH);
+	HAL_TIMEx_PWMN_Start(&htim_buzzer, BUZZER_TIM_CH);
 
-	is_buzzer_init = true;
+	buzzer.is_init = true;
 
-	CK_BUZZER_Deactivate();
+	CK_BUZZER_Disable();
 
 #endif
 
 #if BUZZER_DC
 
-	CK_BUZZER_Deactivate();
+	CK_BUZZER_Disable();
 
-	is_buzzer_init = true;
+	buzzer.is_init = true;
 
 #endif
 }
 
+void CK_BUZZER_Toggle(void){
 
-void CK_BUZZER_Activate(void){
+	if(buzzer.is_init){
+		if(buzzer.toggle_state == BUZZER_DISABLED){
+			CK_BUZZER_Enable();
+			buzzer.toggle_state = BUZZER_ENABLED;
+		}
+		else if(buzzer.toggle_state == BUZZER_ENABLED){
+			CK_BUZZER_Disable();
+			buzzer.toggle_state = BUZZER_DISABLED;
+		}
+	}
+}
 
-	if(is_buzzer_init){
+void CK_BUZZER_Enable(void){
+
+	if(buzzer.is_init){
 
 	#if BUZZER_PWM
 		if(BUZZER_TIM_CH == TIM_CHANNEL_1){
@@ -140,13 +174,15 @@ void CK_BUZZER_Activate(void){
 	#if BUZZER_DC
 		CK_GPIO_SetPin(_BUZZER_GPIO, _BUZZER_GPIO_PIN); // Set pin to low.
 	#endif
+
+		buzzer.state = BUZZER_ENABLED;
 	}
 }
 
 
-void CK_BUZZER_Deactivate(void){
+void CK_BUZZER_Disable(void){
 
-	if(is_buzzer_init){
+	if(buzzer.is_init){
 
 		#if BUZZER_PWM
 
@@ -172,10 +208,10 @@ void CK_BUZZER_Deactivate(void){
 
 		#endif
 
+			buzzer.state = BUZZER_DISABLED;
 	}
 
 }
-
 
 /*
  * Activate buzzer if BUZZER_FLAG is true.
@@ -183,10 +219,10 @@ void CK_BUZZER_Deactivate(void){
 void CK_BUZZER_CheckBuzzer(void){
 
 	if(flags.BUZZER){
-		CK_BUZZER_Activate();
+		CK_BUZZER_Enable();
 	}
 	else{
-		CK_BUZZER_Deactivate();
+		CK_BUZZER_Disable();
 	}
 }
 
@@ -194,16 +230,16 @@ void CK_BUZZER_CheckBuzzer(void){
 // such as microcard initialized, gps is fixed etc.
 void CK_BUZZER_Tone1(void){
 
-	if(is_buzzer_init){
+	if(buzzer.is_init){
 
 		// I put delay to prevent mixing to previous tones.
 		CK_TIME_DelayMilliSec(BUZZER_TIME2 * 10);
 
 		int i = 3;
 		while(i--){
-			CK_BUZZER_Activate();
+			CK_BUZZER_Enable();
 			CK_TIME_DelayMilliSec(BUZZER_TIME1);
-			CK_BUZZER_Deactivate();
+			CK_BUZZER_Disable();
 			CK_TIME_DelayMilliSec(BUZZER_TIME1);
 		}
 
@@ -215,16 +251,16 @@ void CK_BUZZER_Tone1(void){
 // 10 quick beeps. To indicate loop is starting.
 void CK_BUZZER_Tone2(void){
 
-	if(is_buzzer_init){
+	if(buzzer.is_init){
 
 		// I put delay to prevent mixing to previous tones.
 		CK_TIME_DelayMilliSec(BUZZER_TIME2 * 10);
 
 		int i = 10;
 		while(i--){
-			CK_BUZZER_Activate();
+			CK_BUZZER_Enable();
 			CK_TIME_DelayMilliSec(BUZZER_TIME2);
-			CK_BUZZER_Deactivate();
+			CK_BUZZER_Disable();
 			CK_TIME_DelayMilliSec(BUZZER_TIME2);
 		}
 
@@ -238,16 +274,16 @@ void CK_BUZZER_Tone2(void){
 // at every refreshing of that sensor. Longer delay will affect loop frequency
 void CK_BUZZER_Tone3(void){
 
-	if(is_buzzer_init){
+	if(buzzer.is_init){
 
 		// I put delay to prevent mixing to previous tones.
 		CK_TIME_DelayMilliSec(BUZZER_TIME2 * 10);
 
 		int i = 5;
 		while(i--){
-			CK_BUZZER_Activate();
+			CK_BUZZER_Enable();
 			CK_TIME_DelayMilliSec(BUZZER_TIME2/10);
-			CK_BUZZER_Deactivate();
+			CK_BUZZER_Disable();
 			CK_TIME_DelayMilliSec(BUZZER_TIME2/10);
 		}
 
@@ -259,13 +295,13 @@ void CK_BUZZER_Tone3(void){
 // this is the delayless version of tone 1 for microcard logging done indication.
 void CK_BUZZER_Tone4(void){
 
-	if(is_buzzer_init){
+	if(buzzer.is_init){
 
 		int i = 3;
 		while(i--){
-			CK_BUZZER_Activate();
+			CK_BUZZER_Enable();
 			CK_TIME_DelayMilliSec(BUZZER_TIME2);
-			CK_BUZZER_Deactivate();
+			CK_BUZZER_Disable();
 			CK_TIME_DelayMilliSec(BUZZER_TIME2);
 		}
 

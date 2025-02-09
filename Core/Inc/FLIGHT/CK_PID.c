@@ -593,7 +593,7 @@ static void handleCrashRecovery(
 {
     if (pidRuntime.inCrashRecoveryMode && cmpTimeUs(currentTimeUs, pidRuntime.crashDetectedAtUs) > pidRuntime.crashTimeDelayUs) {
         if (crash_recovery == PID_CRASH_RECOVERY_BEEP) {
-        	CK_BUZZER_Activate();
+        	CK_BUZZER_Enable();
         }
         if (axis == FD_YAW) {
             *errorRate = constrainf(*errorRate, -pidRuntime.crashLimitYaw, pidRuntime.crashLimitYaw);
@@ -619,11 +619,11 @@ static void handleCrashRecovery(
                 if (abs(attitude.raw[FD_ROLL] - angleTrim->raw[FD_ROLL]) < pidRuntime.crashRecoveryAngleDeciDegrees
                    && abs(attitude.raw[FD_PITCH] - angleTrim->raw[FD_PITCH]) < pidRuntime.crashRecoveryAngleDeciDegrees) {
                     pidRuntime.inCrashRecoveryMode = false;
-                    CK_BUZZER_Deactivate();
+                    CK_BUZZER_Disable();
                 }
             } else {
                 pidRuntime.inCrashRecoveryMode = false;
-                CK_BUZZER_Deactivate();
+                CK_BUZZER_Disable();
             }
         }
     }
@@ -653,11 +653,11 @@ static void detectAndSetCrashRecovery(
             if (pidRuntime.inCrashRecoveryMode && cmpTimeUs(currentTimeUs, pidRuntime.crashDetectedAtUs) < pidRuntime.crashTimeDelayUs && (fabsf(errorRate) < pidRuntime.crashGyroThreshold
                 || fabsf(getSetpointRate(axis)) > pidRuntime.crashSetpointThreshold)) {
                 pidRuntime.inCrashRecoveryMode = false;
-                CK_BUZZER_Deactivate();
+                CK_BUZZER_Disable();
             }
         } else if (pidRuntime.inCrashRecoveryMode) {
             pidRuntime.inCrashRecoveryMode = false;
-            CK_BUZZER_Deactivate();
+            CK_BUZZER_Disable();
         }
     }
 }
