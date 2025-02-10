@@ -47,13 +47,6 @@ typedef struct gpsSensor_s{
 
 extern gpsSensor_t gps;
 
-typedef enum{
-
-    UBLOX_8,
-    UBLOX_7
-
-}GPS_MODULE_e;
-
 typedef struct UBX_NAV_POSLLH_t{
     uint8_t   nav_posllh_cls;
     uint8_t   nav_posllh_id;
@@ -128,7 +121,7 @@ typedef struct UBX_NAV_PVT_t{
 
 extern circularBuffer_t gps_cb;
 
-void CK_GPS_Init(USART_TypeDef* uart_, GPS_MODULE_e module_type);
+void CK_GPS_Init(USART_TypeDef* uart_, sensorModel_e module_type);
 
 void CK_GPS_Update(void);
 

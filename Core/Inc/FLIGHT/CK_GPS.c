@@ -45,7 +45,7 @@ UBX_NAV_PVT_s pvt;
 
 gpsSensor_t gps;
 
-GPS_MODULE_e module;
+sensorModel_e module;
 
 //#define COMPUTE_DMS       // Degree minute sec
 
@@ -68,7 +68,7 @@ USART_TypeDef* FLIGHT_GPS_UART;
 
 circularBuffer_t gps_cb;
 
-void CK_GPS_Init(USART_TypeDef* uart_, GPS_MODULE_e module_type){
+void CK_GPS_Init(USART_TypeDef* uart_, sensorModel_e module_type){
 
 	FLIGHT_GPS_UART = uart_;
 
@@ -78,10 +78,10 @@ void CK_GPS_Init(USART_TypeDef* uart_, GPS_MODULE_e module_type){
 
     module = module_type;
 
-    if(module == UBLOX_7){
+    if(module == GPS_UBLOX7){
         UBX_PAYLOAD_SIZE = 84;
     }
-    else if(module == UBLOX_8){
+    else if(module == GPS_UBLOX8){
         UBX_PAYLOAD_SIZE = 92;
     }
 
@@ -259,7 +259,7 @@ void CK_GPS_DecodePacket(void){
      *
      */
 
-    if(module == UBLOX_8){
+    if(module == GPS_UBLOX8){
         // Fix type 2 is 2D fix, 3 is 3D fix
         pvt.nav_pvt_fixType = _buffer[20];
 
@@ -284,7 +284,7 @@ void CK_GPS_DecodePacket(void){
         // Current latitude in decimal degrees
         pvt.nav_pvt_lat     = (int32_t)((_buffer[31]<<24)+(_buffer[30]<<16)+(_buffer[29]<<8)+_buffer[28]);
     }
-    else if(module == UBLOX_7){
+    else if(module == GPS_UBLOX7){
 
         // Fix type 2 is 2D fix, 3 is 3D fix
         pvt.nav_pvt_fixType = _buffer[20];
@@ -473,7 +473,7 @@ void CK_GPS_InitConfig(){
     CK_GPS_SendUBXPacket(UBX_CFG_UPDATE_10HZ, 14);
     CK_TIME_DelayMilliSec(10);
 
-    if(module == UBLOX_8){
+    if(module == GPS_UBLOX8){
         uint8_t UBX_CFG_LED_10HZ[]        = {0xB5, 0x62, 0x06, 0x31, 0x20, 0x00, 0x00, 0x01, 0x00, 0x00, 0x32,
                                              0x00, 0x00, 0x00, 0x40, 0x42, 0x0F, 0x00, 0xA0, 0x86, 0x01, 0x00,
                                              0x00, 0x00, 0x00, 0x00, 0x50, 0xC3, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -481,7 +481,7 @@ void CK_GPS_InitConfig(){
         CK_GPS_SendUBXPacket(UBX_CFG_LED_10HZ, 40);
         CK_TIME_DelayMilliSec(10);
     }
-    else if(module == UBLOX_7){
+    else if(module == GPS_UBLOX7){
         uint8_t UBX_CFG_LED_10HZ[]        = {0xB5, 0x62, 0x06, 0x31, 0x20, 0x00, 0x00, 0x01, 0x00, 0x00, 0x32,
                                              0x00, 0x00, 0x00, 0x40, 0x42, 0x0F, 0x00, 0xA0, 0x86, 0x01, 0x00,
                                              0x00, 0x00, 0x00, 0x00, 0x50, 0xC3, 0x00, 0x00, 0x00, 0x00, 0x00,
