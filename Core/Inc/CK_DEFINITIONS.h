@@ -117,6 +117,9 @@ typedef enum
 
 	BNO055_IMU,
 
+	GPS_UBLOX7,
+	GPS_UBLOX8,
+
 	SENSOR_NONE
 
 }sensorModel_e;
