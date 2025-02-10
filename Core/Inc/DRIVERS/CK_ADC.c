@@ -288,6 +288,8 @@ void ADC_IRQHandler(void){
 	// Regular channel end of conversion
 	if((ADC1->ISR & (1u << 2))){
 
+		ADC1->ISR = 0xFFFF;
+
 		HAL_ADC_IRQHandler(&lipo_adc);
 
 		adc.lipo_adc_result = (float)HAL_ADC_GetValue(&lipo_adc);
@@ -302,6 +304,8 @@ void ADC_IRQHandler(void){
 
 	// Regular channel end of conversion
 	if((ADC2->ISR & (1u << 2))){
+
+		ADC2->ISR = 0xFFFF;
 
 		HAL_ADC_IRQHandler(&current_adc);
 
