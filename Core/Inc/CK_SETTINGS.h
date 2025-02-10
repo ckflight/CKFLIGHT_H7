@@ -82,6 +82,7 @@
 #define BNO055_					0
 
 #define GPS_					1
+#define GPS_MODULE				GPS_UBLOX7
 
 #define LOG_SPI_				0
 #define LOG_SDIO_				0
