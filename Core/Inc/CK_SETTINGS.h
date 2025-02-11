@@ -77,7 +77,7 @@
 
 #define MAG_SPI_				0	// Init peripheral CS important for common SPI
 #define MAG_I2C_				1
-#define USE_MAG_				1
+#define USE_MAG_				0
 
 #define BNO055_					0
 
@@ -94,7 +94,7 @@
 #define BUZZER_PWM				0
 #define BUZZER_DC				1
 
-#define OSD_ONBOARD_			1 // Keep it high for H7
+#define OSD_ONBOARD_			0 // Keep it high for H7
 #define OSD_PDB_				0
 #define OSD_DJI_				1
 

@@ -67,6 +67,8 @@ uint32_t computeStartTime, computeEndTime;
 // todo: complete mixer ezlanding related things.
 // todo: implement USE_ADVANCED_TPA if used by betaflight
 
+// todo: not implemented and init magnetometer creates 250ms delay not a problem
+
 int main(void){
 
 	#if USE_H7 == 1
@@ -153,7 +155,7 @@ int main(void){
 
     CK_ADJUSTMENT_Init(TARGET_2HZ_US, TARGET_MAIN_TIME_US);
 
-    CK_RECEIVER_WaitARM(); // Buzzer tone 1
+    //CK_RECEIVER_WaitARM(); // Buzzer tone 1
 
 #if GPS_
     CK_GPS_Init(GPS_UART, GPS_MODULE);
@@ -268,8 +270,9 @@ int main(void){
 
         CK_ACC_Update();
 
+
 		#if USE_MAG_
-        CK_MAGNETO_Update();
+        //CK_MAGNETO_Update();
 		#endif
 
 		#if USE_BARO_
@@ -277,7 +280,9 @@ int main(void){
 		#endif
 
 		#if GPS_
+
         CK_GPS_Update();
+
 		#endif
 
 		#if BNO055_
