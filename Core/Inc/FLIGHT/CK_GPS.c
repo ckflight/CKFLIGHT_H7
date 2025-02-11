@@ -86,13 +86,23 @@ void CK_GPS_Init(USART_TypeDef* uart_, sensorModel_e module_type){
     }
 
     USART_CONFIGURATION_ config;
-    config.interrupt 			= RX_INTERRUPT;
+#if GPS_
+    config.tx_gpio_type			= GPS_UART_TX_GPIO;
+	config.tx_gpio_pin			= GPS_UART_TX_PIN;
+	config.tx_af				= GPS_UART_TX_AF;
+
+	config.rx_gpio_type			= GPS_UART_RX_GPIO;
+	config.rx_gpio_pin			= GPS_UART_RX_PIN;
+	config.rx_af				= GPS_UART_RX_AF;
+#endif
+	config.interrupt 			= RX_INTERRUPT;
     config.mode 				= RX_TX;
     config.parity 				= NO_PARITY;
     config.stop_bit 			= STOP_BIT1;
     config.baudrate 			= GPS_DEFAULT_BAUDRATE;
     config.usart 				= FLIGHT_GPS_UART;
     config.use_circular_buffer 	= true;
+
 
     CK_UART_Init(&config, &gps_cb);
 

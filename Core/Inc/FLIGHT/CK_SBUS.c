@@ -36,6 +36,9 @@ void CK_SBUS_Init(SBUS_Method method){
 	config.stop_bit 			= STOP_BIT2;
 	config.baudrate 			= sbus_baud;
 #if SBUS_
+	config.rx_gpio_type			= SBUS_UART_RX_GPIO;
+	config.rx_gpio_pin			= SBUS_UART_RX_PIN;
+	config.rx_af				= SBUS_UART_RX_AF;
 	config.usart 				= SBUS_UART;
 	CK_SBUS_UART 				= SBUS_UART;
 #endif

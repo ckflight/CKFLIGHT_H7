@@ -4,6 +4,7 @@
 
 #include "CK_CIRCULARBUFFER.h"
 #include "CK_DEFINITIONS.h"
+#include "CK_GPIO.h"
 
 #define CK_USART_CR1_TE         		1u<<3    // TX ENABLE
 #define CK_USART_CR1_RE         		1u<<2    // RX ENABLE
@@ -66,6 +67,14 @@ typedef struct{
 	USART_TypeDef* 		usart;
 
 	bool				use_circular_buffer;
+
+	GPIO_TypeDef*		tx_gpio_type;
+	uint16_t 			tx_gpio_pin;
+	CK_GPIOx_AFx		tx_af;
+
+	GPIO_TypeDef*		rx_gpio_type;
+	uint16_t 			rx_gpio_pin;
+	CK_GPIOx_AFx		rx_af;
 
 }USART_CONFIGURATION_;
 

@@ -1,5 +1,4 @@
 
-#include "CK_GPIO.h"
 #include "CK_UART.h"
 #include "CK_SYSTEM.h"
 
@@ -58,10 +57,30 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 	uart_clock = CK_SYSTEM_GetUARTClock(config->usart);
 
+	if(config->rx_gpio_type != config->tx_gpio_type){
+		CK_GPIO_ClockEnable(config->rx_gpio_type);
+		CK_GPIO_ClockEnable(config->tx_gpio_type);
+	}
+	else{
+		CK_GPIO_ClockEnable(config->rx_gpio_type);
+	}
+
+	if(config->mode == RX_ONLY){
+		CK_GPIO_Init(config->rx_gpio_type, config->rx_gpio_pin, CK_GPIO_AF_PP, config->rx_af, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
+	}
+	else if(config->mode == TX_ONLY){
+		CK_GPIO_Init(config->tx_gpio_type, config->tx_gpio_pin, CK_GPIO_AF_PP, config->tx_af, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
+	}
+	else{
+		CK_GPIO_Init(config->rx_gpio_type, config->rx_gpio_pin, CK_GPIO_AF_PP, config->rx_af, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
+		CK_GPIO_Init(config->tx_gpio_type, config->tx_gpio_pin, CK_GPIO_AF_PP, config->tx_af, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
+	}
+
 	if(config->usart == USART1){
 
 		__HAL_RCC_USART1_CLK_ENABLE();
 
+		/*
 		CK_GPIO_ClockEnable(GPIOA);
 
 		if(config->mode == RX_ONLY){
@@ -74,6 +93,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 			CK_GPIO_Init(GPIOA, 10, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
 			CK_GPIO_Init(GPIOA, 9, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
 		}
+		*/
 
 		NVIC_EnableIRQ(USART1_IRQn);
 
@@ -82,6 +102,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 		__HAL_RCC_USART2_CLK_ENABLE();
 
+		/*
 		CK_GPIO_ClockEnable(GPIOD);
 
 		if(config->mode == RX_ONLY){
@@ -94,6 +115,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 			CK_GPIO_Init(GPIOD, 6, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
 			CK_GPIO_Init(GPIOD, 5, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
 		}
+		*/
 
 		NVIC_EnableIRQ(USART2_IRQn);
 
@@ -102,6 +124,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 		__HAL_RCC_USART3_CLK_ENABLE();
 
+		/*
 		CK_GPIO_ClockEnable(GPIOD);
 
 		if(config->mode == RX_ONLY){
@@ -114,6 +137,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 			CK_GPIO_Init(GPIOD, 9, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
 			CK_GPIO_Init(GPIOD, 8, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
 		}
+		*/
 
 		NVIC_EnableIRQ(USART3_IRQn);
 
@@ -122,18 +146,27 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 		__HAL_RCC_UART4_CLK_ENABLE();
 
-		CK_GPIO_ClockEnable(GPIOB);
+		/*
+		//CK_GPIO_ClockEnable(GPIOB);
+		CK_GPIO_ClockEnable(GPIOD);
 
 		if(config->mode == RX_ONLY){
-			CK_GPIO_Init(GPIOB, 8, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
+
+			//CK_GPIO_Init(GPIOB, 8, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
+			CK_GPIO_Init(GPIOD, 0, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
 		}
 		else if(config->mode == TX_ONLY){
-			CK_GPIO_Init(GPIOB, 9, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
+			//CK_GPIO_Init(GPIOB, 9, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
+			CK_GPIO_Init(GPIOD, 1, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
 		}
 		else{
-			CK_GPIO_Init(GPIOB, 8, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
-			CK_GPIO_Init(GPIOB, 9, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
+			//CK_GPIO_Init(GPIOB, 8, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
+			//CK_GPIO_Init(GPIOB, 9, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
+			CK_GPIO_Init(GPIOD, 0, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
+			CK_GPIO_Init(GPIOD, 1, CK_GPIO_AF_PP, CK_GPIO_AF8, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
+
 		}
+		*/
 
 		NVIC_EnableIRQ(UART4_IRQn);
 
@@ -142,6 +175,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 		__HAL_RCC_USART6_CLK_ENABLE();
 
+		/*
 		CK_GPIO_ClockEnable(GPIOC);
 
 		if(config->mode == RX_ONLY){
@@ -154,7 +188,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 			CK_GPIO_Init(GPIOC, 7, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
 			CK_GPIO_Init(GPIOC, 6, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
 		}
-
+		*/
 		NVIC_EnableIRQ(USART6_IRQn);
 
 	}
@@ -162,6 +196,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 		__HAL_RCC_UART7_CLK_ENABLE();
 
+		/*
 		CK_GPIO_ClockEnable(GPIOE);
 
 		if(config->mode == RX_ONLY){
@@ -174,6 +209,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 			CK_GPIO_Init(GPIOE, 7, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
 			CK_GPIO_Init(GPIOE, 8, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
 		}
+		*/
 
 		NVIC_EnableIRQ(UART7_IRQn);
 
@@ -182,6 +218,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 		__HAL_RCC_UART8_CLK_ENABLE();
 
+		/*
 		CK_GPIO_ClockEnable(GPIOE);
 
 		if(config->mode == RX_ONLY){
@@ -194,6 +231,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 			CK_GPIO_Init(GPIOE, 0, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP); //RX
 			CK_GPIO_Init(GPIOE, 1, CK_GPIO_AF_PP, CK_GPIO_AF7, CK_GPIO_VERYHIGH, CK_GPIO_PULLUP);  //TX
 		}
+		*/
 
 		NVIC_EnableIRQ(UART8_IRQn);
 

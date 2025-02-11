@@ -67,6 +67,10 @@ void CK_OSD_Init(uint32_t osdT, uint32_t mainT){
     	COMMUNICATION_OSD_UART = OSD_PDB_USART;
 
 		USART_CONFIGURATION_ config;
+	    config.tx_gpio_type			= OSD_PDB_UART_TX_GPIO;
+		config.tx_gpio_pin			= OSD_PDB_UART_TX_PIN;
+		config.tx_af				= OSD_PDB_UART_TX_AF;
+
 		config.interrupt 			= TX_INTERRUPT;
 		config.mode 				= TX_ONLY;
 		config.parity 				= NO_PARITY;
@@ -102,6 +106,10 @@ void CK_OSD_Init(uint32_t osdT, uint32_t mainT){
     	COMMUNICATION_OSD_UART = OSD_DJI_USART;
 
 		USART_CONFIGURATION_ config;
+		config.tx_gpio_type			= OSD_DJI_UART_TX_GPIO;
+		config.tx_gpio_pin			= OSD_DJI_UART_TX_PIN;
+		config.tx_af				= OSD_DJI_UART_TX_AF;
+
 		config.interrupt 			= TX_INTERRUPT;
 		config.mode 				= TX_ONLY;
 		config.parity 				= NO_PARITY;

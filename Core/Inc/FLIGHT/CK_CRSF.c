@@ -197,6 +197,9 @@ void CK_CRSF_Init(CRSF_Method method){
 	config.stop_bit 			= STOP_BIT1;
 	config.baudrate 			= crsf_baud;
 	#if CRSF_
+	config.rx_gpio_type			= CRSF_UART_RX_GPIO;
+	config.rx_gpio_pin			= CRSF_UART_RX_PIN;
+	config.rx_af				= CRSF_UART_RX_AF;
 	config.usart 				= CRSF_UART;
 	CK_CRSF_UART 				= CRSF_UART;
 	#endif
