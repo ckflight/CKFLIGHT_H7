@@ -67,7 +67,9 @@ uint32_t computeStartTime, computeEndTime;
 // todo: complete mixer ezlanding related things.
 // todo: implement USE_ADVANCED_TPA if used by betaflight
 
-// todo: not implemented and init magnetometer creates 250ms delay not a problem
+// todo: mag not initialized it creates 250ms delay not a problem
+
+// todo: add USE_MAG_ to imu correct 2 lines
 
 int main(void){
 
@@ -272,7 +274,7 @@ int main(void){
 
 
 		#if USE_MAG_
-        //CK_MAGNETO_Update();
+        CK_MAGNETO_Update();
 		#endif
 
 		#if USE_BARO_

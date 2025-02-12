@@ -473,7 +473,7 @@ float imuCalcCourseErr(float courseOverGround)
 
 #endif
 
-#if defined(USE_MAG) && defined(GPS__RESCUE)
+#if defined(USE_MAG_) && defined(GPS__RESCUE)
 // refactored from old debug code, to be removed/optimized eventually
 static void imuDebug_GPS_RESCUE_HEADING(void)
 {
@@ -502,9 +502,9 @@ static void imuDebug_GPS_RESCUE_HEADING(void)
         mag.isNewMagADCFlag = false;
     }
 }
-#endif // defined(USE_MAG) && defined(GPS__RESCUE)
+#endif // defined(USE_MAG_) && defined(GPS__RESCUE)
 
-#ifdef USE_MAG
+#if USE_MAG_ == true
 // Calculate heading error derived from magnetometer
 // return value rotation around earth Z axis, pointing in directipon of smaller error, [rad/s]
 float imuCalcMagErr(void)
@@ -655,7 +655,7 @@ static void imuCalculateEstimatedAttitude(timeUs_t currentTimeUs)
 			bool useMag = false;   // mag will suppress GPS correction
 			float magErr = 0;
 
-		#ifdef USE_MAG
+		#if USE_MAG_ == true
 			if (sensors(SENSOR_MAG)
 				&& compassIsHealthy()
 		#ifdef GPS__RESCUE
@@ -667,7 +667,7 @@ static void imuCalculateEstimatedAttitude(timeUs_t currentTimeUs)
 			}
 		#endif
 
-		#if defined(USE_MAG) && defined(GPS__RESCUE)
+		#if defined(USE_MAG_) && defined(GPS__RESCUE)
 			// fill in GPS rescue debug value (leftover from code refactoring)
 			imuDebug_GPS_RESCUE_HEADING();
 		#endif
