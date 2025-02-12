@@ -158,6 +158,14 @@
 	#define GPS_UART					USART1
 	#define USE_INTERRUPT_GPS			1
 	#define GPS_INTERRUPT_				1
+
+	#define GPS_UART_TX_GPIO			GPIOA
+	#define GPS_UART_TX_PIN				9
+	#define GPS_UART_TX_AF				CK_GPIO_AF7
+
+	#define GPS_UART_RX_GPIO			GPIOA
+	#define GPS_UART_RX_PIN				10
+	#define GPS_UART_RX_AF				CK_GPIO_AF7
 #endif
 
 	#define BUZZER_GPIO					GPIOA // BUZ- pin is DC active low but i use pwm to set volume
@@ -329,6 +337,10 @@
 	#define OSD_DMA_Handler				DMA2_Stream2_IRQHandler
 	#define OSD_DMA_IRQn				DMA2_Stream2_IRQn
 	#define OSD_DMA_Request				DMA_REQUEST_UART4_TX
+
+	#define OSD_PDB_UART_TX_GPIO		GPIOB
+	#define OSD_PDB_UART_TX_PIN			9
+  	#define OSD_PDB_UART_TX_AF			CK_GPIO_AF8
 #endif
 
 #if OSD_DJI_
@@ -343,6 +355,10 @@
 	#define OSD_DMA_Handler				DMA2_Stream2_IRQHandler
 	#define OSD_DMA_IRQn				DMA2_Stream2_IRQn
 	#define OSD_DMA_Request				DMA_REQUEST_USART2_TX
+
+	#define OSD_DJI_UART_TX_GPIO		GPIOD
+	#define OSD_DJI_UART_TX_PIN			5
+  	#define OSD_DJI_UART_TX_AF			CK_GPIO_AF7
 #endif
 
 #if SBUS_
@@ -357,6 +373,14 @@
 	#define SBUS_DMA_Handler			DMA2_Stream1_IRQHandler
 	#define SBUS_DMA_IRQn				DMA2_Stream1_IRQn
 	#define SBUS_DMA_Request			DMA_REQUEST_USART6_RX
+
+	#define SBUS_UART_TX_GPIO			GPIOC
+	#define SBUS_UART_TX_PIN			6
+	#define SBUS_UART_TX_AF				CK_GPIO_AF7
+
+	#define SBUS_UART_RX_GPIO			GPIOC
+	#define SBUS_UART_RX_PIN			7
+	#define SBUS_UART_RX_AF				CK_GPIO_AF7
 #endif
 
 #if CRSF_
@@ -371,6 +395,14 @@
 	#define CRSF_DMA_Handler			DMA2_Stream1_IRQHandler
 	#define CRSF_DMA_IRQn				DMA2_Stream1_IRQn
 	#define CRSF_DMA_Request			DMA_REQUEST_USART6_RX
+
+	#define CRSF_UART_TX_GPIO			GPIOC
+	#define CRSF_UART_TX_PIN			6
+	#define CRSF_UART_TX_AF				CK_GPIO_AF7
+
+	#define CRSF_UART_RX_GPIO			GPIOC
+	#define CRSF_UART_RX_PIN			7
+	#define CRSF_UART_RX_AF				CK_GPIO_AF7
 #endif
 
 #if SMART_AUDIO_

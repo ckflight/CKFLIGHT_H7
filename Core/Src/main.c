@@ -155,7 +155,7 @@ int main(void){
 
     CK_ADJUSTMENT_Init(TARGET_2HZ_US, TARGET_MAIN_TIME_US);
 
-    //CK_RECEIVER_WaitARM(); // Buzzer tone 1
+    CK_RECEIVER_WaitARM(); // Buzzer tone 1
 
 #if GPS_
     CK_GPS_Init(GPS_UART, GPS_MODULE);
@@ -164,10 +164,10 @@ int main(void){
 #if GYRO1_SPI_
     CK_GYRO_Init(GYRO1_SPI, GYRO1_CS_PORT, GYRO1_CS_PIN, TARGET_GYRO1, DPS2000, TARGET_GYRO_TIME_US, TARGET_MAIN_TIME_US);
 
-    /*while(!gyro.is_gyro_init){
+    while(!gyro.is_gyro_init){
     	CK_LED_ToggleLedForMs(1, 10, 100);
     	CK_LED_ToggleLedForMs(2, 10, 100);
-    }*/
+    }
 #endif
 
 #if ACC1_SPI_
