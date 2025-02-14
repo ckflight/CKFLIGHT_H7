@@ -98,284 +98,38 @@ uint8_t CK_MPU6000_GyroInit(SPI_TypeDef* SPIn, GPIO_TypeDef* GPIO_CSn, uint8_t C
 	GPIO_CS_MPU6000 = GPIO_CSn;
 	CS_PIN_MPU6000 = CS_PINn;
 
-	uint8_t resp = 0;
-
 	uint8_t id = CK_SPI_WriteRegister(MPU_RA_WHO_AM_I, 0xFF, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
-	if(id == ICM20602_WHO_AM_I_ID){
+	id = CK_SPI_WriteRegister(MPU_RA_WHO_AM_I, 0xFF, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
+	id = CK_SPI_WriteRegister(MPU_RA_WHO_AM_I, 0xFF, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
 
-		// ICM20602 Setup
-		CK_TIME_DelayMilliSec(100);
-
-		// Device Reset, Takes everyting to default
-        CK_SPI_WriteRegister(CK_ICM20602_PWR_MNG1_REG, ICM20602_RESET_BIT, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-        CK_TIME_DelayMilliSec(100);
-
-		// I2C Disable, SPI Only Mode
-		CK_SPI_WriteRegister(CK_ICM20602_I2C_IF_REG, ICM20602_I2C_IF_DIS_BIT, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-		CK_TIME_DelayMilliSec(10);
-
-		// Reset Signal Path and Sensor Register
-		CK_SPI_WriteRegister(CK_ICM20602_USER_CONTROL_REG, 0x05, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-		CK_TIME_DelayMilliSec(100);
-
-		// Clear PWR MNG1 Register
-		//CK_SPI_WriteRegister(CK_ICM20602_PWR_MNG1_REG, 0, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-		//CK_TIME_DelayMilliSec(10);
-
-		// CLK Selection for Best Gyro Performance
-		CK_SPI_WriteRegister(CK_ICM20602_PWR_MNG1_REG, 0x01, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-		CK_TIME_DelayMilliSec(10);
-
-		// DLPF_CFG[00] 8KHz, Bit 7 set to 0, Set main clock to 8MHz
-		CK_SPI_WriteRegister(CK_ICM20602_CONFIG_REG, 0, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-		CK_TIME_DelayMilliSec(10);
-
-		uint8_t div_rate = 0;
-		if(gyroFreq == TARGET_8KHZ_US){
-			div_rate = 0;
-		}
-		else if(gyroFreq == TARGET_4KHZ_US){
-			div_rate = 1;
-		}
-		else if(gyroFreq == TARGET_2KHZ_US){
-			div_rate = 3;
-		}
-		else if(gyroFreq == TARGET_1KHZ_US){
-			div_rate = 7;
-		}
-		else{
-			div_rate = 0;
-		}
-
-		// SMPL RATE DIV = 0 8Khz/1+SMPL RATE DIV = 8Khz
-		CK_SPI_WriteRegister(CK_ICM20602_SMPLRT_DIV_REG, div_rate, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-		CK_TIME_DelayMilliSec(10);
-
-		// FCHOICE_B [00], FSEL[11] CK_ICM20602_DPS2000
-		CK_SPI_WriteRegister(CK_ICM20602_GYRO_CONFIG_REG, 0x18, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-		CK_TIME_DelayMilliSec(10);
-
-		icm20602.GyroInit = true;
-
-		icm20602.HardwareInit = true;
-
-		resp = 1;
-
-	}
-	else{
-
-	    resp = 0;
-	}
-
-	return resp;
 
 }
 
-uint8_t CK_MPU6000_AccInit(SPI_TypeDef* SPIn, GPIO_TypeDef* GPIO_CSn, uint8_t CS_PINn, uint32_t accFreq){
+bool CK_MPU6000_isGyroSensorInitialized(void){
 
-    SPI_MPU6000 = SPIn;
-    GPIO_CS_MPU6000 = GPIO_CSn;
-    CS_PIN_MPU6000 = CS_PINn;
-
-    uint8_t resp = 0;
-
-    if(CK_SPI_WriteRegister(CK_ICM20602_WHO_AM_I_READ_REG, 0xFF, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602) == ICM20602_WHO_AM_I_ID){
-
-        // ACCEL,TEMP SIGNAL PATH RESET
-        CK_SPI_WriteRegister(CK_ICM20602_SIGNAL_PATH_RESET_REG, 0x03, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-        CK_TIME_DelayMilliSec(10);
-
-        // ACCEL_FS_SEL[11] +-16g 0x18, 2g 0x00
-        CK_SPI_WriteRegister(CK_ICM20602_ACCEL_CONFIG_REG, 0x18, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-        CK_TIME_DelayMilliSec(10);
-
-        uint8_t data = 0;
-        if(accFreq == TARGET_4KHZ_US){
-			data = 0x08;
-		}
-		else if(accFreq == TARGET_1KHZ_US){
-			data = 0x01; // 218 hz bw is selected
-		}
-		else{
-			data = 0x08;
-		}
-
-        // ACCEL_FCHOICE_B=1,A_DLPF_CFG=0
-        CK_SPI_WriteRegister(CK_ICM20602_ACCEL_CONFIG2_REG, data, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602);
-
-        CK_TIME_DelayMilliSec(10);
-
-        icm20602.AccInit = true;
-
-        icm20602.HardwareInit = true;
-
-        resp = 1;
-
-    }
-    else{
-    	resp = 0;
-    }
-
-    return resp;
-
+	return mpu6000.GyroInit;
 }
 
-void CK_ICM20602_AlignGyro(int x, int y, int z){
+bool CK_MPU6000_isAccSensorInitialized(void){
 
-	gyro.gyroSign[X]  = x;
-
-	gyro.gyroSign[Y] = y;
-
-	gyro.gyroSign[Z]   = z;
+    return mpu6000.AccInit;
 }
 
-void CK_ICM20602_AlignAcc(int x, int y, int z){
-
-	acc.accSign[X] = x;
-
-	acc.accSign[Y] = y;
-
-	acc.accSign[Z] = z;
-
-}
-
-void CK_ICM20602_ReadGyroRaw(void){
-
-    CK_SPI_ReadRegisterMulti(CK_ICM20602_GYRO_XOUT_H, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602, icm20602.rxArray, 6);
-
-    gyro.gyroADCRaw[X]  = (int16_t)(icm20602.rxArray[0] << 8 | icm20602.rxArray[1]);
-
-    gyro.gyroADCRaw[Y] = (int16_t)(icm20602.rxArray[2] << 8 | icm20602.rxArray[3]);
-
-    gyro.gyroADCRaw[Z]   = (int16_t)(icm20602.rxArray[4] << 8 | icm20602.rxArray[5]);
-
-}
-
-void CK_ICM20602_ReadAccRaw(void){
-
-    CK_SPI_ReadRegisterMulti(CK_ICM20602_ACCEL_XOUT_H, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602, icm20602.rxArray, 6);
-
-    acc.accADCRaw[X] = (int16_t)(icm20602.rxArray[0] << 8 | icm20602.rxArray[1]);
-
-    acc.accADCRaw[Y] = (int16_t)(icm20602.rxArray[2] << 8 | icm20602.rxArray[3]);
-
-    acc.accADCRaw[Z] = (int16_t)(icm20602.rxArray[4] << 8 | icm20602.rxArray[5]);
-
-}
-
-void CK_ICM20602_ReadSensorRaw_DMA(void){
-
-	// This function read all acc temp and gyro at once
-	// Fill buffer before cleandcache
-	icm20602.rxArray[0] = CK_ICM20602_ACCEL_XOUT_H | 0x80;
-
-	#if USE_H7 == 1
-	// Clean before tx operation when dcache is enabled
-	// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
-	SCB_CleanDCache_by_Addr((uint32_t*)icm20602.rxArray, GYRO_READ_ARRAY_SIZE + 32);
-	#endif
-
-	// TX
-	CK_SPI_DMA_ClearFlag(SENSOR_DMA, SENSOR_DMA_TX_Stream);
-
-	CK_SPI_DMA_SetBuffer(SENSOR_DMA_TX_Stream, icm20602.rxArray, 15);
-
-	// RX
-	CK_SPI_DMA_ClearFlag(SENSOR_DMA, SENSOR_DMA_RX_Stream);
-
-	CK_SPI_DMA_SetBuffer(SENSOR_DMA_RX_Stream, icm20602.rxArray, 15);
 
 
-	CK_GPIO_ClearPin(GPIO_CS_ICM20602, CS_PIN_ICM20602);
-
-	CK_SPI_DMA_Enable(SENSOR_DMA_RX_Stream);
-	CK_SPI_DMA_Enable(SENSOR_DMA_TX_Stream);
-
-	CK_SPI_EnableRXDMA(SPI_ICM20602);
-	CK_SPI_EnableTXDMA(SPI_ICM20602);
 
 
-	#if USE_H7
-	// tsize with read size is not working higher number works.
-	CK_SPI_StartTransfer(SPI_ICM20602, 20);
-	#endif
-
-}
-
-#if USE_DMA_SENSOR_ICM20602
-
-void SENSOR_DMA_TX_Handler(void){
-
-    if(CK_SPI_DMA_IsTransferComplete(SENSOR_DMA, SENSOR_DMA_TX_Stream)){ // Transfer of one sector is done.
-
-    	CK_SPI_DMA_Disable(SENSOR_DMA_TX_Stream);
-
-        CK_SPI_DisableTXDMA(SPI_ICM20602);
-
-    	CK_SPI_DMA_ClearFlag(SENSOR_DMA, SENSOR_DMA_TX_Stream);
-
-    }
-}
-
-void SENSOR_DMA_RX_Handler(void){
-
-    if(CK_SPI_DMA_IsTransferComplete(SENSOR_DMA, SENSOR_DMA_RX_Stream)){ // Transfer of one sector is done.
-
-        CK_SPI_DisableRXDMA(SPI_ICM20602);
-
-        CK_SPI_DMA_Disable(SENSOR_DMA_RX_Stream);
-
-    	CK_SPI_DMA_ClearFlag(SENSOR_DMA, SENSOR_DMA_RX_Stream);
-
-		#if USE_H7
-		CK_SPI_Disable(SPI_IIM42652);
-		#endif
-
-        CK_GPIO_SetPin(GPIO_CS_ICM20602, CS_PIN_ICM20602);
-
-		#if USE_H7 == 1
-    	// Invalidate before rx operation when dcache is enabled
-        // DMA is done so data is ready on sram send it to cache so cpu can use it.
-    	SCB_InvalidateDCache_by_Addr((uint32_t*)icm20602.rxArray, GYRO_READ_ARRAY_SIZE + 32);
-		#endif
-
-        // First byte is response of read reg data write
-
-        acc.accADCRaw[X] = (int16_t)(icm20602.rxArray[1] << 8 | icm20602.rxArray[2]);
-
-        acc.accADCRaw[Y] = (int16_t)(icm20602.rxArray[3] << 8 | icm20602.rxArray[4]);
-
-        acc.accADCRaw[Z] = (int16_t)(icm20602.rxArray[5] << 8 | icm20602.rxArray[6]);
-
-		gyro.gyroADCRaw[X]  = (int16_t)(icm20602.rxArray[9] << 8 | icm20602.rxArray[10]);
-
-		gyro.gyroADCRaw[Y] = (int16_t)(icm20602.rxArray[11] << 8 | icm20602.rxArray[12]);
-
-		gyro.gyroADCRaw[Z]   = (int16_t)(icm20602.rxArray[13] << 8 | icm20602.rxArray[14]);
 
 
-    }
-}
 
-#endif
 
-float CK_ICM20602_ReadTempRaw(void){
 
-	CK_SPI_ReadRegisterMulti(0x41, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602, icm20602.rxArray, 2);
 
-	int16_t value2 = ((uint16_t )icm20602.rxArray[0]<<8) | (uint16_t )icm20602.rxArray[1];
-	return value2/326.8 + 25;
-}
 
-bool CK_ICM20602_isGyroSensorInitialized(void){
 
-	return icm20602.GyroInit;
-}
 
-bool CK_ICM20602_isAccSensorInitialized(void){
 
-    return icm20602.AccInit;
-}
+
 
 
 
