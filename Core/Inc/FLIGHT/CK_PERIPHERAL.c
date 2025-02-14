@@ -135,9 +135,6 @@ void CK_PERIPHERAL_Init(targetFreq_e target_period){
 		CK_SPI_Init(GYRO1_SPI, clock_rate, CK_SPI_USE_BAREMETAL);
 	}
 
-	CK_GPIO_ClockEnable(GYRO1_CS_PORT);
-	    CK_GPIO_Init(GYRO1_CS_PORT, GYRO1_CS_PIN, CK_GPIO_OUTPUT_PP, CK_GPIO_NOAF, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
-	    CK_GPIO_SetPin(GYRO1_CS_PORT, GYRO1_CS_PIN); //Set CS High for Idle
 #endif
 
 #if GYRO2_SPI_

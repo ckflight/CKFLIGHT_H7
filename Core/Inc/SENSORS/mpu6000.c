@@ -28,6 +28,8 @@
 #define MPU_RA_FIFO_R_W         0x74
 #define MPU_RA_WHO_AM_I         0x75
 
+#define REG_SMPLRT_DIV			0x19
+
 // Bits
 #define BIT_SLEEP                   0x40
 #define BIT_H_RESET                 0x80
@@ -98,11 +100,28 @@ uint8_t CK_MPU6000_GyroInit(SPI_TypeDef* SPIn, GPIO_TypeDef* GPIO_CSn, uint8_t C
 	GPIO_CS_MPU6000 = GPIO_CSn;
 	CS_PIN_MPU6000 = CS_PINn;
 
-	uint8_t id = CK_SPI_WriteRegister(MPU_RA_WHO_AM_I, 0xFF, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
-	id = CK_SPI_WriteRegister(MPU_RA_WHO_AM_I, 0xFF, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
-	id = CK_SPI_WriteRegister(MPU_RA_WHO_AM_I, 0xFF, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
+	uint8_t id = 0;
+	CK_SPI_ReadRegisterMulti(MPU_RA_WHO_AM_I, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000, &id, 1);
 
+	if(id == 0x68){
+		CK_SPI_WriteRegister(MPU_RA_PWR_MGMT_1, 0x80, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
+		CK_TIME_DelayMilliSec(100);
 
+		CK_SPI_WriteRegister(MPU_RA_PWR_MGMT_1, 0x03, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
+		CK_TIME_DelayMicroSec(10);
+
+		CK_SPI_WriteRegister(MPU_RA_USER_CTRL, 0x10, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
+		CK_TIME_DelayMicroSec(15);
+
+		CK_SPI_WriteRegister(MPU_RA_PWR_MGMT_2, 0x00, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
+		CK_TIME_DelayMicroSec(15);
+
+		CK_SPI_WriteRegister(REG_SMPLRT_DIV, 0, SPI_MPU6000, GPIO_CS_MPU6000, CS_PIN_MPU6000);
+		CK_TIME_DelayMicroSec(15);
+
+	}
+
+	return 1;
 }
 
 bool CK_MPU6000_isGyroSensorInitialized(void){
