@@ -573,6 +573,11 @@ void CK_GYRO_ReadRaw(void){
 		CK_ICM20602_ReadSensorRaw_DMA();
 
 	}
+	else if(gyro.sensor == MPU6000_GYRO){
+
+		CK_MPU6000_ReadSensorRaw_DMA();
+
+	}
 	else if(gyro.sensor == IIM42652_GYRO){
 
 		CK_IIM42652_ReadSensorRaw_DMA();
@@ -596,6 +601,11 @@ void CK_GYRO_ReadRaw(void){
 	if(gyroSensor == ICM20602_GYRO){
 
 		CK_ICM20602_ReadGyroRaw();
+
+	}
+	else if(gyro.sensor == MPU6000_GYRO){
+
+		CK_MPU6000_ReadGyroRaw();
 
 	}
 	else if(gyroSensor == IIM42652_GYRO){
@@ -754,6 +764,11 @@ void CK_GYRO_PerformCalibration(void){
 			CK_ICM20602_ReadGyroRaw();
 
 		}
+		else if(gyro.sensor == MPU6000_GYRO){
+
+			CK_MPU6000_ReadGyroRaw();
+
+		}
 		else if(gyro.sensor == IIM42652_GYRO){
 
 			CK_IIM42652_ReadGyroRaw();
@@ -841,6 +856,9 @@ void CK_GYRO_CheckTimeout(void){
 
 	    	if(gyro.sensor == ICM20602_GYRO){
 	    		CK_ICM20602_GyroInit(MOTION_GYRO_SPI, MOTION_GYRO_CS_PORT, MOTION_GYRO_CS_PIN, gyro.sync.targetLoopTime);
+	    	}
+	    	else if(gyro.sensor == MPU6000_GYRO){
+	    		CK_MPU6000_GyroInit(MOTION_GYRO_SPI, MOTION_GYRO_CS_PORT, MOTION_GYRO_CS_PIN, gyro.sync.targetLoopTime);
 	    	}
 	    	else if(gyro.sensor == IIM42652_GYRO){
 				CK_IIM42652_GyroInit(MOTION_GYRO_SPI, MOTION_GYRO_CS_PORT, MOTION_GYRO_CS_PIN, gyro.sync.targetLoopTime);

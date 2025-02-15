@@ -306,7 +306,7 @@ void SENSOR_DMA_RX_Handler(void){
     	CK_SPI_DMA_ClearFlag(SENSOR_DMA, SENSOR_DMA_RX_Stream);
 
 		#if USE_H7
-		CK_SPI_Disable(SPI_IIM42652);
+		CK_SPI_Disable(SPI_ICM20602);
 		#endif
 
         CK_GPIO_SetPin(GPIO_CS_ICM20602, CS_PIN_ICM20602);

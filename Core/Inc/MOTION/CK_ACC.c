@@ -8,6 +8,7 @@
 #include "SENSORS/CK_IIM42652.h"
 #include "SENSORS/CK_ICM42688P.h"
 #include "SENSORS/CK_ICM42605.h"
+#include "SENSORS/mpu6000.h"
 
 #include "SENSORS/CK_LSM303D.h"
 #include "SENSORS/CK_FXOS8700CQ.h"
@@ -69,6 +70,34 @@ void CK_ACC_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, se
 		if(!CK_ICM20602_isAccSensorInitialized()){
 			while(reinit_count--){
 				if(CK_ICM20602_AccInit(MOTION_ACC_SPI, MOTION_ACC_CS_PORT, MOTION_ACC_CS_PIN, acc.sync.targetLoopTime)){
+					reinit_count = 0;
+					CK_PRINTER_PrintlnString("ACC INIT CORRECT");
+				}
+				else CK_PRINTER_PrintlnString("ACC ERROR");
+			}
+		}
+
+		if(g == G2){
+			acc.acc1G = 16384.0f;
+		}
+		else if(g == G4){
+			acc.acc1G = 8192.0f;
+		}
+		else if(g == G8){
+			acc.acc1G = 4096.0f;
+		}
+		else if(g == G16){
+			acc.acc1G = 2048.0f;
+
+		}
+
+	}
+
+	else if(acc.sensor == MPU6000_ACC){
+
+		if(!CK_MPU6000_isAccSensorInitialized()){
+			while(reinit_count--){
+				if(CK_MPU6000_AccInit(MOTION_ACC_SPI, MOTION_ACC_CS_PORT, MOTION_ACC_CS_PIN, acc.sync.targetLoopTime)){
 					reinit_count = 0;
 					CK_PRINTER_PrintlnString("ACC INIT CORRECT");
 				}
@@ -364,14 +393,16 @@ void CK_ACC_ReadACCRaw(void){
 		//CK_ICM20602_ReadSensorRaw_DMA();
 
 	}
+	else if(acc.sensor == MPU6000_ACC){
+
+		// Gyro read all sensor data at once in dma mode
+	}
 	else if(acc.sensor == IIM42652_ACC){
 
 		// Gyro read all sensor data at once in dma mode
-		//CK_IIM42652_ReadSensorRaw_DMA();
 	}
 	else if(acc.sensor == ICM42688P_ACC){
 		// Gyro read all sensor data at once in dma mode
-		//CK_ICM42688P_ReadSensorRaw_DMA();
 	}
 	else if(acc.sensor == LSM303D_ACC){
 
@@ -385,6 +416,11 @@ void CK_ACC_ReadACCRaw(void){
 	if(accSensor == ICM20602_ACC){
 
 		CK_ICM20602_ReadAccRaw();
+
+	}
+	else if(accSensor == MPU6000_ACC){
+
+			CK_MPU6000_ReadAccRaw();
 
 	}
 	else if(accSensor == IIM42652_ACC){
@@ -435,6 +471,11 @@ void CK_ACC_PerformCalibration(int16_t* acc_buffer){
 		if(acc.sensor == ICM20602_ACC){
 
 			CK_ICM20602_ReadAccRaw();
+
+		}
+		else if(acc.sensor == MPU6000_ACC){
+
+			CK_MPU6000_ReadAccRaw();
 
 		}
 		else if(acc.sensor == IIM42652_ACC){
@@ -514,6 +555,20 @@ void CK_ACC_CheckTimeout(void){
 
 				if(acc.acc_reInit_counter  < TIMEOUT_REINIT_THREASHOLD){
 					CK_ICM20602_AccInit(MOTION_ACC_SPI, MOTION_ACC_CS_PORT, MOTION_ACC_CS_PIN, acc.sync.targetLoopTime);
+					acc.acc_reInit_counter ++;
+				}
+			}
+		}
+		else if(acc.sensor == MPU6000_ACC){
+
+			// Check if any timeout occured
+			if(CK_SPI_GetTimeOut(MOTION_ACC_SPI) == TIMEOUT_THREASHOLD){
+
+				CK_BUZZER_Tone3();
+				CK_SPI_ResetTimeOut(MOTION_ACC_SPI);
+
+				if(acc.acc_reInit_counter  < TIMEOUT_REINIT_THREASHOLD){
+					CK_MPU6000_AccInit(MOTION_ACC_SPI, MOTION_ACC_CS_PORT, MOTION_ACC_CS_PIN, acc.sync.targetLoopTime);
 					acc.acc_reInit_counter ++;
 				}
 			}

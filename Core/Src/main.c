@@ -71,6 +71,10 @@ uint32_t computeStartTime, computeEndTime;
 
 // todo: add USE_MAG_ to imu correct 2 lines
 
+// todo: add acc gyro temperature to flight monitor
+
+// todo: dma reads gyro acc temp at the same time but acc is 1k gyro 8k check this!!!
+
 int main(void){
 
 	#if USE_H7 == 1
