@@ -46,6 +46,20 @@
 #define SPI2_MOSI_PIN	15
 #define SPI2_MOSI_AF	CK_GPIO_AF5
 
+
+
+#define SPI3_SCK_GPIO 	GPIOC
+#define SPI3_SCK_PIN  	10
+#define SPI3_SCK_AF		CK_GPIO_AF6
+
+#define SPI3_MISO_GPIO	GPIOC
+#define SPI3_MISO_PIN	11
+#define SPI3_MISO_AF	CK_GPIO_AF6
+
+#define SPI3_MOSI_GPIO	GPIOC
+#define SPI3_MOSI_PIN	12
+#define SPI3_MOSI_AF	CK_GPIO_AF6
+
 	// GYROSCOPE
 #if GYRO1_SPI_
 	#define USE_SPI1					true
