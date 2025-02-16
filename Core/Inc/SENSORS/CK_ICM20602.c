@@ -25,12 +25,6 @@
 #define ICM20602_I2C_IF_DIS_BIT             1u<<6
 
 #define CK_ICM20602_WHO_AM_I_READ_REG       0x75|0x80 // If we set MSB, indicates a read operation
-#define CK_ICM20602_GYRO_XOUT_H             0x43
-#define CK_ICM20602_GYRO_XOUT_L             0x44
-#define CK_ICM20602_GYRO_YOUT_H             0x45
-#define CK_ICM20602_GYRO_YOUT_L             0x46
-#define CK_ICM20602_GYRO_ZOUT_H             0x47
-#define CK_ICM20602_GYRO_ZOUT_L             0x48
 
 #define CK_ICM20602_ACCEL_XOUT_H            0x3B
 #define CK_ICM20602_ACCEL_XOUT_L            0x3C
@@ -38,6 +32,14 @@
 #define CK_ICM20602_ACCEL_YOUT_L            0x3E
 #define CK_ICM20602_ACCEL_ZOUT_H            0x3F
 #define CK_ICM20602_ACCEL_ZOUT_L            0x40
+#define CK_ICM20602_TEMP_OUT_H             	0x41
+#define CK_ICM20602_TEMP_OUT_L             	0x42
+#define CK_ICM20602_GYRO_XOUT_H             0x43
+#define CK_ICM20602_GYRO_XOUT_L             0x44
+#define CK_ICM20602_GYRO_YOUT_H             0x45
+#define CK_ICM20602_GYRO_YOUT_L             0x46
+#define CK_ICM20602_GYRO_ZOUT_H             0x47
+#define CK_ICM20602_GYRO_ZOUT_L             0x48
 
 SPI_TypeDef * SPI_ICM20602;
 
@@ -325,6 +327,8 @@ void SENSOR_DMA_RX_Handler(void){
 
         acc.accADCRaw[Z] = (int16_t)(icm20602.rxArray[5] << 8 | icm20602.rxArray[6]);
 
+        gyro.gyroacc_sensor_temperature = (float)((int16_t)(icm20602.rxArray[7] << 8 | icm20602.rxArray[8]) / 326.8 + 25.0f);
+
 		gyro.gyroADCRaw[X]  = (int16_t)(icm20602.rxArray[9] << 8 | icm20602.rxArray[10]);
 
 		gyro.gyroADCRaw[Y] = (int16_t)(icm20602.rxArray[11] << 8 | icm20602.rxArray[12]);
@@ -342,7 +346,7 @@ float CK_ICM20602_ReadTempRaw(void){
 	CK_SPI_ReadRegisterMulti(0x41, SPI_ICM20602, GPIO_CS_ICM20602, CS_PIN_ICM20602, icm20602.rxArray, 2);
 
 	int16_t value2 = ((uint16_t )icm20602.rxArray[0]<<8) | (uint16_t )icm20602.rxArray[1];
-	return value2/326.8 + 25;
+	return value2/326.8 + 25.0f;
 }
 
 bool CK_ICM20602_isGyroSensorInitialized(void){

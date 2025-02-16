@@ -149,6 +149,8 @@ typedef struct gyroSensor_s{
 
     sensorModel_e sensor;
 
+    float gyroacc_sensor_temperature;
+
 }gyroSensor_t;
 
 extern gyroSensor_t gyro;

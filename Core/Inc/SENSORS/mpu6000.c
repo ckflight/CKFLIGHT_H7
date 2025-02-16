@@ -334,6 +334,8 @@ void SENSOR_DMA_RX_Handler(void){
 
         acc.accADCRaw[Z] = (int16_t)(mpu6000.rxArray[5] << 8 | mpu6000.rxArray[6]);
 
+        gyro.gyroacc_sensor_temperature = (float)((int16_t)(mpu6000.rxArray[7] << 8 | mpu6000.rxArray[8]) / 340.0f + 35.0f);
+
 		gyro.gyroADCRaw[X]  = (int16_t)(mpu6000.rxArray[9] << 8 | mpu6000.rxArray[10]);
 
 		gyro.gyroADCRaw[Y] = (int16_t)(mpu6000.rxArray[11] << 8 | mpu6000.rxArray[12]);

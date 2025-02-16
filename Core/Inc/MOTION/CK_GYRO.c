@@ -14,6 +14,7 @@
 #include "MOTION/CK_GYRO.h"
 
 #include "FLIGHT/CK_PID.h"
+#include "FLIGHT/flight_monitor.h"
 
 #include "COMMUNICATION/CK_PRINTER.h"
 
@@ -127,6 +128,8 @@ void CK_GYRO_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, s
 
     gyro.yaw_spin_recovery = YAW_SPIN_RECOVERY_AUTO;
     gyro.yaw_spin_threshold = 1950;
+
+    gyro.gyroacc_sensor_temperature = 0.0f;
 
 #if USE_DMA_SENSOR
 
@@ -660,6 +663,8 @@ void CK_GYRO_Update(uint32_t currentTimeUs){
 
 		// Read Raw gyro values
 	    CK_GYRO_ReadRaw();
+
+	    monitor_set_gyroacc_temp(gyro.gyroacc_sensor_temperature);
 
 		for(int axis = X; axis < FLIGHT_DYNAMICS_INDEX_COUNT; axis++){
 

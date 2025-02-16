@@ -33,6 +33,8 @@ typedef struct{
 	float temp_sum;
 	uint8_t temperature_average;
 
+	float gyroacc_sensor_temperature;
+
 }flight_monitor_s;
 
 flight_monitor_s monitor;
@@ -56,6 +58,8 @@ void flight_monitor_init(uint32_t monitorT, uint32_t mainT){
 	monitor.temperature = 0.0f;
 	monitor.temperature_average = 0;
 	monitor.temp_sum = 0.0f;
+
+	monitor.gyroacc_sensor_temperature = 0.0f;
 
 }
 
@@ -136,6 +140,14 @@ void warning_monitor_update(void){
 		}
 	}
 
+}
+
+void monitor_set_gyroacc_temp(float t){
+	monitor.gyroacc_sensor_temperature = t;
+}
+
+float monitor_get_gyroacc_temp(void){
+	return monitor.gyroacc_sensor_temperature;
 }
 
 

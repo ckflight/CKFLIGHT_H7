@@ -19,6 +19,7 @@
 #include "FLIGHT/CK_NAVIGATION.h"
 #include "FLIGHT/CK_PID.h"
 #include "FLIGHT/CK_ESC.h"
+#include "FLIGHT/flight_monitor.h"
 
 #include "MOTION/CK_IMU.h"
 #include "MOTION/CK_BNO055.h"
@@ -342,6 +343,7 @@ void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t){
 		CK_USBD_StringPrint("LIPO VOLT:    ");CK_USBD_FloatPrintln(CK_ADC_GetLipoResult() * VOLT_CALIBRATION_MULTIPLIER);
 		CK_USBD_StringPrint("ADC_CURRENT: ");CK_USBD_FloatPrintln(CK_ADC_GetCurrentResult());
 		CK_USBD_StringPrint("ADC_TEMPERATUR: ");CK_USBD_FloatPrintln(CK_ADC_GetTemperatureResult());
+		CK_USBD_StringPrint("SENSOR_TEMPERATUR: ");CK_USBD_FloatPrintln(monitor_get_gyroacc_temp());
 		CK_USBD_StringPrintln("");
 
 		CK_USBD_Transmit();
