@@ -88,20 +88,12 @@
 #endif
 
 #if EXT_SPI_
-	#define EXT_SPI		           		SPI3
-
-	#define EXT_SPI_CLOCK				10000000L
-
 #endif
 
 #if EXT_CS1_
-	#define EXT_CS1_PORT				GPIOD
-	#define EXT_CS1_PIN					4
 #endif
 
 #if EXT_CS2_
-	#define EXT_CS2_PORT				GPIOE
-	#define EXT_CS2_PIN					2
 #endif
 
 #if ACC_I2C_
@@ -185,18 +177,9 @@
 #endif
 
 #if LOG_SDIO_
-
-	// SDIO has its own dma no need for dma setup
-	#define MICROCARD_SDIO				SDMMC1
-
 #endif
 
 #if LOG_FLASH_
-	#define FLASH_SPI					SPI1
-	#define FLASH_GPIO					GPIOC
-	#define FLASH_CS_PIN				13
-
-	#define FLASH_SPI_CLOCK				10000000L
 #endif
 
 	// DSHOT and PWM PROTOCOL
