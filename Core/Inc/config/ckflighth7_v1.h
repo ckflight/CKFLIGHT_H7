@@ -1,4 +1,6 @@
 
+#include "CK_SETTINGS.h"
+
 #define VOLT_CALIBRATION_MULTIPLIER		10.09f
 
 #define TARGET_MAIN_TIME_US			TARGET_8KHZ_US
@@ -15,6 +17,20 @@
 	#define MAIN_INTERRUPT_TIM_CH		TIM_CHANNEL_1
 	#define MAIN_INTERRUPT_Handler		TIM16_IRQHandler
 	#define MAIN_INTERRUPT_IRQn			TIM16_IRQn
+
+// Define SPI pins here for an automatic SPI pin initialization
+#define USE_SPI1		true
+#define SPI1_SCK_GPIO 	GPIOA
+#define SPI1_SCK_PIN  	5
+#define SPI1_SCK_AF		CK_GPIO_AF5
+
+#define SPI1_MISO_GPIO	GPIOA
+#define SPI1_MISO_PIN	6
+#define SPI1_MISO_AF	CK_GPIO_AF5
+
+#define SPI1_MOSI_GPIO	GPIOD
+#define SPI1_MOSI_PIN	7
+#define SPI1_MOSI_AF	CK_GPIO_AF5
 
  // My board had 2 ICM42688P i changed it
  // SPI1 is IIM42652

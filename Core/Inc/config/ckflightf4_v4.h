@@ -1,4 +1,6 @@
 
+#include "CK_SETTINGS.h"
+
 #define VOLT_CALIBRATION_MULTIPLIER		10.09f
 
 #define TARGET_MAIN_TIME_US				TARGET_2KHZ_US
@@ -17,8 +19,36 @@
 #define MAIN_INTERRUPT_Handler		TIM2_IRQHandler
 #define MAIN_INTERRUPT_IRQn			TIM2_IRQn
 
+// Define all SPI pins that board have.
+#define SPI1_SCK_GPIO 	GPIOA
+#define SPI1_SCK_PIN  	5
+#define SPI1_SCK_AF		CK_GPIO_AF5
+
+#define SPI1_MISO_GPIO	GPIOA
+#define SPI1_MISO_PIN	6
+#define SPI1_MISO_AF	CK_GPIO_AF5
+
+#define SPI1_MOSI_GPIO	GPIOA
+#define SPI1_MOSI_PIN	7
+#define SPI1_MOSI_AF	CK_GPIO_AF5
+
+
+
+#define SPI2_SCK_GPIO 	GPIOB
+#define SPI2_SCK_PIN  	13
+#define SPI2_SCK_AF		CK_GPIO_AF5
+
+#define SPI2_MISO_GPIO	GPIOB
+#define SPI2_MISO_PIN	14
+#define SPI2_MISO_AF	CK_GPIO_AF5
+
+#define SPI2_MOSI_GPIO	GPIOB
+#define SPI2_MOSI_PIN	15
+#define SPI2_MOSI_AF	CK_GPIO_AF5
+
 	// GYROSCOPE
 #if GYRO1_SPI_
+	#define USE_SPI1					true
 	#define GYRO1_SPI           		SPI1 // Checked on hardware
 	#define GYRO1_CS_PORT				GPIOB // Checked on hardware
 	#define GYRO1_CS_PIN				12
@@ -46,59 +76,15 @@
 	#define GYRO1_SPI_CLOCK				10000000L
 #endif
 
-#if GYRO2_SPI_
-	#define GYRO2_SPI           		SPI2
-	#define GYRO2_CS_PORT				GPIOB
-	#define GYRO2_CS_PIN				12
-	#define TARGET_GYRO2				ICM42688P_GYRO
-
-	#define GYRO2_USE_INT				0
-	#define GYRO2_INT_PORT				GPIOE
-	#define GYRO2_INT_PIN				15
-
-	#define USE_DMA_SENSOR				1
-	#define USE_DMA_SENSOR_ICM42688P	0
-	#define USE_DMA_SENSOR_ICM20602		1
-	#define USE_DMA_SENSOR_IIM42652		0
-	#define SENSOR_DMA					DMA2
-	#define SENSOR_DMA_TX_Stream		DMA2_Stream3
-	#define SENSOR_DMA_RX_Stream		DMA2_Stream0
-	#define SENSOR_DMA_TX_Handler		DMA2_Stream3_IRQHandler
-	#define SENSOR_DMA_RX_Handler		DMA2_Stream0_IRQHandler
-	#define SENSOR_DMA_TX_Channel		3u
-	#define SENSOR_DMA_RX_Channel		3u
-
-	#define SENSOR_DMA_TX_IRQn			DMA2_Stream3_IRQn
-	#define SENSOR_DMA_RX_IRQn			DMA2_Stream0_IRQn
-
-	#define GYRO2_SPI_CLOCK				10000000L
-#endif
-
 	// ACCELEROMETER
 #if ACC1_SPI_
+	#define USE_SPI1					true
 	#define ACC1_SPI           			SPI1
 	#define ACC1_CS_PORT				GPIOB
 	#define ACC1_CS_PIN					12
 	#define TARGET_ACC1					ICM20602_ACC
 
 	#define ACC1_SPI_CLOCK				10000000L
-#endif
-
-#if GYRO2_SPI_
-	#define GYRO2_SPI           		SPI4 // Checked on hardware
-	#define GYRO2_CS_PORT				GPIOC // Checked on hardware
-	#define GYRO2_CS_PIN				13
-	#define TARGET_ACC2					ICM42688P_ACC
-
-	#define GYRO2_SPI_CLOCK				10000000L
-#endif
-
-#if ACC2_SPI_
-	#define ACC2_SPI           			SPI4
-	#define ACC2_CS_PORT				GPIOC
-	#define ACC2_CS_PIN					13
-
-	#define ACC2_SPI_CLOCK				10000000L
 #endif
 
 #if EXT_SPI_
@@ -124,6 +110,7 @@
 
 	// BAROMETER
 #if BARO_SPI_
+	#define USE_SPI1					true
 	#define BARO_SPI           			SPI1
 	#define BARO_CS_PORT       			GPIOC
 	#define BARO_CS_PIN        			4
@@ -134,6 +121,7 @@
 
 	// MAGNETOMETER
 #if MAG_SPI_
+	#define USE_SPI1					true
 	#define MAG_SPI           			SPI1
 	#define MAG_CS_PORT					GPIOB
 	#define MAG_CS_PIN					1
@@ -173,7 +161,6 @@
 	#define BUZZER_GPIO_PIN				0
 
 #if BUZZER_PWM
-
 	#define BUZZER_TIM					TIM1
 	#define BUZZER_TIM_CH				TIM_CHANNEL_2
 	#define BUZZER_AF					CK_GPIO_AF1
@@ -182,6 +169,7 @@
 
 	// MICROCARD
 #if LOG_SPI_
+	#define USE_SPI3					true
 	#define MICROCARD_DMA           	DMA1
 	#define MICROCARD_DMA_STREAM    	DMA1_Stream7
 	#define MICROCARD_SPI           	SPI3
@@ -305,6 +293,7 @@
 
 	// OSD
 #if OSD_ONBOARD_
+	#define USE_SPI2					true
 	#define OSD_SPI						SPI2
 	#define OSD_CS_PORT					GPIOC
 	#define OSD_CS_PIN					9

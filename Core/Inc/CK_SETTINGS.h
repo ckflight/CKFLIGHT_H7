@@ -1,62 +1,6 @@
 #ifndef CK_SETTINGS_H_
 #define CK_SETTINGS_H_
 
-#define CURRENT_VERSION_MAJOR	4
-#define CURRENT_VERSION_MINOR	33
-
-//#define MATEKH743_SLIMV3
-//#define 		RF_REVOLT
-//#define 		CKBOARD_v2
-//#define 		CKBOARD_v1
-//#define 		CKFLIGHT_F4
-//#define 		CKFLIGHT_H7
-#define 		KAKUTE_H7_1v3
-
-#ifdef MATEKH743_SLIMV3
-#define TARGET_BOARD	"MATEKH743_SLIMV3"
-#define TARGET_MCU 		"H7"
-
-// For dma cache etc so copy paste wont create problem
-#define USE_H7	1
-#define USE_F4	0
-#endif
-
-#ifdef CKFLIGHT_H7
-#define TARGET_BOARD	"CKFLIGHT_H7"
-#define TARGET_MCU 		"H7"
-
-// For dma cache etc so copy paste wont create problem
-#define USE_H7	1
-#define USE_F4	0
-#endif
-
-#ifdef KAKUTE_H7_1v3
-#define TARGET_BOARD	"KAKUTE_H7_v1.3"
-#define TARGET_MCU 		"H7"
-
-// For dma cache etc so copy paste wont create problem
-#define USE_H7	1
-#define USE_F4	0
-#endif
-
-#ifdef CKFLIGHT_F4
-#define TARGET_BOARD			"CKFLIGHT_F4"
-#define TARGET_MCU 				"F4"
-
-// For dma cache etc so copy paste wont create problem
-#define USE_H7	0
-#define USE_F4	1
-#endif
-
-#ifdef RF_REVOLT
-#define TARGET_BOARD			"RF_REVOLT"
-#define TARGET_MCU 				"F4"
-
-// For dma cache etc so copy paste wont create problem
-#define USE_H7	0
-#define USE_F4	1
-#endif
-
 #define MAIN_INTERRUPT_			0
 
 #define GYRO1_SPI_				1

@@ -3,7 +3,60 @@
 
 #include "stdbool.h"
 #include "string.h"
-#include "CK_SETTINGS.h"
+
+#define 		CKFLIGHT_F4			false
+#define 		CKFLIGHT_H7			false
+#define 		KAKUTE_H7_1v3		true
+#define 		MATEKH743_SLIMV3	false
+#define 		RF_REVOLT			false
+
+#define CURRENT_VERSION_MAJOR	4
+#define CURRENT_VERSION_MINOR	33
+
+#if MATEKH743_SLIMV3 == true
+#define TARGET_BOARD	"MATEKH743_SLIMV3"
+#define TARGET_MCU 		"H7"
+
+// For dma cache etc so copy paste wont create problem
+#define USE_H7	1
+#define USE_F4	0
+#endif
+
+#if CKFLIGHT_H7 == true
+#define TARGET_BOARD	"CKFLIGHT_H7"
+#define TARGET_MCU 		"H7"
+
+// For dma cache etc so copy paste wont create problem
+#define USE_H7	1
+#define USE_F4	0
+#endif
+
+#if KAKUTE_H7_1v3 == true
+#define TARGET_BOARD	"KAKUTE_H7_v1.3"
+#define TARGET_MCU 		"H7"
+
+// For dma cache etc so copy paste wont create problem
+#define USE_H7	1
+#define USE_F4	0
+#endif
+
+#if CKFLIGHT_F4 == true
+#define TARGET_BOARD			"CKFLIGHT_F4"
+#define TARGET_MCU 				"F4"
+
+// For dma cache etc so copy paste wont create problem
+#define USE_H7	0
+#define USE_F4	1
+#endif
+
+#if RF_REVOLT == true
+#define TARGET_BOARD			"RF_REVOLT"
+#define TARGET_MCU 				"F4"
+
+// For dma cache etc so copy paste wont create problem
+#define USE_H7	0
+#define USE_F4	1
+#endif
 
 #if USE_H7 == 1
 #include "stm32h7xx_hal.h"
@@ -15,25 +68,26 @@
 #include "stm32f4xx.h"
 #endif
 
-#if defined(CKFLIGHT_F4)
+#if CKFLIGHT_F4 == true
 #include "config/ckflightf4_v4.h"
 #endif
 
-#if defined(RF_REVOLT)
-#include "config/revolt.h"
-#endif
-
-#if defined(CKFLIGHT_H7)
+#if CKFLIGHT_H7 == true
 #include "config/ckflighth7_v1.h"
 #endif
 
-#if defined(KAKUTE_H7_1v3)
+#if KAKUTE_H7_1v3 == true
 #include "config/kakuteh7_1v3.h"
 #endif
 
-#if defined(MATEKH743_SLIMV3)
+#if MATEKH743_SLIMV3 == true
 #include "config/matekh743slim_v3.h"
 #endif
+
+#if RF_REVOLT == true
+#include "config/revolt.h"
+#endif
+
 
 typedef struct{
     uint16_t syncRate;

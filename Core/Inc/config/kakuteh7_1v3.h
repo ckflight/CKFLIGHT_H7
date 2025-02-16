@@ -1,4 +1,6 @@
 
+#include "CK_SETTINGS.h"
+
 #define VOLT_CALIBRATION_MULTIPLIER		10.95f
 
 #define TARGET_MAIN_TIME_US			TARGET_8KHZ_US
@@ -9,14 +11,55 @@
 #define TARGET_PERIPHERAL_TIME_US	TARGET_8KHZ_US
 #define TARGET_FLASH				FLASH_STM32H7_
 
-	// Updates receiver and rc for response
-	// Interrupt cannot be used for all method updates
-	#define MAIN_INTERRUPT_TIM			TIM16
-	#define MAIN_INTERRUPT_TIM_CH		TIM_CHANNEL_1
-	#define MAIN_INTERRUPT_Handler		TIM16_IRQHandler
-	#define MAIN_INTERRUPT_IRQn			TIM16_IRQn
+// Updates receiver and rc for response
+// Interrupt cannot be used for all method updates
+#define MAIN_INTERRUPT_TIM			TIM16
+#define MAIN_INTERRUPT_TIM_CH		TIM_CHANNEL_1
+#define MAIN_INTERRUPT_Handler		TIM16_IRQHandler
+#define MAIN_INTERRUPT_IRQn			TIM16_IRQn
+
+// Define all SPI pins that board have.
+#define SPI1_SCK_GPIO 	GPIOA
+#define SPI1_SCK_PIN  	5
+#define SPI1_SCK_AF		CK_GPIO_AF5
+
+#define SPI1_MISO_GPIO	GPIOA
+#define SPI1_MISO_PIN	6
+#define SPI1_MISO_AF	CK_GPIO_AF5
+
+#define SPI1_MOSI_GPIO	GPIOA
+#define SPI1_MOSI_PIN	7
+#define SPI1_MOSI_AF	CK_GPIO_AF5
+
+
+#define SPI2_SCK_GPIO 	GPIOB
+#define SPI2_SCK_PIN  	13
+#define SPI2_SCK_AF		CK_GPIO_AF5
+
+#define SPI2_MISO_GPIO	GPIOB
+#define SPI2_MISO_PIN	14
+#define SPI2_MISO_AF	CK_GPIO_AF5
+
+#define SPI2_MOSI_GPIO	GPIOB
+#define SPI2_MOSI_PIN	15
+#define SPI2_MOSI_AF	CK_GPIO_AF5
+
+
+#define SPI4_SCK_GPIO 	GPIOE
+#define SPI4_SCK_PIN  	2
+#define SPI4_SCK_AF		CK_GPIO_AF5
+
+#define SPI4_MISO_GPIO	GPIOE
+#define SPI4_MISO_PIN	5
+#define SPI4_MISO_AF	CK_GPIO_AF5
+
+#define SPI4_MOSI_GPIO	GPIOE
+#define SPI4_MOSI_PIN	6
+#define SPI4_MOSI_AF	CK_GPIO_AF5
+
 
 #if GYRO1_SPI_
+	#define USE_SPI4					true
 	#define GYRO1_SPI           		SPI4
 	#define GYRO1_CS_PORT				GPIOE
 	#define GYRO1_CS_PIN				4
@@ -47,6 +90,7 @@
 #endif
 
 #if ACC1_SPI_
+	#define USE_SPI4					true
 	#define ACC1_SPI           			SPI4
 	#define ACC1_CS_PORT				GPIOE
 	#define ACC1_CS_PIN					4
@@ -56,71 +100,18 @@
 #endif
 
 #if GYRO2_SPI_
-	#define GYRO2_SPI           		SPI4 // Checked on hardware
-	#define GYRO2_CS_PORT				GPIOC // Checked on hardware
-	#define GYRO2_CS_PIN				13
-	#define TARGET_GYRO2				ICM42688P_GYRO
-
-	#define GYRO2_USE_INT				0
-	#define GYRO2_INT_PORT				GPIOE
-	#define GYRO2_INT_PIN				15
-
-	#define USE_DMA_SENSOR				1
-	#define USE_DMA_SENSOR_ICM42688P	1
-	#define USE_DMA_SENSOR_ICM20602		0
-	#define USE_DMA_SENSOR_IIM42652		0
-	#define SENSOR_DMA					DMA1
-	#define SENSOR_DMA_TX_Stream		DMA1_Stream6
-	#define SENSOR_DMA_RX_Stream		DMA1_Stream7
-	#define SENSOR_DMA_TX_Handler		DMA1_Stream6_IRQHandler
-	#define SENSOR_DMA_RX_Handler		DMA1_Stream7_IRQHandler
-	#define SENSOR_DMA_Request1			DMA_REQUEST_SPI4_TX
-	#define SENSOR_DMA_Request2			DMA_REQUEST_SPI4_RX
-
-	#define SENSOR_DMA_TX_IRQn			DMA1_Stream6_IRQn
-	#define SENSOR_DMA_RX_IRQn			DMA1_Stream7_IRQn
-
-	#define GYRO2_SPI_CLOCK				16000000L
 #endif
 
 #if ACC2_SPI_
-	#define ACC2_SPI           			SPI4
-	#define ACC2_CS_PORT				GPIOC
-	#define ACC2_CS_PIN					13
-	#define TARGET_ACC2					ICM42688P_ACC
-
-	#define ACC2_SPI_CLOCK				16000000L
 #endif
 
 #if EXT_SPI_
-	#define EXT_SPI		           		SPI3
-
-	#define USE_DMA_SENSOR				1
-	#define USE_DMA_SENSOR_ICM42688P	0
-	#define USE_DMA_SENSOR_ICM20602		1
-	#define SENSOR_DMA					DMA1
-	#define SENSOR_DMA_TX_Stream		DMA1_Stream6
-	#define SENSOR_DMA_RX_Stream		DMA1_Stream7
-	#define SENSOR_DMA_TX_Handler		DMA1_Stream6_IRQHandler
-	#define SENSOR_DMA_RX_Handler		DMA1_Stream7_IRQHandler
-	#define SENSOR_DMA_Request1			DMA_REQUEST_SPI3_TX
-	#define SENSOR_DMA_Request2			DMA_REQUEST_SPI3_RX
-
-	#define SENSOR_DMA_TX_IRQn			DMA1_Stream6_IRQn
-	#define SENSOR_DMA_RX_IRQn			DMA1_Stream7_IRQn
-
-	#define EXT_SPI_CLOCK				10000000L
-
 #endif
 
 #if EXT_CS1_
-	#define EXT_CS1_PORT				GPIOD
-	#define EXT_CS1_PIN					4
 #endif
 
 #if EXT_CS2_
-	#define EXT_CS2_PORT				GPIOE
-	#define EXT_CS2_PIN					2
 #endif
 
 #if ACC_I2C_
@@ -128,12 +119,6 @@
 #endif
 
 #if BARO_SPI_
-	#define BARO_SPI           			SPI1
-	#define BARO_CS_PORT       			GPIOC
-	#define BARO_CS_PIN        			4
-
-	#define BARO_SPI_CLOCK				10000000L
-	#define TARGET_BARO					BMP280_BAROMETER
 #endif
 
 #if BARO_I2C_
@@ -142,12 +127,6 @@
 #endif
 
 #if MAG_SPI_
-	#define MAG_SPI           			SPI1
-	#define MAG_CS_PORT					GPIOB
-	#define MAG_CS_PIN					1
-
-	#define MAG_SPI_CLOCK				10000000L
-	#define TARGET_MAG					QMC5883L_MAGNETO
 #endif
 
 #if MAG_I2C_
@@ -190,7 +169,7 @@
 #endif
 
 #if LOG_SPI_
-
+	#define USE_SPI1					true
 	#define MICROCARD_DMA           	DMA2
 	#define MICROCARD_DMA_STREAM    	DMA2_Stream0
 	#define MICROCARD_SPI           	SPI1
@@ -210,16 +189,9 @@
 #endif
 
 #if LOG_SDIO_
-	// SDIO has its own dma no need for dma setup
-	#define MICROCARD_SDIO				SDMMC1
 #endif
 
 #if LOG_FLASH_
-	#define FLASH_SPI					SPI1
-	#define FLASH_GPIO					GPIOC
-	#define FLASH_CS_PIN				13
-
-	#define FLASH_SPI_CLOCK				10000000L
 #endif
 
 	// DSHOT and PWM PROTOCOL
@@ -319,6 +291,7 @@
 	#define ADC_CURRENT_GPIO_PIN		1
 
 #if OSD_ONBOARD_
+	#define USE_SPI2					true
 	#define OSD_SPI						SPI2
 	#define OSD_CS_PORT					GPIOB
 	#define OSD_CS_PIN					12
