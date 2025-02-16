@@ -3,6 +3,7 @@
 
 #include "stdbool.h"
 #include "string.h"
+#include "git_commit_hash.h"
 
 #define 		CKFLIGHT_F4			false
 #define 		CKFLIGHT_H7			false
@@ -10,8 +11,10 @@
 #define 		MATEKH743_SLIMV3	false
 #define 		RF_REVOLT			false
 
-#define CURRENT_VERSION_MAJOR	4
-#define CURRENT_VERSION_MINOR	33
+#define COMMIT_HASH					CURRENT_COMMIT_HASH
+#define CURRENT_VERSION_MAJOR		VERSION_MAJOR
+#define CURRENT_VERSION_MINOR		VERSION_MINOR
+
 
 #if MATEKH743_SLIMV3 == true
 #define TARGET_BOARD	"MATEKH743_SLIMV3"

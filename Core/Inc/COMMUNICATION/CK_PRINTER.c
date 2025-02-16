@@ -47,6 +47,9 @@ void CK_PRINTER_Init(uint32_t mainT){
 	CK_PRINTER_PrintInt(CURRENT_VERSION_MINOR);
 	CK_PRINTER_PrintlnString(TARGET_MCU);
 
+	CK_PRINTER_PrintString("Git Hash: ");
+	CK_PRINTER_PrintlnString(COMMIT_HASH);
+
 	CK_PRINTER_PrintlnString("Hardware: ");
 	CK_PRINTER_PrintlnString(TARGET_BOARD);
 
