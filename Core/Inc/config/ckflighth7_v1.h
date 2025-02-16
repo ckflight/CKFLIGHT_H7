@@ -32,9 +32,6 @@
 #define SPI1_MOSI_PIN	7
 #define SPI1_MOSI_AF	CK_GPIO_AF5
 
- // My board had 2 ICM42688P i changed it
- // SPI1 is IIM42652
- // SPI4 is ICM42688P
 #if GYRO1_SPI_
 	#define GYRO1_SPI           		SPI1 // Checked on hardware
 	#define GYRO1_CS_PORT				GPIOC // Checked on hardware
