@@ -15,9 +15,18 @@ print("H file Dri:" + h_file_path)
 repo = Repo(upper_directory)
 commit_hash = repo.git.rev_parse("HEAD")
 branch_name = repo.active_branch.name
+print("branch_name:"+branch_name)
 
-version_major = branch_name[13]
-version_minor = int(branch_name[15])*10 + int(branch_name[16])
+if(branch_name[0] == 'C' and branch_name[1] == 'K'):
+
+    version_major = branch_name[13]
+    version_minor = int(branch_name[15])*10 + int(branch_name[16])
+
+else:
+
+    version_major = 0
+    version_minor = 0
+
 
 macro_def = "#define CURRENT_COMMIT_HASH "+'"'+commit_hash[0:8]+'"'
 
