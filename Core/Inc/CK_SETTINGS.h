@@ -32,13 +32,13 @@
 #define LOG_SDIO_				0
 #define LOG_FLASH_				0
 #define LOG_DUALBUFFER_			0
-#define LOG_MULTIWRITE_			1 // spi f4 works in single mode
+#define LOG_MULTIWRITE_			0 // spi f4 works in single mode
 #define TEST_LOG				0
 
 #define BUZZER_PWM				0
 #define BUZZER_DC				1
 
-#define OSD_ONBOARD_			0 // Keep it high for H7
+#define OSD_ONBOARD_			0
 #define OSD_PDB_				0
 #define OSD_DJI_				1
 

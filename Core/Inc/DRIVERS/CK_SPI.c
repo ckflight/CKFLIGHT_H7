@@ -146,6 +146,8 @@ void CK_SPI_Init(SPI_TypeDef* spi_n, uint32_t clock, CK_SPIx_LibraryType type){
 
 			if(SPI_ == SPI1){
 
+				__HAL_RCC_SPI1_CLK_ENABLE();
+
 				hspi1 = hspi_;
 				spi_variables.spi1_init    	= 1;
 				spi_variables.spi1_timeout 	= 0;

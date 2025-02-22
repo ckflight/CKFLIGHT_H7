@@ -281,9 +281,19 @@ void CK_MICROCARD_Init(microcard_transfer_modes_e mode){
 
 		CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
 
+#if USE_H7 == 1
+		CK_SPI_DMA_InitTX(MICROCARD_DMA_STREAM, MICROCARD_SPI, MICROCARD_DMA_Request1);
+
+		CK_SPI_DMA_SetPeripheralAddress(MICROCARD_DMA_STREAM, (uint32_t)(&MICROCARD_SPI->TXDR));
+
+#endif
+
+#if USE_F4 == 1
 		CK_SPI_DMA_InitTX(MICROCARD_DMA_STREAM, MICROCARD_DMA_Channel);
 
 		CK_SPI_DMA_SetPeripheralAddress(MICROCARD_DMA_STREAM, (uint32_t)(&MICROCARD_SPI->DR));
+
+#endif
 
 		CK_SPI_DMA_TCInterruptEnable(MICROCARD_DMA_STREAM);
 

@@ -190,7 +190,7 @@ void CK_PERIPHERAL_Init(targetFreq_e target_period){
     if(!CK_SPI_CheckInitialized(MICROCARD_SPI)){
 		// MicroCard needs slow clock at initialization
 		// It will be change to full speed after initialization
-        CK_SPI_Init(MICROCARD_SPI, CK_SPIx_CR1_Fclk_Div128, CK_SPI_USE_BAREMETAL);
+        CK_SPI_Init(MICROCARD_SPI, CK_SPIx_CR1_Fclk_Div128, CK_SPI_USE_HAL);
     }
 #endif
 
