@@ -317,6 +317,8 @@ void CK_MICROCARD_InitCard(void){
     uint8_t highspeed_response_register[64]; UNUSED(highspeed_response_register);
     uint8_t resp = 0xFF;
 
+    CK_TIME_DelayMilliSec(100);
+
     while(resp != R1_RESPONSE_IDLE && card.init_retry--){
         CK_MICROCARD_SelectCard();
         resp = CK_MICROCARD_SendCmd(CMD0, 0, 0x95);
@@ -347,7 +349,7 @@ void CK_MICROCARD_InitCard(void){
             // It takes a few attempts to get 0 response
 
             resp = 0xFF;
-            CK_TIME_SetTimeOut(card.TIME_OUT);
+            CK_TIME_SetTimeOut(card.TIME_OUT*100);
             while(resp != R1_RESPONSE_READY && CK_TIME_GetTimeOut()){
                 CK_MICROCARD_SelectCard();
                 resp = CK_MICROCARD_SendAppCommand(ACMD41, 1 << 30);
@@ -1029,10 +1031,10 @@ uint8_t CK_MICROCARD_SendStopToken(void){
 
 uint8_t CK_MICROCARD_WaitForResponse(int bytesToWait){
 
-
+	uint8_t response = 0xAA;
     for(int i=0; i < bytesToWait; i++){
-        uint8_t response = CK_SPI_Transfer(CK_MICROCARD_SPI, 0xFF);
-        if (response != 0xFF){
+         response = CK_SPI_Transfer(CK_MICROCARD_SPI, 0xFF);
+        if (response == 0x01){
             return response;
         }
     }

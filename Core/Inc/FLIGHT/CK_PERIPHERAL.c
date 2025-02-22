@@ -87,6 +87,11 @@ void CK_PERIPHERAL_Init(targetFreq_e target_period){
     CK_GPIO_ClockEnable(MICROCARD_CS_PORT);
     CK_GPIO_Init(MICROCARD_CS_PORT, MICROCARD_CS_PIN, CK_GPIO_OUTPUT_PP, CK_GPIO_NOAF, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
     CK_GPIO_SetPin(MICROCARD_CS_PORT, MICROCARD_CS_PIN); //Set CS High for Idle
+
+#if USE_MICROCARD_DETECT == true
+    CK_GPIO_ClockEnable(MICROCARD_DETECT_PORT);
+    CK_GPIO_Init(MICROCARD_DETECT_PORT, MICROCARD_DETECT_PIN, CK_GPIO_INPUT, CK_GPIO_NOAF, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
+#endif
 #endif
 
 #if LED1_
@@ -190,7 +195,7 @@ void CK_PERIPHERAL_Init(targetFreq_e target_period){
     if(!CK_SPI_CheckInitialized(MICROCARD_SPI)){
 		// MicroCard needs slow clock at initialization
 		// It will be change to full speed after initialization
-        CK_SPI_Init(MICROCARD_SPI, CK_SPIx_CR1_Fclk_Div128, CK_SPI_USE_HAL);
+        CK_SPI_Init(MICROCARD_SPI, CK_SPIx_CR1_Fclk_Div128, CK_SPI_USE_BAREMETAL);
     }
 #endif
 

@@ -176,6 +176,7 @@
 	#define MICROCARD_CS_PORT       	GPIOA
 	#define MICROCARD_CS_PIN        	4
 
+	#define USE_MICROCARD_DETECT		true
 	#define MICROCARD_DETECT_PORT		GPIOA
 	#define MICROCARD_DETECT_PIN		3
 
