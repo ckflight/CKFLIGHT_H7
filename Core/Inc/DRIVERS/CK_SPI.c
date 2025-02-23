@@ -47,7 +47,7 @@ SPI_t spi_variables = {
 
 };
 
-#define SPI_TIMEOUT         100
+#define SPI_TIMEOUT         500
 
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
