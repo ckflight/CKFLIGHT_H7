@@ -63,6 +63,14 @@ void CK_PRINTER_Init(uint32_t mainT){
 	CK_PRINTER_PrintlnString("TARGET_FLASH");
 	CK_PRINTER_PrintlnInt(TARGET_FLASH);
 
+	if(card.is_Initialized){
+		CK_PRINTER_PrintlnString("MicroSDCard is initialized");
+	}
+	else{
+		CK_PRINTER_PrintlnString("MicroSDCard is not initialized:");
+	}
+
+
 	#if (GYRO1_SPI_|| GYRO2_SPI_) && (ACC1_SPI_ || ACC2_SPI_ || ACC_I2C_) && !(MAG_SPI_ || MAG_I2C_)
 	CK_PRINTER_PrintlnString("IMU Source: GYRO + ACC");
 	#else
