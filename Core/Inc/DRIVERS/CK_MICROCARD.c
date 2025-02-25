@@ -151,6 +151,8 @@ DMA_TypeDef* CK_MICROCARD_DMA;
 DMA_Stream_TypeDef* CK_MICROCARD_DMA_STREAM;
 
 SD_HandleTypeDef hsd1;
+
+uint32_t time_test;
 /*
  * It takes 400 microsecond for one sector 512 bytes 10MHz
  * It takes 200 microsecond for one sector 512 bytes 20MHz
@@ -282,6 +284,7 @@ void CK_MICROCARD_Init(microcard_transfer_modes_e mode){
 		CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
 
 #if USE_H7 == 1
+
 		CK_SPI_DMA_InitTX(MICROCARD_DMA_STREAM, MICROCARD_SPI, MICROCARD_DMA_Request1);
 
 		CK_SPI_DMA_SetPeripheralAddress(MICROCARD_DMA_STREAM, (uint32_t)(&MICROCARD_SPI->TXDR));
@@ -689,24 +692,26 @@ void CK_MICROCARD_AccessCardDetails(void){
 void CK_MICROCARD_WriteInfoSector(void){
 
 	if(card.transfer_mode == SPI_DMA_INTERRUPT_MULTIBLOCK){
-	    CK_SPI_DMA_SetBuffer(CK_MICROCARD_DMA_STREAM, flightLog.info_buffer, INFO_BUFFER_SIZE);
 
 		#if USE_H7 == 1
 		// Clean before tx operation when dcache is enabled
 		// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
 		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 32);
 		#endif
+
+		CK_SPI_DMA_SetBuffer(CK_MICROCARD_DMA_STREAM, flightLog.info_buffer, INFO_BUFFER_SIZE);
 
 	    CK_MICROCARD_WriteData(card.INFO_SECTOR);
 	}
 	else if(card.transfer_mode == SPI_DMA_INTERRUPT_SINGLEBLOCK){
-	    CK_SPI_DMA_SetBuffer(CK_MICROCARD_DMA_STREAM, flightLog.info_buffer, INFO_BUFFER_SIZE);
 
 		#if USE_H7 == 1
 		// Clean before tx operation when dcache is enabled
 		// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
 		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 32);
 		#endif
+
+		CK_SPI_DMA_SetBuffer(CK_MICROCARD_DMA_STREAM, flightLog.info_buffer, INFO_BUFFER_SIZE);
 
 	    CK_MICROCARD_WriteData(card.INFO_SECTOR);
 	}
@@ -745,6 +750,14 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 
 				CK_SPI_EnableTXDMA(CK_MICROCARD_SPI);
 
+
+				#if USE_H7
+				CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
+
+				// tsize with read size is not working higher number works.
+				CK_SPI_StartTransfer(CK_MICROCARD_SPI, LOG_BUFFER_SIZE);
+				#endif
+
 				card.is_multi_started = true;
         	}
         	else{
@@ -757,6 +770,13 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 				CK_SPI_DMA_Enable(CK_MICROCARD_DMA_STREAM);
 
 				CK_SPI_EnableTXDMA(CK_MICROCARD_SPI);
+
+				#if USE_H7
+				CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
+
+				// tsize with read size is not working higher number works.
+				CK_SPI_StartTransfer(CK_MICROCARD_SPI, LOG_BUFFER_SIZE);
+				#endif
         	}
             break;
 
@@ -771,6 +791,13 @@ void CK_MICROCARD_WriteData(uint32_t sector){
             CK_SPI_DMA_Enable(CK_MICROCARD_DMA_STREAM);
 
             CK_SPI_EnableTXDMA(CK_MICROCARD_SPI);
+
+			#if USE_H7
+			CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
+
+			// tsize with read size is not working higher number works.
+			CK_SPI_StartTransfer(CK_MICROCARD_SPI, LOG_BUFFER_SIZE);
+			#endif
 
             break;
 
@@ -1313,6 +1340,8 @@ void MICROCARD_DMA_TX_Handler(void){
         CK_SPI_DisableTXDMA(CK_MICROCARD_SPI);
 
         card.is_dma_ready = true;           // dma transfer is done
+
+        time_test = CK_TIME_GetMilliSec() - CK_LOG_GetTimeOutStart();
 
     	// Info write tx interrupt
     	if(card.is_infoSector_write){

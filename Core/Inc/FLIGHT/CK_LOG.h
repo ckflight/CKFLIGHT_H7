@@ -112,4 +112,6 @@ void CK_LOG_Update(uint32_t currentLoopTime);
 
 void CK_LOG_WriteInfoBuffer(void);
 
+uint32_t CK_LOG_GetTimeOutStart(void);
+
 #endif

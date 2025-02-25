@@ -155,13 +155,14 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 			case LOG_START_TRANSFER:
 
 				#if LOG_SPI_
-				CK_SPI_DMA_SetBuffer(CK_LOG_DMA_STREAM, flightLog.log_buffer_1, flightLog.buffer_index);
-				#endif
 
 				#if USE_H7 == 1
 				// Clean before tx operation when dcache is enabled
 				// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
 				SCB_CleanDCache_by_Addr((uint32_t*)flightLog.log_buffer_1, flightLog.buffer_index + 32);
+				#endif
+
+				CK_SPI_DMA_SetBuffer(CK_LOG_DMA_STREAM, flightLog.log_buffer_1, flightLog.buffer_index);
 				#endif
 
 				flightLog.buffer_index = 0;
@@ -228,12 +229,12 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 					dma_timeout_t2 = CK_TIME_GetMilliSec() - dma_timeout_t1;
 					if(dma_timeout_t2 > LOG_TIMEOUT_MS){
 
-						log_state = LOG_DATA;
+						//log_state = LOG_DATA;
 
-						card.is_dma_ready = true;
+						//card.is_dma_ready = true;
 
 						// Relog last 16 sector
-						CK_MICROCARD_DecrementCurrentSector(BLOCK_CACHE_SIZE);
+						//CK_MICROCARD_DecrementCurrentSector(BLOCK_CACHE_SIZE);
 
 						//CK_PRINTER_PrintlnString("DMA Timeout");
 					}
@@ -733,7 +734,9 @@ void CK_LOG_WriteInfoBuffer(void){
 }
 
 
-
+uint32_t CK_LOG_GetTimeOutStart(void){
+	return dma_timeout_t1;
+}
 
 
 
