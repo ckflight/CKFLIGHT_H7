@@ -158,6 +158,12 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 				CK_SPI_DMA_SetBuffer(CK_LOG_DMA_STREAM, flightLog.log_buffer_1, flightLog.buffer_index);
 				#endif
 
+				#if USE_H7 == 1
+				// Clean before tx operation when dcache is enabled
+				// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
+				SCB_CleanDCache_by_Addr((uint32_t*)flightLog.log_buffer_1, flightLog.buffer_index + 32);
+				#endif
+
 				flightLog.buffer_index = 0;
 
 				flightLog.info_sector_write_counter++;

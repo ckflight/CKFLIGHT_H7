@@ -634,7 +634,12 @@ void CK_MICROCARD_AccessCardDetails(void){
 
         card.START_SECTOR = log_file.firsSectorOfFile + card.SECTOR_OFFSET;
 
+		#if LED1_
+        CK_LED_ToggleLedForMs(1, 50, 20);
+		#endif
+		#if LED2_
         CK_LED_ToggleLedForMs(2, 50, 20); // Fast toggle
+		#endif
     }
     else{
 
@@ -661,7 +666,12 @@ void CK_MICROCARD_AccessCardDetails(void){
 
         card.START_SECTOR = log_file.firsSectorOfFile;
 
+		#if LED1_
+        CK_LED_ToggleLedForMs(1, 50, 50);
+		#endif
+		#if LED2_
         CK_LED_ToggleLedForMs(2, 20, 50); // Slow toggle
+		#endif
     }
 
     // First sector will be used to store data needed to be known by python log-analyzer code.
@@ -681,10 +691,22 @@ void CK_MICROCARD_WriteInfoSector(void){
 	if(card.transfer_mode == SPI_DMA_INTERRUPT_MULTIBLOCK){
 	    CK_SPI_DMA_SetBuffer(CK_MICROCARD_DMA_STREAM, flightLog.info_buffer, INFO_BUFFER_SIZE);
 
+		#if USE_H7 == 1
+		// Clean before tx operation when dcache is enabled
+		// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
+		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 32);
+		#endif
+
 	    CK_MICROCARD_WriteData(card.INFO_SECTOR);
 	}
 	else if(card.transfer_mode == SPI_DMA_INTERRUPT_SINGLEBLOCK){
 	    CK_SPI_DMA_SetBuffer(CK_MICROCARD_DMA_STREAM, flightLog.info_buffer, INFO_BUFFER_SIZE);
+
+		#if USE_H7 == 1
+		// Clean before tx operation when dcache is enabled
+		// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
+		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 32);
+		#endif
 
 	    CK_MICROCARD_WriteData(card.INFO_SECTOR);
 	}
@@ -1216,7 +1238,12 @@ void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd){
 
 void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd){
 
+	#if LED1_
+	CK_LED_ToggleLed(1);
+	#endif
+	#if LED2_
 	CK_LED_ToggleLed(2);
+	#endif
 
 	card.is_dma_ready = true;  // dma transfer is done
 
@@ -1269,8 +1296,12 @@ void HAL_SD_ErrorCallback(SD_HandleTypeDef *hsd){
 #if LOG_SPI_
 void MICROCARD_DMA_TX_Handler(void){
 
+#if LED1_
+	CK_LED_ToggleLed(1);
+#endif
+#if LED2_
 	CK_LED_ToggleLed(2);
-
+#endif
     uint8_t resp; UNUSED(resp);
 
     if(CK_SPI_DMA_IsTransferComplete(CK_MICROCARD_DMA, CK_MICROCARD_DMA_STREAM)){ // Transfer of one sector is done.
