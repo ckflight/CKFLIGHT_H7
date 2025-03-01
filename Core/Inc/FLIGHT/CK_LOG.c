@@ -22,8 +22,8 @@
 
 #define LOG_TIMEOUT_MS 				240
 
-const uint8_t debug_start_byte = 0x00;
-const uint8_t debug_end_byte   = 0xFF;
+const uint8_t debug_start_byte = 0xCC;
+const uint8_t debug_end_byte   = 0xDD;
 uint8_t counter = debug_start_byte;
 
 log_parameters_t flightLog;
@@ -191,7 +191,6 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 
 				log_state = LOG_WAIT_DMA_TRANSFER;
 
-
 				break;
 
 			// After the end of multi write, card will be busy
@@ -229,12 +228,12 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 					dma_timeout_t2 = CK_TIME_GetMilliSec() - dma_timeout_t1;
 					if(dma_timeout_t2 > LOG_TIMEOUT_MS){
 
-						//log_state = LOG_DATA;
+						log_state = LOG_DATA;
 
-						//card.is_dma_ready = true;
+						card.is_dma_ready = true;
 
 						// Relog last 16 sector
-						//CK_MICROCARD_DecrementCurrentSector(BLOCK_CACHE_SIZE);
+						CK_MICROCARD_DecrementCurrentSector(BLOCK_CACHE_SIZE);
 
 						//CK_PRINTER_PrintlnString("DMA Timeout");
 					}
@@ -732,12 +731,6 @@ void CK_LOG_WriteInfoBuffer(void){
 	#endif
 
 }
-
-
-uint32_t CK_LOG_GetTimeOutStart(void){
-	return dma_timeout_t1;
-}
-
 
 
 
