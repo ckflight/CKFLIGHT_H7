@@ -413,32 +413,32 @@ void CK_ACC_ReadACCRaw(void){
 
 #else
 
-	if(accSensor == ICM20602_ACC){
+	if(acc.sensor == ICM20602_ACC){
 
 		CK_ICM20602_ReadAccRaw();
 
 	}
-	else if(accSensor == MPU6000_ACC){
+	else if(acc.sensor == MPU6000_ACC){
 
 			CK_MPU6000_ReadAccRaw();
 
 	}
-	else if(accSensor == IIM42652_ACC){
+	else if(acc.sensor == IIM42652_ACC){
 
 		CK_IIM42652_ReadAccRaw();
 
 	}
-	else if(accSensor == ICM42688P_ACC){
+	else if(acc.sensor == ICM42688P_ACC){
 
 		CK_ICM42688P_ReadAccRaw();
 
 	}
-	else if(accSensor == LSM303D_ACC){
+	else if(acc.sensor == LSM303D_ACC){
 
 		CK_LSM303D_ReadAccRaw();
 
 	}
-	else if(accSensor == FXOS8700CQ_ACC){
+	else if(acc.sensor == FXOS8700CQ_ACC){
 
 		CK_FXOS8700CQ_ReadAccRaw();
 

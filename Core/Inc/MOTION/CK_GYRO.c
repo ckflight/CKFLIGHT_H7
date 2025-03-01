@@ -601,7 +601,7 @@ void CK_GYRO_ReadRaw(void){
 #else
 
 	// Read Raw gyro values
-	if(gyroSensor == ICM20602_GYRO){
+	if(gyro.sensor == ICM20602_GYRO){
 
 		CK_ICM20602_ReadGyroRaw();
 
@@ -611,17 +611,17 @@ void CK_GYRO_ReadRaw(void){
 		CK_MPU6000_ReadGyroRaw();
 
 	}
-	else if(gyroSensor == IIM42652_GYRO){
+	else if(gyro.sensor == IIM42652_GYRO){
 
 		CK_IIM42652_ReadGyroRaw();
 
 	}
-	else if(gyroSensor == ICM42688P_GYRO){
+	else if(gyro.sensor == ICM42688P_GYRO){
 
 		CK_ICM42688P_ReadGyroRaw();
 
 	}
-	else if(gyroSensor == L3GD20H_GYRO){
+	else if(gyro.sensor == L3GD20H_GYRO){
 
 		CK_L3GD20H_ReadGyroRaw();
 
