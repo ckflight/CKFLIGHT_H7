@@ -53,6 +53,8 @@ void CK_SPI_ReadRegisterMulti(uint8_t reg, SPI_TypeDef* SPI_, GPIO_TypeDef* GPIO
 
 uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data);
 
+void CK_SPI_MultiTransfer(SPI_TypeDef* SPI_, uint8_t* tx_buffer, uint8_t* rx_buffer, uint8_t len);
+
 uint8_t CK_SPI_WaitTransfer(SPI_TypeDef* SPI_);
 
 int CK_SPI_CheckInitialized(SPI_TypeDef* SPI_);

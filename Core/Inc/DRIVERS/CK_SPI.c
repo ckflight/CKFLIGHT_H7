@@ -54,6 +54,8 @@ SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 SPI_HandleTypeDef hspi4;
 
+uint32_t t1,t2,t3,t4,t5,t6,t7,t8,t9;
+
 void CK_SPI_Init(SPI_TypeDef* spi_n, uint32_t clock, CK_SPIx_LibraryType type){
 
 	SPI_TypeDef* SPI_ = spi_n;
@@ -266,6 +268,10 @@ void CK_SPI_StartTransfer(SPI_TypeDef* SPI_, uint32_t tsize){
 }
 
 void CK_SPI_ChangeClock(SPI_TypeDef* SPI_, CK_SPIx_CR1_Fclk_Div clk){
+
+	CK_TIME_DelayMilliSec(100);
+
+	CK_SPI_Disable(SPI_);
 
 	SPI_->CFG1 &= ~(7u << 28);
 	SPI_->CFG1 |= clk << 28;
@@ -489,6 +495,10 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 
 		CK_SPI_StartTransfer(SPI_, 1);
 
+        t1 = CK_TIME_GetMicroSec();
+
+        t2 = CK_TIME_GetMicroSec() - t1;
+
 		// TXP Flag
 		spi_variables.timeout = SPI_TIMEOUT;
 		while((SPI_->SR & (1u << 1)) == 0){
@@ -497,6 +507,8 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 				break;
 			}
 		}
+
+        t3 = CK_TIME_GetMicroSec() - t1;
 
 		*((__IO uint8_t *)&SPI_->TXDR) = data;
 
@@ -509,7 +521,10 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 			}
 		}
 
+        t4 = CK_TIME_GetMicroSec() - t1;
+
 		rx_data = *((__IO uint8_t *)&SPI_->RXDR);
+
 
 		// EOT Flag
 		spi_variables.timeout = SPI_TIMEOUT;
@@ -520,6 +535,9 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 			}
 		}
 
+        t5 = CK_TIME_GetMicroSec() - t1;
+
+
 		SPI_->IFCR |= 1u << 4;		 	// Clear txtf
 		SPI_->CR1 &= ~(1u << 0); 		// disable spi
 
@@ -529,9 +547,75 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 
 }
 
+void CK_SPI_MultiTransfer(SPI_TypeDef* SPI_, uint8_t* tx_buffer, uint8_t* rx_buffer, uint8_t len){
+
+		CK_SPI_StartTransfer(SPI_, len);
+
+        t1 = CK_TIME_GetMicroSec();
+
+        uint8_t idx = 0;
+        while(idx < len){
+
+            t6 = CK_TIME_GetMicroSec();
+
+     		// TXP Flag
+     		spi_variables.timeout = SPI_TIMEOUT;
+     		while((SPI_->SR & (1u << 1)) == 0){
+     			if(--spi_variables.timeout == 0x00){
+     				CK_SPI_TimeOutCounter(SPI_);
+     				break;
+     			}
+     		}
+
+            t7 = CK_TIME_GetMicroSec() - t1;
+
+     		*((__IO uint8_t *)&SPI_->TXDR) = tx_buffer[idx];
+
+     		// RXP Flag
+     		spi_variables.timeout = SPI_TIMEOUT;
+     		while((SPI_->SR & (1u << 0)) == 0){
+     			if(--spi_variables.timeout == 0x00){
+     				CK_SPI_TimeOutCounter(SPI_);
+     				break;
+     			}
+     		}
+
+            t8 = CK_TIME_GetMicroSec() - t1;
+
+     		rx_buffer[idx++] = *((__IO uint8_t *)&SPI_->RXDR);
+
+            t9 = CK_TIME_GetMicroSec() - t1;
+
+
+        }
+
+ 		// EOT Flag
+ 		spi_variables.timeout = SPI_TIMEOUT;
+ 		while((SPI_->SR & (1u << 3)) == 0){
+ 			if(--spi_variables.timeout == 0){
+ 				CK_SPI_TimeOutCounter(SPI_);
+ 				break;
+ 			}
+ 		}
+
+ 		SPI_->IFCR |= 1u << 4 | 1u << 3;		 	// Clear txtf, eot
+		SPI_->CR1 &= ~(1u << 0); 		// disable spi
+
+
+}
+
 uint8_t CK_SPI_WaitTransfer(SPI_TypeDef* SPI_){
 
 	spi_variables.timeout = SPI_TIMEOUT;
+
+	// EOT Flag
+	spi_variables.timeout = SPI_TIMEOUT;
+	while((SPI_->SR & (1u << 3)) == 0){
+		if(--spi_variables.timeout == 0){
+			CK_SPI_TimeOutCounter(SPI_);
+			break;
+		}
+	}
 
 	//while(((SPIn)->SR & (CK_SPIx_SR_TXE | CK_SPIx_SR_RXNE)) == 0 || ((SPIn)->SR & CK_SPIx_SR_BSY)){
 	while((SPI_->SR & (1u << 1)) == 0){
