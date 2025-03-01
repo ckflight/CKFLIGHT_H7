@@ -151,8 +151,6 @@ DMA_TypeDef* CK_MICROCARD_DMA;
 DMA_Stream_TypeDef* CK_MICROCARD_DMA_STREAM;
 
 SD_HandleTypeDef hsd1;
-
-uint32_t time_test;
 /*
  * It takes 400 microsecond for one sector 512 bytes 10MHz
  * It takes 200 microsecond for one sector 512 bytes 20MHz
@@ -167,6 +165,7 @@ uint32_t time_test;
  *
  * Tested with 1 Gbyte log 30 minutes 128 bytes logging. It works.
  */
+
 
 void CK_MICROCARD_Init(microcard_transfer_modes_e mode){
 
@@ -750,7 +749,6 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 
 				CK_SPI_EnableTXDMA(CK_MICROCARD_SPI);
 
-
 				#if USE_H7
 				CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
 
@@ -1048,6 +1046,7 @@ uint8_t CK_MICROCARD_SendAppCommand(uint8_t cmd, uint32_t arg){
 
 uint8_t CK_MICROCARD_SendCmd(uint8_t cmd, uint32_t arg, uint8_t crc){
 
+	/*
     //CK_MICROCARD_WaitForIdle(8);
     CK_SPI_Transfer(CK_MICROCARD_SPI,0xFF); // Works as well do not spend extra time with 8 spi transfer
 
@@ -1060,6 +1059,24 @@ uint8_t CK_MICROCARD_SendCmd(uint8_t cmd, uint32_t arg, uint8_t crc){
     CK_SPI_Transfer(CK_MICROCARD_SPI, crc); // important for cmd0 and cmd8
 
     // Command response
+    return CK_MICROCARD_WaitForResponse(4);
+	*/
+
+	static uint8_t cmd_tx_buffer[16];
+	static uint8_t cmd_rx_buffer[16];
+	static uint8_t cmd_idx = 0;
+
+	cmd_tx_buffer[cmd_idx++] = 0xFF;
+
+	cmd_tx_buffer[cmd_idx++] = cmd | 0x40;
+	cmd_tx_buffer[cmd_idx++] = arg >> 24;
+	cmd_tx_buffer[cmd_idx++] = arg >> 16;
+	cmd_tx_buffer[cmd_idx++] = arg >> 8;
+	cmd_tx_buffer[cmd_idx++] = arg;
+	cmd_tx_buffer[cmd_idx++] = crc;
+    CK_SPI_MultiTransfer(CK_MICROCARD_SPI, cmd_tx_buffer, cmd_rx_buffer, cmd_idx);
+
+    cmd_idx = 0;
     return CK_MICROCARD_WaitForResponse(4);
 
 }
@@ -1340,8 +1357,6 @@ void MICROCARD_DMA_TX_Handler(void){
         CK_SPI_DisableTXDMA(CK_MICROCARD_SPI);
 
         card.is_dma_ready = true;           // dma transfer is done
-
-        time_test = CK_TIME_GetMilliSec() - CK_LOG_GetTimeOutStart();
 
     	// Info write tx interrupt
     	if(card.is_infoSector_write){
