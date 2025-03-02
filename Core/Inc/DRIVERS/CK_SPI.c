@@ -54,7 +54,7 @@ SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 SPI_HandleTypeDef hspi4;
 
-uint32_t t1,t2,t3,t4,t5,t6,t7,t8,t9;
+uint32_t t1,t2,t3,t4,t5,t6,t7,t8;
 
 void CK_SPI_Init(SPI_TypeDef* spi_n, uint32_t clock, CK_SPIx_LibraryType type){
 
@@ -497,8 +497,6 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 
         t1 = CK_TIME_GetMicroSec();
 
-        t2 = CK_TIME_GetMicroSec() - t1;
-
 		// TXP Flag
 		spi_variables.timeout = SPI_TIMEOUT;
 		while((SPI_->SR & (1u << 1)) == 0){
@@ -508,7 +506,7 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 			}
 		}
 
-        t3 = CK_TIME_GetMicroSec() - t1;
+        t2 = CK_TIME_GetMicroSec() - t1;
 
 		*((__IO uint8_t *)&SPI_->TXDR) = data;
 
@@ -521,7 +519,7 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 			}
 		}
 
-        t4 = CK_TIME_GetMicroSec() - t1;
+        t3 = CK_TIME_GetMicroSec() - t1;
 
 		rx_data = *((__IO uint8_t *)&SPI_->RXDR);
 
@@ -535,7 +533,7 @@ uint8_t CK_SPI_Transfer(SPI_TypeDef* SPI_, uint8_t data){
 			}
 		}
 
-        t5 = CK_TIME_GetMicroSec() - t1;
+        t4 = CK_TIME_GetMicroSec() - t1;
 
 
 		SPI_->IFCR |= 1u << 4;		 	// Clear txtf
@@ -551,12 +549,10 @@ void CK_SPI_MultiTransfer(SPI_TypeDef* SPI_, uint8_t* tx_buffer, uint8_t* rx_buf
 
 		CK_SPI_StartTransfer(SPI_, len);
 
-        t1 = CK_TIME_GetMicroSec();
+        t5 = CK_TIME_GetMicroSec();
 
         uint8_t idx = 0;
         while(idx < len){
-
-            t6 = CK_TIME_GetMicroSec();
 
      		// TXP Flag
      		spi_variables.timeout = SPI_TIMEOUT;
@@ -567,7 +563,7 @@ void CK_SPI_MultiTransfer(SPI_TypeDef* SPI_, uint8_t* tx_buffer, uint8_t* rx_buf
      			}
      		}
 
-            t7 = CK_TIME_GetMicroSec() - t1;
+            t6 = CK_TIME_GetMicroSec() - t1;
 
      		*((__IO uint8_t *)&SPI_->TXDR) = tx_buffer[idx];
 
@@ -580,12 +576,9 @@ void CK_SPI_MultiTransfer(SPI_TypeDef* SPI_, uint8_t* tx_buffer, uint8_t* rx_buf
      			}
      		}
 
-            t8 = CK_TIME_GetMicroSec() - t1;
-
      		rx_buffer[idx++] = *((__IO uint8_t *)&SPI_->RXDR);
 
-            t9 = CK_TIME_GetMicroSec() - t1;
-
+            t7 = CK_TIME_GetMicroSec() - t1;
 
         }
 
@@ -601,6 +594,8 @@ void CK_SPI_MultiTransfer(SPI_TypeDef* SPI_, uint8_t* tx_buffer, uint8_t* rx_buf
  		SPI_->IFCR |= 1u << 4 | 1u << 3;		 	// Clear txtf, eot
 		SPI_->CR1 &= ~(1u << 0); 		// disable spi
 
+
+        t8 = CK_TIME_GetMicroSec() - t1;
 
 }
 

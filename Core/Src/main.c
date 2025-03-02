@@ -73,6 +73,7 @@ uint32_t computeStartTime, computeEndTime;
 
 // todo: dma reads gyro acc temp at the same time but acc is 1k gyro 8k check this!!!
 
+uint32_t main_t1, main_t2;
 int main(void){
 
 	#if USE_H7 == 1
@@ -329,11 +330,13 @@ int main(void){
 
 		#endif
 
+        main_t1 = CK_TIME_GetMicroSec();
 		#if LOG_SPI_ || LOG_SDIO_ || LOG_FLASH_
 
 		CK_LOG_Update(computeEndTime);
 
 		#endif
+		main_t2 = CK_TIME_GetMicroSec() - main_t1;
 
 		flight_monitor_update();
 

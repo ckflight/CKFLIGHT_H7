@@ -22,8 +22,8 @@
 
 #define LOG_TIMEOUT_MS 				240
 
-const uint8_t debug_start_byte = 0xCC;
-const uint8_t debug_end_byte   = 0xDD;
+const uint8_t debug_start_byte = 0x00;
+const uint8_t debug_end_byte   = 0x11;
 uint8_t counter = debug_start_byte;
 
 log_parameters_t flightLog;
@@ -69,6 +69,8 @@ uint32_t dma_timeout_t1 = 0;
 uint32_t dma_timeout_t2	= 0;
 
 uint32_t logStartTime, logEndTime;
+
+uint32_t log_data_t1, log_data_t2, log_transfer_t1, log_transfer_t2;
 
 void CK_LOG_Init(uint32_t mainT, uint32_t logT){
 
@@ -154,6 +156,8 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 
 			case LOG_START_TRANSFER:
 
+				log_transfer_t1 = CK_TIME_GetMicroSec();
+
 				#if LOG_SPI_
 
 				#if USE_H7 == 1
@@ -177,6 +181,8 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 
 				log_state = LOG_WAIT_DMA_TRANSFER;
 
+				log_transfer_t2 = CK_TIME_GetMicroSec() - log_transfer_t1;
+
 				break;
 
 			case LOG_WRITE_INFO_DATA:
@@ -190,6 +196,7 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 				CK_MICROCARD_WriteInfoSector();
 
 				log_state = LOG_WAIT_DMA_TRANSFER;
+
 
 				break;
 
@@ -289,6 +296,8 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 
 			case LOG_DATA:
 
+				log_data_t1 = CK_TIME_GetMicroSec();
+
 				flightLog.log_target_counter++;
 
 				if(flightLog.log_target_counter == flightLog.syncRate){
@@ -303,7 +312,25 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 							}
 						}
 						else if(card.transfer_mode == SPI_DMA_INTERRUPT_SINGLEBLOCK){
+
 							if(flightLog.buffer_index == 0){
+
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
+
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 24 | 0x40;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 24;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 16;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 8;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR);
+
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0x00;
+
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
+
+							}
+
+							if(flightLog.buffer_index == 9){
 								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFE;
 							}
 						}
@@ -542,6 +569,8 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 					#endif
 				}
 
+				log_data_t2 = CK_TIME_GetMicroSec() - log_data_t1;
+
 				break;
 
 			default:
@@ -570,6 +599,19 @@ void CK_LOG_WriteInfoBuffer(void){
 	#if LOG_SPI_
 	// Info sector is always single block write
     card.transfer_mode = SPI_DMA_INTERRUPT_SINGLEBLOCK;
+
+    flightLog.info_buffer[idx++]  = 0xFF;
+
+	flightLog.info_buffer[idx++]  = 24 | 0x40;
+	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 24;
+	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 16;
+	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 8;
+	flightLog.info_buffer[idx++]  = card.INFO_SECTOR;
+
+	flightLog.info_buffer[idx++]  = 0x00;
+
+	flightLog.info_buffer[idx++]  = 0xFF;
+	flightLog.info_buffer[idx++]  = 0xFF;
 
 	flightLog.info_buffer[idx++]  = 0xFE; // Start token
 	#endif
@@ -725,9 +767,9 @@ void CK_LOG_WriteInfoBuffer(void){
 	flightLog.info_buffer[211+idx]  = (uint8_t)(invalid_data & 0xFF);
 
 	#if LOG_SPI_
-    flightLog.info_buffer[513]  = 0xFF; // Dummy crc
-    flightLog.info_buffer[514]  = 0xFF; // Dummy crc
-    flightLog.info_buffer[515]  = 0xFF; // response
+    flightLog.info_buffer[INFO_BUFFER_SIZE - 3]  = 0xFF; // Dummy crc
+    flightLog.info_buffer[INFO_BUFFER_SIZE - 2]  = 0xFF; // Dummy crc
+    flightLog.info_buffer[INFO_BUFFER_SIZE - 1]  = 0xFF; // response
 	#endif
 
 }

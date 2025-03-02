@@ -166,7 +166,7 @@ SD_HandleTypeDef hsd1;
  * Tested with 1 Gbyte log 30 minutes 128 bytes logging. It works.
  */
 
-
+uint32_t sdcard_t1, sdcard_t2;
 void CK_MICROCARD_Init(microcard_transfer_modes_e mode){
 
 	/*
@@ -741,7 +741,8 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 				CK_MICROCARD_SelectCard();
 
 				// This is also needed to be send once
-				resp = CK_MICROCARD_SendCmd(CMD25, sector, 0);
+				//resp = CK_MICROCARD_SendCmd(CMD25, sector, 0);
+				//CK_MICROCARD_SendCmdNoResp(CMD25, sector, 0);
 
 				// CK_SPI_DMA_SetBuffer is called before enabling dma
 				// so now just start transfer
@@ -750,7 +751,7 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 				CK_SPI_EnableTXDMA(CK_MICROCARD_SPI);
 
 				#if USE_H7
-				CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
+				CK_SPI_DMA_ClearFlag(CK_MICROCARD_DMA, CK_MICROCARD_DMA_STREAM);
 
 				// tsize with read size is not working higher number works.
 				CK_SPI_StartTransfer(CK_MICROCARD_SPI, LOG_BUFFER_SIZE);
@@ -770,7 +771,7 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 				CK_SPI_EnableTXDMA(CK_MICROCARD_SPI);
 
 				#if USE_H7
-				CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
+				CK_SPI_DMA_ClearFlag(CK_MICROCARD_DMA, CK_MICROCARD_DMA_STREAM);
 
 				// tsize with read size is not working higher number works.
 				CK_SPI_StartTransfer(CK_MICROCARD_SPI, LOG_BUFFER_SIZE);
@@ -780,9 +781,12 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 
         case SPI_DMA_INTERRUPT_SINGLEBLOCK:
 
+        	sdcard_t1 = CK_TIME_GetMicroSec();
+
             CK_MICROCARD_SelectCard();
 
-            resp = CK_MICROCARD_SendCmd(CMD24, sector, 0);
+            //resp = CK_MICROCARD_SendCmd(CMD24, sector, 0);
+            //CK_MICROCARD_SendCmdNoResp(CMD24, sector, 0);
 
             // CK_SPI_DMA_SetBuffer is called before enabling dma
             // so now just start transfer
@@ -791,11 +795,13 @@ void CK_MICROCARD_WriteData(uint32_t sector){
             CK_SPI_EnableTXDMA(CK_MICROCARD_SPI);
 
 			#if USE_H7
-			CK_SPI_DMA_ClearFlag(MICROCARD_DMA, MICROCARD_DMA_STREAM);
+			CK_SPI_DMA_ClearFlag(CK_MICROCARD_DMA, CK_MICROCARD_DMA_STREAM);
 
 			// tsize with read size is not working higher number works.
 			CK_SPI_StartTransfer(CK_MICROCARD_SPI, LOG_BUFFER_SIZE);
 			#endif
+
+	    	sdcard_t2 = CK_TIME_GetMicroSec() - sdcard_t1;
 
             break;
 
@@ -1046,7 +1052,7 @@ uint8_t CK_MICROCARD_SendAppCommand(uint8_t cmd, uint32_t arg){
 
 uint8_t CK_MICROCARD_SendCmd(uint8_t cmd, uint32_t arg, uint8_t crc){
 
-	/*
+#if USE_F4
     //CK_MICROCARD_WaitForIdle(8);
     CK_SPI_Transfer(CK_MICROCARD_SPI,0xFF); // Works as well do not spend extra time with 8 spi transfer
 
@@ -1060,7 +1066,33 @@ uint8_t CK_MICROCARD_SendCmd(uint8_t cmd, uint32_t arg, uint8_t crc){
 
     // Command response
     return CK_MICROCARD_WaitForResponse(4);
-	*/
+#endif
+
+#if USE_H7
+	static uint8_t cmd_tx_buffer[16];
+	static uint8_t cmd_rx_buffer[16];
+	static uint8_t cmd_idx = 0;
+
+	cmd_tx_buffer[cmd_idx++] = 0xFF;
+
+	cmd_tx_buffer[cmd_idx++] = cmd | 0x40;
+	cmd_tx_buffer[cmd_idx++] = arg >> 24;
+	cmd_tx_buffer[cmd_idx++] = arg >> 16;
+	cmd_tx_buffer[cmd_idx++] = arg >> 8;
+	cmd_tx_buffer[cmd_idx++] = arg;
+	cmd_tx_buffer[cmd_idx++] = crc;
+
+    CK_SPI_MultiTransfer(CK_MICROCARD_SPI, cmd_tx_buffer, cmd_rx_buffer, cmd_idx);
+
+    cmd_idx = 0;
+    return CK_MICROCARD_WaitForResponse(4);
+
+#endif
+
+}
+
+#if USE_H7
+void CK_MICROCARD_SendCmdNoResp(uint8_t cmd, uint32_t arg, uint8_t crc){
 
 	static uint8_t cmd_tx_buffer[16];
 	static uint8_t cmd_rx_buffer[16];
@@ -1074,12 +1106,16 @@ uint8_t CK_MICROCARD_SendCmd(uint8_t cmd, uint32_t arg, uint8_t crc){
 	cmd_tx_buffer[cmd_idx++] = arg >> 8;
 	cmd_tx_buffer[cmd_idx++] = arg;
 	cmd_tx_buffer[cmd_idx++] = crc;
+
+	cmd_tx_buffer[cmd_idx++] = 0xFF;
+	cmd_tx_buffer[cmd_idx++] = 0xFF;
+
     CK_SPI_MultiTransfer(CK_MICROCARD_SPI, cmd_tx_buffer, cmd_rx_buffer, cmd_idx);
 
     cmd_idx = 0;
-    return CK_MICROCARD_WaitForResponse(4);
 
 }
+#endif
 
 uint8_t CK_MICROCARD_SendStopToken(void){
 

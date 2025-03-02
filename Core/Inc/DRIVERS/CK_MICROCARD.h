@@ -87,6 +87,8 @@ uint8_t CK_MICROCARD_SendAppCommand(uint8_t cmd, uint32_t arg);
 
 uint8_t CK_MICROCARD_SendCmd(uint8_t cmd, uint32_t arg, uint8_t crc);
 
+void CK_MICROCARD_SendCmdNoResp(uint8_t cmd, uint32_t arg, uint8_t crc);
+
 uint8_t CK_MICROCARD_SendStopToken(void);
 
 uint8_t CK_MICROCARD_WaitForResponse(int bytesToWait);

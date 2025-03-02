@@ -25,8 +25,8 @@
 #else
 
 #define BLOCK_CACHE_SIZE		1
-#define LOG_BUFFER_SIZE			(1 + 512 + 2 + 1)
-#define INFO_BUFFER_SIZE		(1 + 512 + 2 + 1)
+#define LOG_BUFFER_SIZE			(1 + 512 + 2 + 1) + 9
+#define INFO_BUFFER_SIZE		(1 + 512 + 2 + 1) + 9
 
 #define WRITE_INFO_SECTOR		512
 
