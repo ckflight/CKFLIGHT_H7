@@ -5,6 +5,19 @@
 
 #include "CK_DEFINITIONS.h"
 
+#define CMD0        0
+#define CMD6        6
+#define CMD8        8
+#define CMD9        9
+#define CMD12       12
+#define CMD17       17
+#define CMD18       18
+#define CMD24       24
+#define CMD25       25
+#define CMD55       55
+#define CMD58       58
+#define ACMD41      41
+
 typedef enum{
 	SPI_POLLING_SINGLEBLOCK,
 	SPI_POLLING_MULTIBLOCK,

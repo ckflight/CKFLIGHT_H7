@@ -22,8 +22,8 @@
 
 #define LOG_TIMEOUT_MS 				240
 
-const uint8_t debug_start_byte = 0x00;
-const uint8_t debug_end_byte   = 0x11;
+const uint8_t debug_start_byte = 0xCC;
+const uint8_t debug_end_byte   = 0xCF;
 uint8_t counter = debug_start_byte;
 
 log_parameters_t flightLog;
@@ -70,7 +70,7 @@ uint32_t dma_timeout_t2	= 0;
 
 uint32_t logStartTime, logEndTime;
 
-uint32_t log_data_t1, log_data_t2, log_transfer_t1, log_transfer_t2;
+uint32_t log_data_t1, log_data_t2, log_transfer_t1, log_transfer_t2, log_LOG_CHECK_SDCARD_BUSY_t1, log_LOG_CHECK_SDCARD_BUSY_t2, log_LOG_CHECK_SDCARD_BUSY_t3;
 
 void CK_LOG_Init(uint32_t mainT, uint32_t logT){
 
@@ -249,9 +249,12 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 
 			case LOG_CHECK_SDCARD_BUSY:
 
+				log_LOG_CHECK_SDCARD_BUSY_t1 = CK_TIME_GetMicroSec();
 				// Card takes DO line low during busy flag which means MISO data is 0x00
 				// So reading 0xFF means not busy
 				if(CK_MICROCARD_CheckIsCardBusy() == HAL_OK){
+
+					log_LOG_CHECK_SDCARD_BUSY_t2 = CK_TIME_GetMicroSec() - log_LOG_CHECK_SDCARD_BUSY_t1;
 
 					if(flightLog.info_sector_write_counter == WRITE_INFO_SECTOR){
 						if(card.transfer_mode == SPI_DMA_INTERRUPT_MULTIBLOCK){
@@ -292,6 +295,8 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 						//CK_PRINTER_PrintlnString("Card Busy Timeout");
 					}
 				}
+
+				log_LOG_CHECK_SDCARD_BUSY_t3 = CK_TIME_GetMicroSec() - log_LOG_CHECK_SDCARD_BUSY_t1;
 				break;
 
 			case LOG_DATA:
@@ -313,11 +318,12 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 						}
 						else if(card.transfer_mode == SPI_DMA_INTERRUPT_SINGLEBLOCK){
 
+							/*
 							if(flightLog.buffer_index == 0){
 
 								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
 
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = 24 | 0x40;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = CMD24 | 0x40;
 								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 24;
 								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 16;
 								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 8;
@@ -331,6 +337,10 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 							}
 
 							if(flightLog.buffer_index == 9){
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFE;
+							}
+							*/
+							if(flightLog.buffer_index == 0){
 								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFE;
 							}
 						}
@@ -391,9 +401,28 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 							}
 						}
 						else if(card.transfer_mode == SPI_DMA_INTERRUPT_SINGLEBLOCK){
+
 							if(flightLog.buffer_index == 0){
+
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
+
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = CMD24 | 0x40;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 24;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 16;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 8;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR);
+
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0x00;
+
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
+								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
+
+							}
+
+							if(flightLog.buffer_index == 9){
 								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFE;
 							}
+
 						}
 						else if(card.transfer_mode == SDIO_DMA_INTERRUPT_MULTIBLOCK){
 
@@ -600,9 +629,10 @@ void CK_LOG_WriteInfoBuffer(void){
 	// Info sector is always single block write
     card.transfer_mode = SPI_DMA_INTERRUPT_SINGLEBLOCK;
 
+    /*
     flightLog.info_buffer[idx++]  = 0xFF;
 
-	flightLog.info_buffer[idx++]  = 24 | 0x40;
+	flightLog.info_buffer[idx++]  = CMD24 | 0x40;
 	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 24;
 	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 16;
 	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 8;
@@ -612,6 +642,7 @@ void CK_LOG_WriteInfoBuffer(void){
 
 	flightLog.info_buffer[idx++]  = 0xFF;
 	flightLog.info_buffer[idx++]  = 0xFF;
+	*/
 
 	flightLog.info_buffer[idx++]  = 0xFE; // Start token
 	#endif

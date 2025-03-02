@@ -16,19 +16,6 @@
 
 #include "FLIGHT/CK_LOG.h"
 
-#define CMD0        0
-#define CMD6        6
-#define CMD8        8
-#define CMD9        9
-#define CMD12       12
-#define CMD17       17
-#define CMD18       18
-#define CMD24       24
-#define CMD25       25
-#define CMD55       55
-#define CMD58       58
-#define ACMD41      41
-
 #define R1_RESPONSE_READY                	0x00 // Bit 0
 #define R1_RESPONSE_IDLE            		0x01 // Bit 0
 #define R1_RESPONSE_ILLEGAL_CMD         	0x04 // Bit 1
@@ -300,6 +287,8 @@ void CK_MICROCARD_Init(microcard_transfer_modes_e mode){
 		CK_SPI_DMA_TCInterruptEnable(MICROCARD_DMA_STREAM);
 
 		HAL_NVIC_EnableIRQ(MICROCARD_DMA_TX_IRQn);
+
+		HAL_NVIC_SetPriority(MICROCARD_DMA_TX_IRQn, 5, 5);
 
 		#endif
 
@@ -695,7 +684,7 @@ void CK_MICROCARD_WriteInfoSector(void){
 		#if USE_H7 == 1
 		// Clean before tx operation when dcache is enabled
 		// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
-		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 32);
+		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 512);
 		#endif
 
 		CK_SPI_DMA_SetBuffer(CK_MICROCARD_DMA_STREAM, flightLog.info_buffer, INFO_BUFFER_SIZE);
@@ -707,7 +696,7 @@ void CK_MICROCARD_WriteInfoSector(void){
 		#if USE_H7 == 1
 		// Clean before tx operation when dcache is enabled
 		// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
-		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 32);
+		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 512);
 		#endif
 
 		CK_SPI_DMA_SetBuffer(CK_MICROCARD_DMA_STREAM, flightLog.info_buffer, INFO_BUFFER_SIZE);
@@ -719,7 +708,7 @@ void CK_MICROCARD_WriteInfoSector(void){
 		#if USE_H7 == 1
 		// Clean before tx operation when dcache is enabled
 		// Buffer is filled by cpu to cache so flush it to sram with cleandcache method for dma to send it to peripheral
-		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 32);
+		SCB_CleanDCache_by_Addr((uint32_t*)flightLog.info_buffer, INFO_BUFFER_SIZE + 512);
 		#endif
 
 		HAL_SD_WriteBlocks_DMA(&hsd1, flightLog.info_buffer, card.INFO_SECTOR, 1);
@@ -741,7 +730,7 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 				CK_MICROCARD_SelectCard();
 
 				// This is also needed to be send once
-				//resp = CK_MICROCARD_SendCmd(CMD25, sector, 0);
+				resp = CK_MICROCARD_SendCmd(CMD25, sector, 0);
 				//CK_MICROCARD_SendCmdNoResp(CMD25, sector, 0);
 
 				// CK_SPI_DMA_SetBuffer is called before enabling dma
@@ -785,8 +774,9 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 
             CK_MICROCARD_SelectCard();
 
+            // Added to dma buffer for both data log and info sector
             //resp = CK_MICROCARD_SendCmd(CMD24, sector, 0);
-            //CK_MICROCARD_SendCmdNoResp(CMD24, sector, 0);
+            CK_MICROCARD_SendCmdNoResp(CMD24, sector, 0);
 
             // CK_SPI_DMA_SetBuffer is called before enabling dma
             // so now just start transfer

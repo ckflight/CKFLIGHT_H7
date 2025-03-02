@@ -32,7 +32,7 @@
 #define LOG_SDIO_				0
 #define LOG_FLASH_				0
 #define LOG_DUALBUFFER_			0
-#define LOG_MULTIWRITE_			0 // spi f4 works in single mode
+#define LOG_MULTIWRITE_			0// spi f4 works in single mode
 #define TEST_LOG				1
 
 #define BUZZER_PWM				0
