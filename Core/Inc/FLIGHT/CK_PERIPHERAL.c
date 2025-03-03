@@ -306,8 +306,8 @@ void CK_PERIPHERAL_MainInterruptInit(targetFreq_e target_period){
 	sConfigOC.OCNIdleState 		= TIM_OCNIDLESTATE_RESET;
 	HAL_TIM_PWM_ConfigChannel(&htim_main_interrupt, &sConfigOC, MAIN_INTERRUPT_TIM_CH);
 
+	HAL_NVIC_SetPriority(RGB_DMA_IRQn, PERIPHERAL_PreemptPriority, PERIPHERAL_SubPriority);
 	HAL_NVIC_EnableIRQ(MAIN_INTERRUPT_IRQn);
-	HAL_NVIC_SetPriority(MAIN_INTERRUPT_IRQn, 2, 0);
 }
 
 void CK_PERIPHERAL_StartInterrupt(void){

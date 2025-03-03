@@ -145,6 +145,9 @@ void CK_GYRO_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, s
 		CK_SPI_DMA_TCInterruptEnable(SENSOR_DMA_TX_Stream);
 		CK_SPI_DMA_TCInterruptEnable(SENSOR_DMA_RX_Stream);
 
+	    HAL_NVIC_SetPriority(SENSOR_DMA_TX_IRQn, GYRO_TX_PreemptPriority, GYRO_TX_SubPriority);
+	    HAL_NVIC_SetPriority(SENSOR_DMA_RX_IRQn, GYRO_RX_PreemptPriority, GYRO_RX_SubPriority);
+
 		HAL_NVIC_EnableIRQ(SENSOR_DMA_TX_IRQn);
 		HAL_NVIC_EnableIRQ(SENSOR_DMA_RX_IRQn);
 
@@ -158,6 +161,9 @@ void CK_GYRO_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, s
 
 		CK_SPI_DMA_InitTX(SENSOR_DMA_TX_Stream, MOTION_GYRO_SPI, SENSOR_DMA_Request1);
 		CK_SPI_DMA_InitRX(SENSOR_DMA_RX_Stream, MOTION_GYRO_SPI, SENSOR_DMA_Request2);
+
+		HAL_NVIC_SetPriority(SENSOR_DMA_TX_IRQn, GYRO_TX_PreemptPriority, GYRO_TX_SubPriority);
+		HAL_NVIC_SetPriority(SENSOR_DMA_RX_IRQn, GYRO_RX_PreemptPriority, GYRO_RX_SubPriority);
 
 		HAL_NVIC_EnableIRQ(SENSOR_DMA_TX_IRQn);
 		HAL_NVIC_EnableIRQ(SENSOR_DMA_RX_IRQn);

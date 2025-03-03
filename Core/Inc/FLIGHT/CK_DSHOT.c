@@ -471,8 +471,8 @@ void CK_DSHOT_Init1(void){
 	DSHOT1_DMA_Stream->CR |= (2u << 11) | (2u << 13) | (3u << 16) | (DSHOT1_DMA_Stream_Ch << 25);
 
 	// Enable interrupt
+	HAL_NVIC_SetPriority(DSHOT1_DMA_IRQn, DSHOT_M1_PreemptPriority, DSHOT_M1_SubPriority);
 	HAL_NVIC_EnableIRQ(DSHOT1_DMA_IRQn);
-	HAL_NVIC_SetPriority(DSHOT1_DMA_IRQn, 1, 0);
 
 #endif
 
@@ -498,8 +498,8 @@ void CK_DSHOT_Init1(void){
 
     __HAL_LINKDMA(&htim_dshot1, hdma[DSHOT1_DMA_ID], hdma_dshot1);
 
+    HAL_NVIC_SetPriority(DSHOT1_DMA_IRQn, DSHOT_M1_PreemptPriority, DSHOT_M1_SubPriority);
 	HAL_NVIC_EnableIRQ(DSHOT1_DMA_IRQn);
-	HAL_NVIC_SetPriority(DSHOT1_DMA_IRQn, 1, 0);
 
 	SCB_CleanDCache_by_Addr((uint32_t*)dma_buffer_dshot1, DSHOT_DCACHE_SIZE);
 
@@ -580,8 +580,8 @@ void CK_DSHOT_Init2(void){
 	DSHOT2_DMA_Stream->CR |= (2u << 11) | (2u << 13) | (3u << 16) | (DSHOT2_DMA_Stream_Ch << 25);
 
 	// Enable interrupt
+	HAL_NVIC_SetPriority(DSHOT2_DMA_IRQn, DSHOT_M2_PreemptPriority, DSHOT_M2_SubPriority);
 	HAL_NVIC_EnableIRQ(DSHOT2_DMA_IRQn);
-	HAL_NVIC_SetPriority(DSHOT2_DMA_IRQn, 1, 1);
 
 #endif
 
@@ -607,8 +607,8 @@ void CK_DSHOT_Init2(void){
 
     __HAL_LINKDMA(&htim_dshot2, hdma[DSHOT2_DMA_ID], hdma_dshot2);
 
+    HAL_NVIC_SetPriority(DSHOT2_DMA_IRQn, DSHOT_M2_PreemptPriority, DSHOT_M2_SubPriority);
 	HAL_NVIC_EnableIRQ(DSHOT2_DMA_IRQn);
-	HAL_NVIC_SetPriority(DSHOT2_DMA_IRQn, 1, 1);
 
 	SCB_CleanDCache_by_Addr((uint32_t*)dma_buffer_dshot2, DSHOT_DCACHE_SIZE);
 
@@ -688,8 +688,8 @@ void CK_DSHOT_Init3(void){
 		DSHOT3_DMA_Stream->CR |= (2u << 11) | (2u << 13) | (3u << 16) | (DSHOT3_DMA_Stream_Ch << 25);
 
 		// Enable interrupt
+		HAL_NVIC_SetPriority(DSHOT3_DMA_IRQn, DSHOT_M3_PreemptPriority, DSHOT_M3_SubPriority);
 		HAL_NVIC_EnableIRQ(DSHOT3_DMA_IRQn);
-		HAL_NVIC_SetPriority(DSHOT3_DMA_IRQn, 1, 2);
 
 	#endif
 
@@ -715,8 +715,8 @@ void CK_DSHOT_Init3(void){
 
 	    __HAL_LINKDMA(&htim_dshot3, hdma[DSHOT3_DMA_ID], hdma_dshot3);
 
+		HAL_NVIC_SetPriority(DSHOT3_DMA_IRQn, DSHOT_M3_PreemptPriority, DSHOT_M3_SubPriority);
 		HAL_NVIC_EnableIRQ(DSHOT3_DMA_IRQn);
-		HAL_NVIC_SetPriority(DSHOT3_DMA_IRQn, 1, 2);
 
 		SCB_CleanDCache_by_Addr((uint32_t*)dma_buffer_dshot3, DSHOT_DCACHE_SIZE);
 
@@ -798,8 +798,8 @@ void CK_DSHOT_Init4(void){
 		DSHOT4_DMA_Stream->CR |= (2u << 11) | (2u << 13) | (3u << 16) | (DSHOT4_DMA_Stream_Ch << 25);
 
 		// Enable interrupt
+		HAL_NVIC_SetPriority(DSHOT4_DMA_IRQn, DSHOT_M4_PreemptPriority, DSHOT_M4_SubPriority);
 		HAL_NVIC_EnableIRQ(DSHOT4_DMA_IRQn);
-		HAL_NVIC_SetPriority(DSHOT4_DMA_IRQn, 1, 3);
 
 	#endif
 
@@ -825,8 +825,8 @@ void CK_DSHOT_Init4(void){
 
 	    __HAL_LINKDMA(&htim_dshot4, hdma[DSHOT4_DMA_ID], hdma_dshot4);
 
+	    HAL_NVIC_SetPriority(DSHOT4_DMA_IRQn, DSHOT_M4_PreemptPriority, DSHOT_M4_SubPriority);
 		HAL_NVIC_EnableIRQ(DSHOT4_DMA_IRQn);
-		HAL_NVIC_SetPriority(DSHOT4_DMA_IRQn, 1, 3);
 
 		SCB_CleanDCache_by_Addr((uint32_t*)dma_buffer_dshot4, DSHOT_DCACHE_SIZE);
 

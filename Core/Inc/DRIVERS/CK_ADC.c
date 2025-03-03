@@ -88,6 +88,7 @@ void CK_ADC_Init(void){
 	CK_ADC_ADC2Init();
 	CK_ADC_ADC3Init();
 
+	HAL_NVIC_SetPriority(ADC_IRQn, ADC_PreemptPriority, ADC_SubPriority);
 	HAL_NVIC_EnableIRQ(ADC_IRQn);
 
 }

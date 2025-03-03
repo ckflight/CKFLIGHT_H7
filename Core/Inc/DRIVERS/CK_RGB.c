@@ -109,6 +109,7 @@ void CK_RGB_Init(TIM_TypeDef* rgb_tim_, DMA_TypeDef* rgb_dma_, DMA_Stream_TypeDe
 
     __HAL_LINKDMA(&htim_rgb, hdma[RGB_DMA_ID], hdma_rgb);
 
+	HAL_NVIC_SetPriority(RGB_DMA_IRQn, RGB_PreemptPriority, RGB_SubPriority);
 	HAL_NVIC_EnableIRQ(RGB_DMA_IRQn);
 
 	#if (USE_H7 == 1)

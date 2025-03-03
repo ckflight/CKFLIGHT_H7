@@ -102,7 +102,8 @@ void CK_GPS_Init(USART_TypeDef* uart_, sensorModel_e module_type){
     config.baudrate 			= GPS_DEFAULT_BAUDRATE;
     config.usart 				= FLIGHT_GPS_UART;
     config.use_circular_buffer 	= true;
-
+	config.preempt_priority		= GPS_PreemptPriority;
+	config.sub_priority			= GPS_SubPriority;
 
     CK_UART_Init(&config, &gps_cb);
 

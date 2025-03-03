@@ -79,6 +79,9 @@ void CK_OSD_Init(uint32_t osdT, uint32_t mainT){
 		config.usart 				= COMMUNICATION_OSD_UART;
 		config.use_circular_buffer 	= false;
 
+		config.preempt_priority		= OSD_PreemptPriority;
+		config.sub_priority			= OSD_SubPriority;
+
 		CK_UART_Init(&config, NULL);
 
 		CK_UART_TXEnable(COMMUNICATION_OSD_UART);
@@ -117,6 +120,9 @@ void CK_OSD_Init(uint32_t osdT, uint32_t mainT){
 		config.baudrate 			= 115200;
 		config.usart 				= COMMUNICATION_OSD_UART;
 		config.use_circular_buffer 	= false;
+
+		config.preempt_priority		= OSD_PreemptPriority;
+		config.sub_priority			= OSD_SubPriority;
 
 		CK_UART_Init(&config, NULL);
 		CK_UART_TXEnable(COMMUNICATION_OSD_UART);

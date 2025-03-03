@@ -15,6 +15,51 @@
 #define CURRENT_VERSION_MAJOR		VERSION_MAJOR
 #define CURRENT_VERSION_MINOR		VERSION_MINOR
 
+// Interrupt Priorities
+#define USB_PreemptPriority			0
+#define USB_SubPriority				0
+
+#define GYRO_TX_PreemptPriority		0
+#define GYRO_TX_SubPriority			1
+
+#define GYRO_RX_PreemptPriority		0
+#define GYRO_RX_SubPriority			2
+
+#define RECEIVER_PreemptPriority	0
+#define RECEIVER_SubPriority		3
+
+#define DSHOT_M1_PreemptPriority	1
+#define DSHOT_M1_SubPriority		0
+
+#define DSHOT_M2_PreemptPriority	1
+#define DSHOT_M2_SubPriority		1
+
+#define DSHOT_M3_PreemptPriority	1
+#define DSHOT_M3_SubPriority		2
+
+#define DSHOT_M4_PreemptPriority	1
+#define DSHOT_M4_SubPriority		3
+
+#define SDCARD_PreemptPriority		2
+#define SDCARD_SubPriority			0
+
+#define GPS_PreemptPriority			3
+#define GPS_SubPriority				1
+
+#define OSD_PreemptPriority			4
+#define OSD_SubPriority				0
+
+#define MAX7456_PreemptPriority		4
+#define MAX7456_SubPriority			1
+
+#define ADC_PreemptPriority			5
+#define ADC_SubPriority				0
+
+#define RGB_PreemptPriority			5
+#define RGB_SubPriority				1
+
+#define PERIPHERAL_PreemptPriority	6
+#define PERIPHERAL_SubPriority		0
 
 #if MATEKH743_SLIMV3 == true
 #define TARGET_BOARD	"MATEKH743_SLIMV3"

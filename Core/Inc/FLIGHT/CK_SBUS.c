@@ -35,6 +35,9 @@ void CK_SBUS_Init(SBUS_Method method){
 	config.parity 				= PARITY_EVEN;
 	config.stop_bit 			= STOP_BIT2;
 	config.baudrate 			= sbus_baud;
+
+	config.preempt_priority		= RECEIVER_PreemptPriority;
+	config.sub_priority			= RECEIVER_SubPriority;
 #if SBUS_
 	config.rx_gpio_type			= SBUS_UART_RX_GPIO;
 	config.rx_gpio_pin			= SBUS_UART_RX_PIN;

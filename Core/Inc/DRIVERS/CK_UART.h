@@ -76,6 +76,9 @@ typedef struct{
 	uint16_t 			rx_gpio_pin;
 	CK_GPIOx_AFx		rx_af;
 
+	uint8_t				preempt_priority;
+	uint8_t 			sub_priority;
+
 }USART_CONFIGURATION_;
 
 void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf);

@@ -200,6 +200,7 @@ void CK_MAX7456_Init(SPI_TypeDef* spi_, GPIO_TypeDef* gpio_, uint8_t pin_){
 
 	CK_SPI_DMA_InitTX(OSD_MAX7456_DMA_Stream, SENSOR_MAX7456_SPI, OSD_MAX7456_DMA_Request);
 
+	HAL_NVIC_SetPriority(OSD_MAX7456_DMA_IRQn, MAX7456_PreemptPriority, MAX7456_SubPriority);
 	HAL_NVIC_EnableIRQ(OSD_MAX7456_DMA_IRQn);
 
 	CK_SPI_DMA_SetPeripheralAddress(OSD_MAX7456_DMA_Stream, (uint32_t)(&SENSOR_MAX7456_SPI->TXDR));
@@ -214,6 +215,7 @@ void CK_MAX7456_Init(SPI_TypeDef* spi_, GPIO_TypeDef* gpio_, uint8_t pin_){
 
 	CK_SPI_DMA_InitTX(OSD_MAX7456_DMA_Stream, OSD_MAX7456_DMA_Channel);
 
+	HAL_NVIC_SetPriority(OSD_MAX7456_DMA_IRQn, MAX7456_PreemptPriority, MAX7456_SubPriority);
 	HAL_NVIC_EnableIRQ(OSD_MAX7456_DMA_IRQn);
 
 	CK_SPI_DMA_SetPeripheralAddress(OSD_MAX7456_DMA_Stream, (uint32_t)(&SENSOR_MAX7456_SPI->DR));

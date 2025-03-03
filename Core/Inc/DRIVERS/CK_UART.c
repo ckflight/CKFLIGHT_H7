@@ -80,62 +80,56 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 		__HAL_RCC_USART1_CLK_ENABLE();
 
+		HAL_NVIC_SetPriority(USART1_IRQn, config->preempt_priority, config->sub_priority);
 		NVIC_EnableIRQ(USART1_IRQn);
 
-		HAL_NVIC_SetPriority(USART1_IRQn, 3, 3);
 	}
 	else if(config->usart == USART2){
 
 		__HAL_RCC_USART2_CLK_ENABLE();
 
+		HAL_NVIC_SetPriority(USART2_IRQn, config->preempt_priority, config->sub_priority);
 		NVIC_EnableIRQ(USART2_IRQn);
-
-		HAL_NVIC_SetPriority(USART2_IRQn, 3, 3);
 
 	}
 	else if(config->usart == USART3){
 
 		__HAL_RCC_USART3_CLK_ENABLE();
 
+		HAL_NVIC_SetPriority(USART3_IRQn, config->preempt_priority, config->sub_priority);
 		NVIC_EnableIRQ(USART3_IRQn);
-
-		HAL_NVIC_SetPriority(USART3_IRQn, 3, 3);
 
 	}
 	else if(config->usart == UART4){
 
 		__HAL_RCC_UART4_CLK_ENABLE();
 
+		HAL_NVIC_SetPriority(UART4_IRQn, config->preempt_priority, config->sub_priority);
 		NVIC_EnableIRQ(UART4_IRQn);
-
-		HAL_NVIC_SetPriority(UART4_IRQn, 3, 3);
 
 	}
 	else if(config->usart == USART6){
 
 		__HAL_RCC_USART6_CLK_ENABLE();
 
+		HAL_NVIC_SetPriority(USART6_IRQn, config->preempt_priority, config->sub_priority);
 		NVIC_EnableIRQ(USART6_IRQn);
-
-		HAL_NVIC_SetPriority(USART6_IRQn, 3, 3);
 
 	}
 	else if(config->usart == UART7){
 
 		__HAL_RCC_UART7_CLK_ENABLE();
 
+		HAL_NVIC_SetPriority(UART7_IRQn, config->preempt_priority, config->sub_priority);
 		NVIC_EnableIRQ(UART7_IRQn);
-
-		HAL_NVIC_SetPriority(UART7_IRQn, 3, 3);
 
 	}
 	else if(config->usart == UART8){
 
 		__HAL_RCC_UART8_CLK_ENABLE();
 
+		HAL_NVIC_SetPriority(UART8_IRQn, config->preempt_priority, config->sub_priority);
 		NVIC_EnableIRQ(UART8_IRQn);
-
-		HAL_NVIC_SetPriority(UART8_IRQn, 3, 3);
 
 	}
 

@@ -202,6 +202,9 @@ void CK_CRSF_Init(CRSF_Method method){
 	config.rx_af				= CRSF_UART_RX_AF;
 	config.usart 				= CRSF_UART;
 	CK_CRSF_UART 				= CRSF_UART;
+
+	config.preempt_priority		= RECEIVER_PreemptPriority;
+	config.sub_priority			= RECEIVER_SubPriority;
 	#endif
 	config.use_circular_buffer 	= true;
 

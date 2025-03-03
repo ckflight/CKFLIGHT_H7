@@ -22,8 +22,8 @@
 
 #define LOG_TIMEOUT_MS 				240
 
-const uint8_t debug_start_byte = 0xCC;
-const uint8_t debug_end_byte   = 0xCF;
+const uint8_t debug_start_byte = 0x54;
+const uint8_t debug_end_byte   = 0x67;
 uint8_t counter = debug_start_byte;
 
 log_parameters_t flightLog;
@@ -253,6 +253,7 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 				// Card takes DO line low during busy flag which means MISO data is 0x00
 				// So reading 0xFF means not busy
 				if(CK_MICROCARD_CheckIsCardBusy() == HAL_OK){
+				//if(1){
 
 					log_LOG_CHECK_SDCARD_BUSY_t2 = CK_TIME_GetMicroSec() - log_LOG_CHECK_SDCARD_BUSY_t1;
 

@@ -205,6 +205,7 @@ void CK_MICROCARD_Init(microcard_transfer_modes_e mode){
 	GPIO_InitStruct.Alternate 	= GPIO_AF12_SDIO1;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+	HAL_NVIC_SetPriority(SDMMC1_IRQn, SDCARD_PreemptPriority, SDCARD_SubPriority);
 	HAL_NVIC_EnableIRQ(SDMMC1_IRQn);
 
 	hsd1.Instance 					= MICROCARD_SDIO;
@@ -286,9 +287,8 @@ void CK_MICROCARD_Init(microcard_transfer_modes_e mode){
 
 		CK_SPI_DMA_TCInterruptEnable(MICROCARD_DMA_STREAM);
 
+		HAL_NVIC_SetPriority(MICROCARD_DMA_TX_IRQn, SDCARD_PreemptPriority, SDCARD_SubPriority);
 		HAL_NVIC_EnableIRQ(MICROCARD_DMA_TX_IRQn);
-
-		HAL_NVIC_SetPriority(MICROCARD_DMA_TX_IRQn, 5, 5);
 
 		#endif
 
