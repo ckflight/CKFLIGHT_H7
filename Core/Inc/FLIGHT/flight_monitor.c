@@ -76,12 +76,17 @@ void flight_monitor_update(void){
 
 		monitor_parameters_update();
 
+#if BUZZER_WARNING_
 		warning_monitor_update();
 
 		// Buzzer works with rc switch command unless code has other use of it.
 		if(!monitor.is_battery_low && !monitor.is_temp_high){
 			CK_BUZZER_CheckBuzzer();
 		}
+
+#else
+		CK_BUZZER_CheckBuzzer();
+#endif
 
 	}
 }

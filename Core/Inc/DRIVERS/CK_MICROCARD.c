@@ -1374,11 +1374,10 @@ void HAL_SD_ErrorCallback(SD_HandleTypeDef *hsd){
 #if LOG_SPI_
 void MICROCARD_DMA_TX_Handler(void){
 
-#if LED1_
-	CK_LED_ToggleLed(1);
-#endif
-#if LED2_
+#if LED1_ & LED2_
 	CK_LED_ToggleLed(2);
+#else
+	CK_LED_ToggleLed(1);
 #endif
     uint8_t resp; UNUSED(resp);
 
