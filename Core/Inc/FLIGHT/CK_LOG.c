@@ -21,9 +21,10 @@
 #include "COMMUNICATION/CK_PRINTER.h"
 
 #define LOG_TIMEOUT_MS 				240
+#define SDCARD_CHECK_BUSY_US		TARGET_PERIPHERAL_TIME_US * 10
 
-const uint8_t debug_start_byte = 0xC1;
-const uint8_t debug_end_byte   = 0xC8;
+const uint8_t debug_start_byte = 0x00;
+const uint8_t debug_end_byte   = 0xCE;
 uint8_t counter = debug_start_byte;
 
 log_parameters_t flightLog;
@@ -67,6 +68,9 @@ bool is_transfer_ready_set = false;
 
 uint32_t dma_timeout_t1 = 0;
 uint32_t dma_timeout_t2	= 0;
+
+uint32_t check_sdcard_busy_t1 = 0;
+uint32_t check_sdcard_busy_t2 = 0;
 
 uint32_t logStartTime, logEndTime;
 
@@ -228,6 +232,8 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 
 					dma_timeout_t1 = CK_TIME_GetMilliSec();
 
+					check_sdcard_busy_t1 = CK_TIME_GetMicroSec();
+
 				}
 				else{
 					// Sometimes even if tx started the interrupt is not called
@@ -252,48 +258,52 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 				log_LOG_CHECK_SDCARD_BUSY_t1 = CK_TIME_GetMicroSec();
 				// Card takes DO line low during busy flag which means MISO data is 0x00
 				// So reading 0xFF means not busy
-				if(CK_MICROCARD_CheckIsCardBusy() == HAL_OK){
-				//if(1){
+				if(CK_TIME_GetMicroSec() - check_sdcard_busy_t1 >= SDCARD_CHECK_BUSY_US){
 
-					log_LOG_CHECK_SDCARD_BUSY_t2 = CK_TIME_GetMicroSec() - log_LOG_CHECK_SDCARD_BUSY_t1;
+					check_sdcard_busy_t1 = CK_TIME_GetMicroSec();
 
-					if(flightLog.info_sector_write_counter == WRITE_INFO_SECTOR){
-						if(card.transfer_mode == SPI_DMA_INTERRUPT_MULTIBLOCK){
+					if(CK_MICROCARD_CheckIsCardBusy() == HAL_OK){
 
-							// Stop multi before info write.
-							CK_MICROCARD_SendStopToken();
+						log_LOG_CHECK_SDCARD_BUSY_t2 = CK_TIME_GetMicroSec() - log_LOG_CHECK_SDCARD_BUSY_t1;
 
-							log_state = LOG_SPI_MULTI_STOP_TOKEN_BUSY;
+						if(flightLog.info_sector_write_counter == WRITE_INFO_SECTOR){
+							if(card.transfer_mode == SPI_DMA_INTERRUPT_MULTIBLOCK){
+
+								// Stop multi before info write.
+								CK_MICROCARD_SendStopToken();
+
+								log_state = LOG_SPI_MULTI_STOP_TOKEN_BUSY;
+							}
+							else if(card.transfer_mode == SPI_DMA_INTERRUPT_SINGLEBLOCK){
+
+								log_state = LOG_WRITE_INFO_DATA;
+							}
+							else if(card.transfer_mode == SDIO_DMA_INTERRUPT_MULTIBLOCK){
+
+								log_state = LOG_WRITE_INFO_DATA;
+							}
+
 						}
-						else if(card.transfer_mode == SPI_DMA_INTERRUPT_SINGLEBLOCK){
-
-							log_state = LOG_WRITE_INFO_DATA;
-						}
-						else if(card.transfer_mode == SDIO_DMA_INTERRUPT_MULTIBLOCK){
-
-							log_state = LOG_WRITE_INFO_DATA;
+						else{
+							log_state = LOG_DATA;
 						}
 
 					}
 					else{
-						log_state = LOG_DATA;
-					}
+						// Sometimes even if tx started the interrupt is not called
+						// so after waiting enough time i restart tx and it is fine
+						dma_timeout_t2 = CK_TIME_GetMilliSec() - dma_timeout_t1;
+						if(dma_timeout_t2 > LOG_TIMEOUT_MS){
 
-				}
-				else{
-					// Sometimes even if tx started the interrupt is not called
-					// so after waiting enough time i restart tx and it is fine
-					dma_timeout_t2 = CK_TIME_GetMilliSec() - dma_timeout_t1;
-					if(dma_timeout_t2 > LOG_TIMEOUT_MS){
+							log_state = LOG_DATA;
 
-						log_state = LOG_DATA;
+							card.is_dma_ready = true;
 
-						card.is_dma_ready = true;
+							// Relog last 16 sector
+							CK_MICROCARD_DecrementCurrentSector(BLOCK_CACHE_SIZE);
 
-						// Relog last 16 sector
-						CK_MICROCARD_DecrementCurrentSector(BLOCK_CACHE_SIZE);
-
-						//CK_PRINTER_PrintlnString("Card Busy Timeout");
+							//CK_PRINTER_PrintlnString("Card Busy Timeout");
+						}
 					}
 				}
 
