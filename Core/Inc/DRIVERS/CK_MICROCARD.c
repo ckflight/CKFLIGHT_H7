@@ -730,8 +730,13 @@ void CK_MICROCARD_WriteData(uint32_t sector){
 				CK_MICROCARD_SelectCard();
 
 				// This is also needed to be send once
+#if USE_F4
 				resp = CK_MICROCARD_SendCmd(CMD25, sector, 0);
-				//CK_MICROCARD_SendCmdNoResp(CMD25, sector, 0);
+#endif
+#if USE_H7
+				CK_MICROCARD_SendCmdNoResp(CMD25, sector, 0);
+#endif
+
 
 				// CK_SPI_DMA_SetBuffer is called before enabling dma
 				// so now just start transfer
@@ -775,9 +780,12 @@ void CK_MICROCARD_WriteData(uint32_t sector){
             CK_MICROCARD_SelectCard();
 
             // Added to dma buffer for both data log and info sector
-            //resp = CK_MICROCARD_SendCmd(CMD24, sector, 0);
+#if USE_F4
+            resp = CK_MICROCARD_SendCmd(CMD24, sector, 0);
+#endif
+#if USE_H7
             CK_MICROCARD_SendCmdNoResp(CMD24, sector, 0);
-
+#endif
             // CK_SPI_DMA_SetBuffer is called before enabling dma
             // so now just start transfer
             CK_SPI_DMA_Enable(CK_MICROCARD_DMA_STREAM);
