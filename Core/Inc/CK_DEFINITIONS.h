@@ -46,11 +46,14 @@
 #define GPS_PreemptPriority			3
 #define GPS_SubPriority				1
 
-#define OSD_PreemptPriority			4
-#define OSD_SubPriority				0
+#define OSD_UART_PreemptPriority	4
+#define OSD_UART_SubPriority		0
+
+#define OSD_DMA_PreemptPriority		4
+#define OSD_DMA_SubPriority			1
 
 #define MAX7456_PreemptPriority		4
-#define MAX7456_SubPriority			1
+#define MAX7456_SubPriority			2
 
 #define ADC_PreemptPriority			5
 #define ADC_SubPriority				0

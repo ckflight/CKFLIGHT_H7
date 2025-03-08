@@ -79,8 +79,8 @@ void CK_OSD_Init(uint32_t osdT, uint32_t mainT){
 		config.usart 				= COMMUNICATION_OSD_UART;
 		config.use_circular_buffer 	= false;
 
-		config.preempt_priority		= OSD_PreemptPriority;
-		config.sub_priority			= OSD_SubPriority;
+		config.preempt_priority		= OSD_UART_PreemptPriority;
+		config.sub_priority			= OSD_UART_SubPriority;
 
 		CK_UART_Init(&config, NULL);
 
@@ -121,8 +121,8 @@ void CK_OSD_Init(uint32_t osdT, uint32_t mainT){
 		config.usart 				= COMMUNICATION_OSD_UART;
 		config.use_circular_buffer 	= false;
 
-		config.preempt_priority		= OSD_PreemptPriority;
-		config.sub_priority			= OSD_SubPriority;
+		config.preempt_priority		= OSD_UART_PreemptPriority;
+		config.sub_priority			= OSD_UART_SubPriority;
 
 		CK_UART_Init(&config, NULL);
 		CK_UART_TXEnable(COMMUNICATION_OSD_UART);
@@ -151,6 +151,7 @@ void CK_OSD_Init(uint32_t osdT, uint32_t mainT){
 
 		CK_UART_DMA_TCInterruptEnable(OSD_DMA_Stream);
 
+		HAL_NVIC_SetPriority(OSD_DMA_IRQn, OSD_DMA_PreemptPriority, OSD_DMA_SubPriority);
 		HAL_NVIC_EnableIRQ(OSD_DMA_IRQn);
 
 		#if USE_H7
