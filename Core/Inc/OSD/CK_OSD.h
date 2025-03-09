@@ -44,13 +44,11 @@ typedef struct{
 
     uint16_t imu_heading;
 
-    uint8_t pid_roll[3];
+    uint8_t pid_roll[5];
 
-	uint8_t pid_pitch[3];
+	uint8_t pid_pitch[5];
 
-	uint8_t pid_yaw[3];
-
-	uint8_t pid_dmin[3];
+	uint8_t pid_yaw[5];
 
 	uint8_t is_adjustment_on;
 
@@ -80,7 +78,7 @@ void CK_OSD_DJI_FormPacket(void);
 
 void CK_OSD_DJI_InitLocationParameters(void);
 
-void CK_OSD_GetFlightData(void);
+void CK_OSD_SetFlightData(void);
 
 #if USE_DMA_OSD
 void CK_OSD_SendPacketDMA(void);

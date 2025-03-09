@@ -2149,10 +2149,10 @@ void CK_MAX7456_PidPlot(uint32_t current_time){
 					// These parameters are minimum d terms for roll pitch yaw axis.
 					// Instead of defining new parameters and adding loops below i will use
 					// p i and d integers.
-					pid_p = osd_packet.pid_dmin[0];
-					pid_i = osd_packet.pid_dmin[1];
+					pid_p = osd_packet.pid_roll[4]; // dmax
+					pid_i = osd_packet.pid_pitch[4];
 					pid_i2 = pid_i;
-					pid_d = osd_packet.pid_dmin[2];
+					pid_d = osd_packet.pid_yaw[4];
 				}
 
 				index = CK_MAX7456_GetPlotIndex(pid_line + i, pid_orientation, pid_space);

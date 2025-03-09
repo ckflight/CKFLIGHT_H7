@@ -23,7 +23,7 @@
 
 #define START_BYTE              0xCC
 #define END_BYTE                0xAA
-#define SEND_BUFFER_SIZE        512
+#define SEND_BUFFER_SIZE        1024
 
 uint8_t sendBuffer[SEND_BUFFER_SIZE];
 
@@ -185,9 +185,15 @@ void CK_OSD_Update(uint32_t currentTime, uint32_t loopTime){
 
 		osd_packet.sync.syncCounter = 0;
 
-        //CK_OSD_GetFlightData();
+		#if !OSD_DJI_
+        CK_OSD_SetFlightData();
+		#endif
 
-		mainLoopSum = 0;
+        osd_packet.freqResult = (1000000 / mainLoopSum);
+
+        osd_packet.system_percent = (100 * (1000000 / mainLoopSum)) / osd_packet.mainLoopTime;
+
+        mainLoopSum = 0;
 
 		#if OSD_PDB_
 
@@ -219,6 +225,8 @@ void CK_OSD_Update(uint32_t currentTime, uint32_t loopTime){
 
 		#if OSD_DJI_
 
+		CK_MSP_OSD_SetData();
+
 		CK_MSP_OSD_Update(currentTime);
 
 		if(!is_interrupt_started){
@@ -241,10 +249,11 @@ void CK_OSD_Update(uint32_t currentTime, uint32_t loopTime){
         osd_debug.update_time = CK_TIME_GetMicroSec() - osd_debug.start_time;
         #endif
 
+
     }
 }
 
-void CK_OSD_GetFlightData(void){
+void CK_OSD_SetFlightData(void){
 
 	osd_packet.gps_distanceToDestination = (uint16_t)gps.distanceToDestination/100; // sends m
 
@@ -277,9 +286,9 @@ void CK_OSD_GetFlightData(void){
 
     osd_packet.isFailSafe = isFailsafeActive();
 
-    osd_packet.freqResult = (1000000 / mainLoopSum);
+    //osd_packet.freqResult = (1000000 / mainLoopSum);
 
-    osd_packet.system_percent = (100 * (1000000 / mainLoopSum)) / osd_packet.mainLoopTime;
+    //osd_packet.system_percent = (100 * (1000000 / mainLoopSum)) / osd_packet.mainLoopTime;
 
     //osd_packet.loopTime defined in init method
 
@@ -291,18 +300,20 @@ void CK_OSD_GetFlightData(void){
     osd_packet.pid_roll[0] = pid_buffer[0];
     osd_packet.pid_roll[1] = pid_buffer[1];
     osd_packet.pid_roll[2] = pid_buffer[2];
+    osd_packet.pid_roll[3] = pid_buffer[3];
+    osd_packet.pid_roll[4] = pid_buffer[4];
 
-    osd_packet.pid_pitch[0] = pid_buffer[3];
-    osd_packet.pid_pitch[1] = pid_buffer[4];
-    osd_packet.pid_pitch[2] = pid_buffer[5];
+    osd_packet.pid_pitch[0] = pid_buffer[5];
+    osd_packet.pid_pitch[1] = pid_buffer[6];
+    osd_packet.pid_pitch[2] = pid_buffer[7];
+    osd_packet.pid_pitch[3] = pid_buffer[8];
+    osd_packet.pid_pitch[4] = pid_buffer[9];
 
-    osd_packet.pid_yaw[0] = pid_buffer[6];
-    osd_packet.pid_yaw[1] = pid_buffer[7];
-    osd_packet.pid_yaw[2] = pid_buffer[8];
-
-    osd_packet.pid_dmin[0] = pid_buffer[9];
-	osd_packet.pid_dmin[1] = pid_buffer[10];
-	osd_packet.pid_dmin[2] = pid_buffer[11];
+    osd_packet.pid_yaw[0] = pid_buffer[10];
+    osd_packet.pid_yaw[1] = pid_buffer[11];
+    osd_packet.pid_yaw[2] = pid_buffer[12];
+    osd_packet.pid_yaw[3] = pid_buffer[13];
+    osd_packet.pid_yaw[4] = pid_buffer[14];
 
     osd_packet.is_adjustment_on = CK_ADJUSTEMENT_IsAdjustmentModeOn();
 
@@ -412,10 +423,6 @@ void CK_OSD_WriteUartBuffer(void){
     sendBuffer[idx++]  = osd_packet.pid_yaw[0];
     sendBuffer[idx++]  = osd_packet.pid_yaw[1];
     sendBuffer[idx++]  = osd_packet.pid_yaw[2];
-
-    sendBuffer[idx++]  = osd_packet.pid_dmin[0];
-	sendBuffer[idx++]  = osd_packet.pid_dmin[1];
-	sendBuffer[idx++]  = osd_packet.pid_dmin[2];
 
     sendBuffer[idx++]  = osd_packet.is_adjustment_on;
 

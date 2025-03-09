@@ -21,10 +21,10 @@
 #include "COMMUNICATION/CK_PRINTER.h"
 
 #define LOG_TIMEOUT_MS 				240
-#define SDCARD_CHECK_BUSY_US		TARGET_PERIPHERAL_TIME_US * 10
+#define SDCARD_CHECK_BUSY_US		TARGET_PERIPHERAL_TIME_US * 5
 
-const uint8_t debug_start_byte = 0x00;
-const uint8_t debug_end_byte   = 0xCE;
+const uint8_t debug_start_byte = 0x33;
+const uint8_t debug_end_byte   = 0x55;
 uint8_t counter = debug_start_byte;
 
 log_parameters_t flightLog;
@@ -329,28 +329,6 @@ void CK_LOG_Update(uint32_t currentLoopTime){
 						}
 						else if(card.transfer_mode == SPI_DMA_INTERRUPT_SINGLEBLOCK){
 
-							/*
-							if(flightLog.buffer_index == 0){
-
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
-
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = CMD24 | 0x40;
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 24;
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 16;
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR) >> 8;
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = (card.START_SECTOR + card.CURRENT_SECTOR);
-
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0x00;
-
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFF;
-
-							}
-
-							if(flightLog.buffer_index == 9){
-								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFE;
-							}
-							*/
 							if(flightLog.buffer_index == 0){
 								flightLog.log_buffer_1[flightLog.buffer_index++]  = 0xFE;
 							}
@@ -622,21 +600,6 @@ void CK_LOG_WriteInfoBuffer(void){
 	#if LOG_SPI_
 	// Info sector is always single block write
     card.transfer_mode = SPI_DMA_INTERRUPT_SINGLEBLOCK;
-
-    /*
-    flightLog.info_buffer[idx++]  = 0xFF;
-
-	flightLog.info_buffer[idx++]  = CMD24 | 0x40;
-	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 24;
-	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 16;
-	flightLog.info_buffer[idx++]  = card.INFO_SECTOR >> 8;
-	flightLog.info_buffer[idx++]  = card.INFO_SECTOR;
-
-	flightLog.info_buffer[idx++]  = 0x00;
-
-	flightLog.info_buffer[idx++]  = 0xFF;
-	flightLog.info_buffer[idx++]  = 0xFF;
-	*/
 
 	flightLog.info_buffer[idx++]  = 0xFE; // Start token
 	#endif

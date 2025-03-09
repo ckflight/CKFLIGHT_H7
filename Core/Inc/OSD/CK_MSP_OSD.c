@@ -9,7 +9,9 @@
 #include "OSD/CK_OSD.h"
 
 #include "COMMUNICATION/CK_MSP.h"
-
+#include "DRIVERS/CK_ADC.h"
+#include "FLIGHT/CK_CRSF.h"
+#include "FLIGHT/CK_RECEIVER.h"
 msp_osd_config_t dji_osd;
 
 // Display canvas mode hd: 0 start and 53 end
@@ -57,6 +59,8 @@ int mah_plot_column						= 16;
 int mah_plot_freq_ 						= TARGET_10HZ_US;
 char mah_parameters[mah_parameters_len];
 
+MSP_OSD_PACKET_s msp_osd_packet;
+
 void CK_MSP_OSD_Init(uint32_t osdT, uint32_t mainT){
 
 	dji_osd.sync.syncCounter 		= 0;
@@ -66,6 +70,29 @@ void CK_MSP_OSD_Init(uint32_t osdT, uint32_t mainT){
 	dji_osd.sync.syncRate 			= osdT / mainT;
 
 	current_font = 0x00;
+
+}
+
+
+void CK_MSP_OSD_SetData(void){
+
+	msp_osd_packet.cpu_core_temperature = (uint8_t)CK_ADC_GetTemperatureResult();
+
+	msp_osd_packet.current = (uint16_t)(CK_ADC_GetCurrentResult() * 100.0f);
+
+	msp_osd_packet.freqResult = osd_packet.freqResult;
+
+	msp_osd_packet.isArmed = flags.ARMED;
+
+	msp_osd_packet.rssi_dBm = CK_CRSF_GetRSSI_dBm();
+
+	msp_osd_packet.rssi_link_quality = CK_CRSF_GetLinkQuality();
+
+	msp_osd_packet.voltage = (uint16_t)(CK_ADC_GetLipoResult() * 100.0f);
+
+	msp_osd_packet.system_percent = osd_packet.system_percent;
+
+	msp_osd_packet.mainLoopTime = 0;
 
 }
 
@@ -124,7 +151,7 @@ void CK_MSP_OSD_Current(uint32_t currentTime){
 
 		preTime = currentTime;
 
-		float current = (float)osd_packet.current;
+		float current = msp_osd_packet.current;
 		current /= 100.0f; // osd multiplies with 100 for getting 2 decimal points
 
 		// I = (Vout * 1000) / (0.5 x resistor)
@@ -182,7 +209,7 @@ void CK_MSP_OSD_RSSI(uint32_t currentTime){
 
 		preTime = currentTime;
 
-		int16_t rssi_temp = osd_packet.rssi_dBm;
+		int16_t rssi_temp = msp_osd_packet.rssi_dBm;
 
 		rssi_dbm_parameters[0] = SYM_RSSI;
 
@@ -217,7 +244,7 @@ void CK_MSP_OSD_RSSILQ(uint32_t currentTime){
 
 		preTime = currentTime;
 
-		uint8_t rssi_temp = osd_packet.rssi_link_quality;
+		uint8_t rssi_temp = msp_osd_packet.rssi_link_quality;
 
 		rssi_lq_parameters[0] = SYM_LINK_QUALITY;
 
@@ -251,7 +278,7 @@ void CK_MSP_OSD_CoreTemperature(uint32_t currentTime){
 
 		preTime = currentTime;
 
-		int core_temperature_temp = osd_packet.cpu_core_temperature;
+		int core_temperature_temp = msp_osd_packet.cpu_core_temperature;
 
 		// First plot num of Sattelite than plot sattelite symbol
 		if(core_temperature_temp >= 0 && core_temperature_temp < 10){
@@ -280,7 +307,7 @@ void CK_MSP_OSD_FirmwareFreqPlot(uint32_t currentTime){
 		preTime = currentTime;
 
 		// 8000 will be printed as 8.0 so divide with 100
-		rate_temp = osd_packet.freqResult / 100;
+		rate_temp = msp_osd_packet.freqResult / 100;
 
 		if(rate_temp >= 0 && rate_temp < 10){
 			fw_freq_parameters[0] = ' ';
@@ -325,7 +352,7 @@ void CK_MSP_OSD_MahPlot(uint32_t currentTime){
 
 		preTime = currentTime;
 
-		currentADC = (float)osd_packet.current;
+		currentADC = (float)(CK_ADC_GetCurrentResult() * 100.0f);
 		currentADC /= 100.0f; // osd multiplies with 100 for getting 2 decimal point
 
 		// I = (Vout * 1000) / (0.5 x resistor)

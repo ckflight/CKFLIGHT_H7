@@ -297,7 +297,33 @@ typedef struct{
 
 }msp_osd_config_t;
 
+typedef struct{
+
+    int16_t rssi_dBm;
+
+    uint8_t rssi_link_quality;
+
+    uint8_t isArmed;
+
+    uint16_t freqResult;
+
+	uint8_t cpu_core_temperature;
+
+	uint16_t voltage;
+
+	uint16_t current;
+
+    uint16_t system_percent;
+
+    uint16_t mainLoopTime;
+
+}MSP_OSD_PACKET_s;
+
+extern MSP_OSD_PACKET_s msp_osd_packet;
+
 void CK_MSP_OSD_Init(uint32_t osdT, uint32_t mainT);
+
+void CK_MSP_OSD_SetData(void);
 
 void CK_MSP_OSD_Update(uint32_t currentTime);
 

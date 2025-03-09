@@ -5,6 +5,7 @@
 #include "COMMUNICATION/CK_PRINTER.h"
 
 #include "OSD/CK_OSD.h"
+#include "OSD/CK_MSP_OSD.h"
 
 #include "DRIVERS/CK_GPIO.h"
 #include "DRIVERS/CK_SYSTEM.h"
@@ -302,7 +303,7 @@ uint16_t CK_MSP_FormPacket(uint8_t command_id, uint8_t* buffer){
 		CK_MSP_WriteBufferU8(buffer, 9, payloadSize++, &crc); // 9 byte payload
 		CK_MSP_WriteBufferU8(buffer, MSP_ANALOG, payloadSize++, &crc);
 
-		float volt_ = (osd_packet.voltage / 100.0f) * VOLT_CALIBRATION_MULTIPLIER;
+		float volt_ = (msp_osd_packet.voltage / 100.0f) * VOLT_CALIBRATION_MULTIPLIER;
 		volt_ *= 10.0f; // 0.1v step
 		CK_MSP_WriteBufferU8(buffer, (uint8_t)volt_, payloadSize++, &crc);
 
@@ -310,14 +311,14 @@ uint16_t CK_MSP_FormPacket(uint8_t command_id, uint8_t* buffer){
 		CK_MSP_WriteBufferU16(buffer, battery_capacity_mah_, payloadSize, &crc);
 		payloadSize += 2;
 
-		uint16_t rssi = osd_packet.rssi_dBm;
+		uint16_t rssi = msp_osd_packet.rssi_dBm;
 		CK_MSP_WriteBufferU16(buffer, rssi, payloadSize, &crc);
 		payloadSize += 2;
 
 		CK_MSP_WriteBufferU16(buffer, 0, payloadSize, &crc);
 		payloadSize += 2;
 
-		volt_ = (osd_packet.voltage / 100.0f) * VOLT_CALIBRATION_MULTIPLIER;
+		volt_ = (msp_osd_packet.voltage / 100.0f) * VOLT_CALIBRATION_MULTIPLIER;
 		volt_ *= 100.0f; // 0.01v step
 		CK_MSP_WriteBufferU16(buffer, (uint16_t)volt_, payloadSize, &crc);
 		payloadSize += 2;
@@ -338,7 +339,7 @@ uint16_t CK_MSP_FormPacket(uint8_t command_id, uint8_t* buffer){
 		CK_MSP_WriteBufferU16(buffer, battery_capacity_mah, payloadSize, &crc);
 		payloadSize += 2;
 
-		float volt = (osd_packet.voltage / 100.0f) * VOLT_CALIBRATION_MULTIPLIER;
+		float volt = (msp_osd_packet.voltage / 100.0f) * VOLT_CALIBRATION_MULTIPLIER;
 		volt *= 10.0f; // 0.1v step
 		CK_MSP_WriteBufferU8(buffer, (uint8_t)volt, payloadSize++, &crc);
 
@@ -346,7 +347,7 @@ uint16_t CK_MSP_FormPacket(uint8_t command_id, uint8_t* buffer){
 		CK_MSP_WriteBufferU16(buffer, mah, payloadSize, &crc);
 		payloadSize += 2;
 
-		float current = ((osd_packet.current / 100.0f) * 1000.0f) / (CURRENT_RESISTOR * 0.5f); // Current Sens Vout = I*0.5m*105K/1K = I*52.5m
+		float current = ((msp_osd_packet.current / 100.0f) * 1000.0f) / (CURRENT_RESISTOR * 0.5f); // Current Sens Vout = I*0.5m*105K/1K = I*52.5m
 		current *= MAH_CALIBRATION_MULTIPLIER;
 		current *= 100.0f; // 0.01A steps
 		CK_MSP_WriteBufferU16(buffer, (int16_t)current, payloadSize, &crc);
@@ -355,7 +356,7 @@ uint16_t CK_MSP_FormPacket(uint8_t command_id, uint8_t* buffer){
 		uint8_t battery_alert = 0;
 		CK_MSP_WriteBufferU8(buffer, battery_alert, payloadSize++, &crc);
 
-		volt = (osd_packet.voltage / 100.0f) * VOLT_CALIBRATION_MULTIPLIER;
+		volt = (msp_osd_packet.voltage / 100.0f) * VOLT_CALIBRATION_MULTIPLIER;
 		volt *= 100.0f; // 0.01v step
 		CK_MSP_WriteBufferU16(buffer, (uint16_t)volt, payloadSize, &crc);
 		payloadSize += 2;
@@ -399,7 +400,7 @@ uint16_t CK_MSP_FormPacket(uint8_t command_id, uint8_t* buffer){
 
 		// 4 uint8_t flightmodeflag
 		uint32_t flightmodeflag = 0;
-		if(osd_packet.isArmed){
+		if(msp_osd_packet.isArmed){
 			flightmodeflag = 0x00000003;    // arm to start recording
 		}
 		else{
@@ -417,7 +418,7 @@ uint16_t CK_MSP_FormPacket(uint8_t command_id, uint8_t* buffer){
 		CK_MSP_WriteBufferU8(buffer, current_pid_profile, payloadSize++, &crc);
 
 		// 1 uint16_t average system load 0 to 100
-		CK_MSP_WriteBufferU16(buffer, osd_packet.system_percent, payloadSize, &crc);
+		CK_MSP_WriteBufferU16(buffer, msp_osd_packet.system_percent, payloadSize, &crc);
 		payloadSize +=2;
 
 		if(command_id == MSP_STATUS){
