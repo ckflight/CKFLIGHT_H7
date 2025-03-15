@@ -39,6 +39,10 @@ SPI_TypeDef* COMMUNICATION_MAX7456_SPI;
 GPIO_TypeDef* COMMUNICATION_MAX7456_GPIO;
 uint8_t COMMUNICATION_MAX7456_PIN;
 
+#if USE_H7
+DMA_HandleTypeDef hdma_osd_dma;
+#endif
+
 int channel_counter = 0;
 
 OSD_PACKET_s osd_packet;
@@ -137,30 +141,46 @@ void CK_OSD_Init(uint32_t osdT, uint32_t mainT){
 
 	#if USE_DMA_OSD
 
+
+		#if USE_H7
+		CK_UART_DMA_EnableClock(OSD_DMA);
+
 		CK_UART_DMA_EnableClock(OSD_DMA);
 
 		CK_UART_DMA_ClearFlag(OSD_DMA, OSD_DMA_Stream);
 
-		#if USE_H7
-		//CK_UART_DMA_InitTX(OSD_DMA_Stream, OSD_DMA_Channel);
-		#endif
-
-		#if USE_F4
 		CK_UART_DMA_InitTX(OSD_DMA_Stream, OSD_DMA_Channel);
-		#endif
 
 		CK_UART_DMA_TCInterruptEnable(OSD_DMA_Stream);
 
 		HAL_NVIC_SetPriority(OSD_DMA_IRQn, OSD_DMA_PreemptPriority, OSD_DMA_SubPriority);
 		HAL_NVIC_EnableIRQ(OSD_DMA_IRQn);
 
-		#if USE_H7
-		CK_UART_DMA_SetPeripheralAddress(OSD_DMA_Stream, (uint32_t)(&COMMUNICATION_OSD_UART->TDR));
-		#endif
-		#if USE_F4
 		CK_UART_DMA_SetPeripheralAddress(OSD_DMA_Stream, (uint32_t)(&COMMUNICATION_OSD_UART->DR));
-		#endif
+
 		CK_UART_DMA_TXEnable(COMMUNICATION_OSD_UART);
+		CK_UART_DMA_SetPeripheralAddress(OSD_DMA_Stream, (uint32_t)(&COMMUNICATION_OSD_UART->TDR));
+
+		#endif
+
+		#if USE_F4
+
+		CK_UART_DMA_EnableClock(OSD_DMA);
+
+		CK_UART_DMA_ClearFlag(OSD_DMA, OSD_DMA_Stream);
+
+		CK_UART_DMA_InitTX(OSD_DMA_Stream, OSD_DMA_Channel);
+
+		CK_UART_DMA_TCInterruptEnable(OSD_DMA_Stream);
+
+		HAL_NVIC_SetPriority(OSD_DMA_IRQn, OSD_DMA_PreemptPriority, OSD_DMA_SubPriority);
+		HAL_NVIC_EnableIRQ(OSD_DMA_IRQn);
+
+		CK_UART_DMA_SetPeripheralAddress(OSD_DMA_Stream, (uint32_t)(&COMMUNICATION_OSD_UART->DR));
+
+		CK_UART_DMA_TXEnable(COMMUNICATION_OSD_UART);
+
+		#endif
 
 	#endif
 
@@ -348,6 +368,7 @@ void CK_OSD_SendPacketDMA(void){
 	CK_UART_DMA_Enable(OSD_DMA_Stream);
 
 	CK_UART_DMA_TXEnable(COMMUNICATION_OSD_UART);
+
 
 	is_interrupt_started = true;
 

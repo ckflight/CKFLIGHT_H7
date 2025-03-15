@@ -158,7 +158,7 @@ void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf){
 
 }
 
-void CK_UART_DMA_InitTX(DMA_Stream_TypeDef* dma_stream, uint32_t ch){
+void CK_UART_DMA_InitTX(DMA_Stream_TypeDef* dma_stream){
 
 	//HAL_UART_Transmit_DMA
 	//Enable the DMA to handle bufferable transfers. It says to set it to 1 for usart
@@ -224,6 +224,32 @@ void CK_UART_DMA_Enable(DMA_Stream_TypeDef* dma_stream){
 void CK_UART_DMA_Disable(DMA_Stream_TypeDef* dma_stream){
 
     dma_stream->CR &= ~DMA_CR_Enable; //Disable
+}
+
+uint32_t CK_UART_DMA_GetRequest(USART_TypeDef* uart, USART_INTERRUPT_ type){
+
+	if(type == RX_INTERRUPT){
+		if(uart == USART1) 		return DMA_REQUEST_USART1_RX;
+		else if(uart == USART2) return DMA_REQUEST_USART2_RX;
+		else if(uart == USART3) return DMA_REQUEST_USART3_RX;
+		else if(uart == UART4) 	return DMA_REQUEST_UART4_RX;
+		else if(uart == USART6) return DMA_REQUEST_USART6_RX;
+		else if(uart == UART7) 	return DMA_REQUEST_UART7_RX;
+		else if(uart == UART8) 	return DMA_REQUEST_UART8_RX;
+
+	}
+	else if(type == TX_INTERRUPT){
+		if(uart == USART1) 		return DMA_REQUEST_USART1_TX;
+		else if(uart == USART2) return DMA_REQUEST_USART2_TX;
+		else if(uart == USART3) return DMA_REQUEST_USART3_TX;
+		else if(uart == UART4) 	return DMA_REQUEST_UART4_TX;
+		else if(uart == USART6) return DMA_REQUEST_USART6_TX;
+		else if(uart == UART7) 	return DMA_REQUEST_UART7_TX;
+		else if(uart == UART8)	return DMA_REQUEST_UART8_TX;
+
+	}
+	return 0;
+
 }
 
 void CK_UART_DMA_ClearFlag(DMA_TypeDef* dma, DMA_Stream_TypeDef* dma_stream){

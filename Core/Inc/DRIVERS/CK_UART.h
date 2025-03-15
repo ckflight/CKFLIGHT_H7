@@ -83,7 +83,7 @@ typedef struct{
 
 void CK_UART_Init(USART_CONFIGURATION_* config, circularBuffer_t* circular_buf);
 
-void CK_UART_DMA_InitTX(DMA_Stream_TypeDef* dma_stream, uint32_t ch);
+void CK_UART_DMA_InitTX(DMA_Stream_TypeDef* dma_stream);
 
 void CK_UART_RXDMAInit(void);
 
@@ -106,6 +106,8 @@ void CK_UART_DMA_RXDisable(USART_TypeDef* uart);
 void CK_UART_DMA_Enable(DMA_Stream_TypeDef* dma_stream);
 
 void CK_UART_DMA_Disable(DMA_Stream_TypeDef* dma_stream);
+
+uint32_t CK_UART_DMA_GetRequest(USART_TypeDef* uart, USART_INTERRUPT_ type);
 
 void CK_UART_DMA_ClearFlag(DMA_TypeDef* dma, DMA_Stream_TypeDef* dma_stream);
 
