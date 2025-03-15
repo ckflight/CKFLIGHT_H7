@@ -329,10 +329,10 @@
 #if OSD_DJI_
 	#define OSD_DJI_USART				USART1
 
-	#define USE_INTERRUPT_OSD			0
+	#define USE_INTERRUPT_OSD			1
 	#define OSD_INTERRUPT_				1
 
-	#define USE_DMA_OSD					1
+	#define USE_DMA_OSD					0
 	#define OSD_DMA						DMA2
 	#define OSD_DMA_Stream				DMA2_Stream2
 	#define OSD_DMA_Handler				DMA2_Stream2_IRQHandler
