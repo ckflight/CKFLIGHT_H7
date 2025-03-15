@@ -23,8 +23,8 @@
 #define LOG_TIMEOUT_MS 				240
 #define SDCARD_CHECK_BUSY_US		TARGET_PERIPHERAL_TIME_US * 5
 
-const uint8_t debug_start_byte = 0x30;
-const uint8_t debug_end_byte   = 0x50;
+const uint8_t debug_start_byte = 0x00;
+const uint8_t debug_end_byte   = 0xFF;
 uint8_t counter = debug_start_byte;
 
 log_parameters_t flightLog;
