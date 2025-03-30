@@ -196,6 +196,7 @@ void CK_PRINTER_Update(CK_PRINT_TIMEx print_freq, uint32_t compT){
 		print_cmd = '.';// To not enter here again unless typed
 	}
 	else if(print_cmd == 'h' && is_printer_motor_mode_enabled == false){
+		CK_PRINTER_PrintPIDDefault();
 		CK_PRINTER_PrintPID();
 		CK_PRINTER_PrintRC();
 		CK_PRINTER_Transfer();
@@ -361,6 +362,38 @@ void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t){
 
 void CK_PRINTER_PrintPID(void){
     CK_USBD_StringPrintln("PID VALUES:");
+    CK_USBD_StringPrintln("-------------------------------------------------");
+    CK_USBD_StringPrintln("       P       I       D      FF     Dmax");
+
+    CK_USBD_StringPrint("ROLL:  ");
+    CK_USBD_IntPrint(pidProfile.pid[FD_ROLL].P); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_ROLL].I); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_ROLL].D); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_ROLL].F); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.d_max[FD_ROLL]); CK_USBD_StringPrintln("");
+
+    CK_USBD_StringPrint("PITCH: ");
+    CK_USBD_IntPrint(pidProfile.pid[FD_PITCH].P); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_PITCH].I); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_PITCH].D); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_PITCH].F); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.d_max[FD_PITCH]); CK_USBD_StringPrintln("");
+
+    CK_USBD_StringPrint("YAW:   ");
+    CK_USBD_IntPrint(pidProfile.pid[FD_YAW].P); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_YAW].I); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_YAW].D); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_YAW].F); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.d_max[FD_YAW]); CK_USBD_StringPrintln("");
+
+    CK_USBD_StringPrint("TPA_POINT: "); CK_USBD_IntPrintln(pidProfile.tpa_breakpoint);
+    CK_USBD_StringPrint("TPA_RATE:  "); CK_USBD_IntPrintln(pidProfile.tpa_rate);
+
+    CK_USBD_Transmit();
+}
+
+void CK_PRINTER_PrintPIDDefault(void){
+    CK_USBD_StringPrintln("PID DEFAULT VALUES:");
     CK_USBD_StringPrintln("-------------------------------------------------");
     CK_USBD_StringPrintln("       P       I       D      FF     Dmax");
 
