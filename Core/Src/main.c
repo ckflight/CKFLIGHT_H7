@@ -55,7 +55,6 @@ uint32_t computeStartTime, computeEndTime;
 // todo: add motor stop when radio is off or check if it creates failsafe
 // todo: implement elrs library as well and check if it has new features.
 
-// todo: add simplified tuning code
 // todo: check feedforward and implement all of it if there is any missing code.
 // todo: check gyro overflow.
 // todo: gyro yaw spin recory: mostly implemented
