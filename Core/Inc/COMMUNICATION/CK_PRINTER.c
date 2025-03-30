@@ -361,6 +361,7 @@ void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t){
 }
 
 void CK_PRINTER_PrintPID(void){
+    CK_USBD_StringPrintln("");
     CK_USBD_StringPrintln("PID VALUES:");
     CK_USBD_StringPrintln("-------------------------------------------------");
     CK_USBD_StringPrintln("       P       I       D      FF     Dmax");
@@ -393,6 +394,7 @@ void CK_PRINTER_PrintPID(void){
 }
 
 void CK_PRINTER_PrintPIDDefault(void){
+    CK_USBD_StringPrintln("");
     CK_USBD_StringPrintln("PID DEFAULT VALUES:");
     CK_USBD_StringPrintln("-------------------------------------------------");
     CK_USBD_StringPrintln("       P       I       D      FF     Dmax");
@@ -425,6 +427,7 @@ void CK_PRINTER_PrintPIDDefault(void){
 }
 
 void CK_PRINTER_PrintRC(void){
+	CK_USBD_StringPrintln("");
     CK_USBD_StringPrintln("RC SETTINGS:");
     CK_USBD_StringPrintln("--------------------------------------");
 
