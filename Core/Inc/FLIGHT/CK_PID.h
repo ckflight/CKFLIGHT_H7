@@ -62,7 +62,7 @@ typedef enum{
 #define PID_ROLL_DEFAULT  { 45, 80, 30, 120, 0 }
 #define PID_PITCH_DEFAULT { 47, 84, 34, 125, 0 }
 #define PID_YAW_DEFAULT   { 45, 80,  0, 120, 0 }
-#define D_MAX_DEFAULT     { 40, 46, 0 }
+#define D_MAX_DEFAULT     { 43, 49, 0 }
 
 #define DTERM_LPF1_DYN_MIN_HZ_DEFAULT 75
 #define DTERM_LPF1_DYN_MAX_HZ_DEFAULT 150

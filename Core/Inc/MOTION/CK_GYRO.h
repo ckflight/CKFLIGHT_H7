@@ -10,6 +10,9 @@
 
 #define GYRO_READ_ARRAY_SIZE	32
 
+#define LPF_MAX_HZ 1000 // so little filtering above 1000hz that if the user wants less delay, they must disable the filter
+#define DYN_LPF_MAX_HZ 1000
+
 #define GYRO_LPF1_DYN_MIN_HZ_DEFAULT 250
 #define GYRO_LPF1_DYN_MAX_HZ_DEFAULT 500
 
@@ -150,6 +153,9 @@ typedef struct gyroSensor_s{
     sensorModel_e sensor;
 
     float gyroacc_sensor_temperature;
+
+    uint8_t simplified_gyro_filter;
+    uint8_t simplified_gyro_filter_multiplier;
 
 }gyroSensor_t;
 

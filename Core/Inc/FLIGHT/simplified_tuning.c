@@ -1,4 +1,3 @@
-
 #include "math.h"
 #include "COMMON/axis.h"
 #include "COMMON/maths.h"
@@ -7,9 +6,7 @@
 
 #ifdef USE_SIMPLIFIED_TUNING
 
-
-
-static void calculateNewPidValues(pidProfile_t *pidProfile)
+void calculateNewPidValues(pidProfile_t *pidProfile)
 {
     const pidf_t pidDefaults[FLIGHT_DYNAMICS_INDEX_COUNT] = {
             [PID_ROLL] = PID_ROLL_DEFAULT,
@@ -59,7 +56,7 @@ static void calculateNewDTermFilterValues(pidProfile_t *pidProfile)
     }
 }
 
-static void calculateNewGyroFilterValues(gyroConfig_t *gyroConfig)
+static void calculateNewGyroFilterValues(gyroSensor_t *gyroConfig)
 {
     if (gyroConfig->gyro_lpf1_dyn_min_hz) {
         gyroConfig->gyro_lpf1_dyn_min_hz = constrain(GYRO_LPF1_DYN_MIN_HZ_DEFAULT * gyroConfig->simplified_gyro_filter_multiplier / 100, 0, DYN_LPF_MAX_HZ);
@@ -70,9 +67,11 @@ static void calculateNewGyroFilterValues(gyroConfig_t *gyroConfig)
         gyroConfig->gyro_lpf1_static_hz = constrain(GYRO_LPF1_DYN_MIN_HZ_DEFAULT * gyroConfig->simplified_gyro_filter_multiplier / 100, 0, DYN_LPF_MAX_HZ);
     }
 
+    /*
     if (gyroConfig->gyro_lpf2_static_hz) {
         gyroConfig->gyro_lpf2_static_hz = constrain(GYRO_LPF2_HZ_DEFAULT * gyroConfig->simplified_gyro_filter_multiplier / 100, 0, LPF_MAX_HZ);
     }
+    */
 }
 
 void applySimplifiedTuningPids(pidProfile_t *pidProfile)
@@ -89,21 +88,21 @@ void applySimplifiedTuningDtermFilters(pidProfile_t *pidProfile)
     }
 }
 
-void applySimplifiedTuningGyroFilters(gyroConfig_t *gyroConfig)
+void applySimplifiedTuningGyroFilters(gyroSensor_t *gyroConfig)
 {
     if (gyroConfig->simplified_gyro_filter) {
         calculateNewGyroFilterValues(gyroConfig);
     }
 }
 
-void applySimplifiedTuning(pidProfile_t *pidProfile, gyroConfig_t *gyroConfig)
+void applySimplifiedTuning(pidProfile_t *pidProfile, gyroSensor_t *gyroConfig)
 {
     applySimplifiedTuningPids(pidProfile);
     applySimplifiedTuningDtermFilters(pidProfile);
     applySimplifiedTuningGyroFilters(gyroConfig);
 }
 
-void disableSimplifiedTuning(pidProfile_t *pidProfile, gyroConfig_t *gyroConfig)
+void disableSimplifiedTuning(pidProfile_t *pidProfile, gyroSensor_t *gyroConfig)
 {
     pidProfile->simplified_pids_mode = PID_SIMPLIFIED_TUNING_OFF;
 
