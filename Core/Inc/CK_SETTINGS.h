@@ -33,7 +33,7 @@
 #define LOG_FLASH_				0
 #define LOG_DUALBUFFER_			0
 #define LOG_MULTIWRITE_			0// spi works in single mode
-#define TEST_LOG				1
+#define TEST_LOG				0
 
 #define BUZZER_PWM				0
 #define BUZZER_DC				1
