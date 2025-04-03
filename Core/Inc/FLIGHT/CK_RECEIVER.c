@@ -135,6 +135,8 @@ void CK_RECEIVER_Init(CK_RC_Mode rx_md){
     flags.MAG_HOLD                     	= false;
     flags.BOX3D                     	= false;
 
+    flags.CRASH_FLIP					= false;
+
     overwrite_flags.FORCE_TO_DISARM         = false;
 
     overwrite_flags.FORCE_TO_ACRO_MODE      = false;
