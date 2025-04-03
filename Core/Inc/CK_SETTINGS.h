@@ -90,6 +90,7 @@
 #define USE_ACC
 #define USE_THRUST_LINEARIZATION
 #define USE_SIMPLIFIED_TUNING
+#define USE_BATTERY_VOLTAGE_SAG_COMPENSATION
 
 // I will allocate 34 bytes left from 128 byte log for debugging parameters.
 // I will implement debug section for each part i want to check and select them here
