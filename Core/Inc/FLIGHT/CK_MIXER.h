@@ -49,6 +49,12 @@ typedef struct{
 
 	#endif
 
+#if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
+    float vbatSagCompensationFactor;
+    float vbatFull;
+    float vbatRangeToCompensate;
+#endif
+
     float ezLandingThreshold;
 	float ezLandingLimit;
 	float ezLandingSpeed;

@@ -10,6 +10,7 @@
 #include "FLIGHT/CK_LAND.h"
 #include "FLIGHT/CK_DSHOT.h"
 #include "FLIGHT/CK_PWM.h"
+#include "FLIGHT/flight_monitor.h"
 
 #include "COMMON/CK_FILTERS.h"
 
@@ -185,6 +186,19 @@ void CK_MIXER_Init(void){
     mixerRuntime.dynIdleI = 0.0f;
     mixerRuntime.prevMinRps = 0.0f;
 	#endif
+
+#if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
+    mixerRuntime.vbatSagCompensationFactor = 0.0f;
+    if (pidProfile.vbat_sag_compensation > 0 && !RPM_LIMIT_ACTIVE) {
+        //TODO: Make this voltage user configurable
+        mixerRuntime.vbatFull = CELL_VOLTAGE_FULL_CV;
+        mixerRuntime.vbatRangeToCompensate = mixerRuntime.vbatFull - monitor.vbatwarningcellvoltage;
+        if (mixerRuntime.vbatRangeToCompensate > 0) {
+            mixerRuntime.vbatSagCompensationFactor = ((float)pidProfile.vbat_sag_compensation) / 100.0f;
+        }
+    }
+#endif
+
 
     mixerRuntime.ezLandingThreshold = 2.0f * pidProfile.ez_landing_threshold / 100.0f;
 	mixerRuntime.ezLandingLimit = pidProfile.ez_landing_limit / 100.0f;
@@ -501,7 +515,19 @@ void CK_MIXER_CalculateThrottleAndMotorRange(void){
 	}
 	#endif
 
-	motorRangeMax = mixerRuntime.motorOutputHigh;
+#if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
+        float motorRangeAttenuationFactor = 0;
+        // reduce motorRangeMax when battery is full
+        if (mixerRuntime.vbatSagCompensationFactor > 0.0f) {
+            const uint16_t currentCellVoltage = getBatterySagCellVoltage();
+            // batteryGoodness = 1 when voltage is above vbatFull, and 0 when voltage is below vbatLow
+            float batteryGoodness = 1.0f - constrainf((mixerRuntime.vbatFull - currentCellVoltage) / mixerRuntime.vbatRangeToCompensate, 0.0f, 1.0f);
+            motorRangeAttenuationFactor = (mixerRuntime.vbatRangeToCompensate / mixerRuntime.vbatFull) * batteryGoodness * mixerRuntime.vbatSagCompensationFactor;
+        }
+        motorRangeMax = flags.CRASH_FLIP ? mixerRuntime.motorOutputHigh : mixerRuntime.motorOutputHigh - motorRangeAttenuationFactor * (mixerRuntime.motorOutputHigh - mixerRuntime.motorOutputLow);
+#else
+        motorRangeMax = mixerRuntime.motorOutputHigh;
+#endif
 
 	motorRangeMin = mixerRuntime.motorOutputLow + motorRangeMinIncrease * (mixerRuntime.motorOutputHigh - mixerRuntime.motorOutputLow);
 

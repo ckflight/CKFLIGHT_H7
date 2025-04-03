@@ -10,33 +10,6 @@
 #include "DRIVERS/CK_BUZZER.h"
 #include "FLIGHT/CK_RECEIVER.h"
 
-#define WARNING_TIME_US		500000U
-#define BATTER_CRITICAL_VOLTAGE			22.0f
-#define BATTERY_AVERAGE					32
-
-#define CRITICAL_TEMP_MAX				65.0f
-#define TEMPERATURE_AVERAGE				32
-
-typedef struct{
-
-	bool is_battery_low;
-	bool is_temp_high;
-
-	syncTimer_t monitor_sync;
-	syncTimer_t warning_sync;
-
-	float battery_voltage;
-	float battery_sum;
-	uint8_t battery_average;
-
-	float temperature;
-	float temp_sum;
-	uint8_t temperature_average;
-
-	float gyroacc_sensor_temperature;
-
-}flight_monitor_s;
-
 flight_monitor_s monitor;
 
 void flight_monitor_init(uint32_t monitorT, uint32_t mainT){
@@ -61,6 +34,7 @@ void flight_monitor_init(uint32_t monitorT, uint32_t mainT){
 
 	monitor.gyroacc_sensor_temperature = 0.0f;
 
+	monitor.vbatwarningcellvoltage = 350; // 3.5V
 }
 
 void flight_monitor_update(void){
@@ -147,15 +121,22 @@ void warning_monitor_update(void){
 
 }
 
+
 void monitor_set_gyroacc_temp(float t){
 	monitor.gyroacc_sensor_temperature = t;
 }
+
 
 float monitor_get_gyroacc_temp(void){
 	return monitor.gyroacc_sensor_temperature;
 }
 
+#if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
+uint16_t getBatterySagCellVoltage(void){
 
+    return (BATTERY_CELL ? monitor.battery_voltage / BATTERY_CELL : 0);
+}
+#endif
 
 
 
