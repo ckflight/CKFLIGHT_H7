@@ -306,12 +306,6 @@ void CK_OSD_SetFlightData(void){
 
     osd_packet.isFailSafe = isFailsafeActive();
 
-    //osd_packet.freqResult = (1000000 / mainLoopSum);
-
-    //osd_packet.system_percent = (100 * (1000000 / mainLoopSum)) / osd_packet.mainLoopTime;
-
-    //osd_packet.loopTime defined in init method
-
     osd_packet.imu_heading = (uint16_t)(attitude.values.yaw / 10.0f);
 
     uint8_t pid_buffer[PID_ARRAY_ROW*PID_ARRAY_COLUMN];

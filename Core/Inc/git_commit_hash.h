@@ -1,0 +1,3 @@
+#define CURRENT_COMMIT_HASH "924dd6b2"
+#define VERSION_MAJOR 4
+#define VERSION_MINOR 34

@@ -4,6 +4,7 @@
 
 #include "FLIGHT/pid_init.h"
 #include "FLIGHT/CK_RECEIVER.h"
+#include "FLIGHT/simplified_tuning.h"
 
 #include "FLASH/CK_FLASH.h"
 
@@ -93,6 +94,8 @@ void pidInit(uint32_t mainT){
     pidLoadParameter();
 
 	pidInitializeParameters();
+
+	calculateNewPidValues(&pidProfile);
 
 	pidResetResultParameters();
 

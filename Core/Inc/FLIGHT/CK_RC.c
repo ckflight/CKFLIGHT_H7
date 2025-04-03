@@ -70,17 +70,17 @@ control_rate_config_t rc_config = {
 		.rate_limit[PITCH] 		= SETPOINT_RATE_LIMIT,
 		.rate_limit[YAW] 		= SETPOINT_RATE_LIMIT,
 
-		.rcRates[ROLL] 			= 110, // divide 100 (110 means 1.10)
-		.rcRates[PITCH] 		= 110,
-		.rcRates[YAW] 			= 110,
+		.rcRates[ROLL] 			= 115, // divide 100 (110 means 1.10)
+		.rcRates[PITCH] 		= 115,
+		.rcRates[YAW] 			= 112,
 
-		.rcExpo[ROLL]			= 20,   // divide 100
-		.rcExpo[PITCH]			= 20,
-		.rcExpo[YAW]			= 25,
+		.rcExpo[ROLL]			= 10,   // divide 100
+		.rcExpo[PITCH]			= 10,
+		.rcExpo[YAW]			= 20,
 
-		.rates[ROLL]			= 62,  // divide 100 (66 means 0.66)
-		.rates[PITCH]			= 62,
-		.rates[YAW]				= 60,
+		.rates[ROLL]			= 65,  // divide 100 (66 means 0.66)
+		.rates[PITCH]			= 65,
+		.rates[YAW]				= 63,
 
 		.thrMid8 				= 50,
 		.thrExpo8				= 0,

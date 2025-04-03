@@ -15,6 +15,7 @@
 
 #include "FLIGHT/CK_PID.h"
 #include "FLIGHT/flight_monitor.h"
+#include "FLIGHT/simplified_tuning.h"
 
 #include "COMMUNICATION/CK_PRINTER.h"
 
@@ -130,6 +131,9 @@ void CK_GYRO_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, s
     gyro.yaw_spin_threshold = 1950;
 
     gyro.gyroacc_sensor_temperature = 0.0f;
+
+    gyro.simplified_gyro_filter = true;
+    gyro.simplified_gyro_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT;
 
 #if USE_DMA_SENSOR
 

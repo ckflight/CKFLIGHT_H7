@@ -110,6 +110,8 @@ int CK_MICROCARD_WaitForIdle(int bytesToWait);
 
 void CK_MICROCARD_SPIFullSpeed(void);
 
+void CK_MICROCARD_DeselectCardNoTransfer(void);
+
 void CK_MICROCARD_DeselectCard(void);
 
 void CK_MICROCARD_SelectCard(void);

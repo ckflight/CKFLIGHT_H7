@@ -23,8 +23,8 @@
 #define LOG_TIMEOUT_MS 				240
 #define SDCARD_CHECK_BUSY_US		TARGET_PERIPHERAL_TIME_US * 5
 
-const uint8_t debug_start_byte = 0x30;
-const uint8_t debug_end_byte   = 0x50;
+const uint8_t debug_start_byte = 0x00;
+const uint8_t debug_end_byte   = 0xFF;
 uint8_t counter = debug_start_byte;
 
 log_parameters_t flightLog;
@@ -676,45 +676,37 @@ void CK_LOG_WriteInfoBuffer(void){
 		flightLog.info_buffer[35+ idx] = (uint8_t)(gyro.gyro_soft_notch_cutoff_3 >> 8 & 0xFF);
 		flightLog.info_buffer[36+ idx] = (uint8_t)(gyro.gyro_soft_notch_cutoff_3 & 0xFF);
 
-    	flightLog.info_buffer[37+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_ROLL][PID_P]);
-    	flightLog.info_buffer[38+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_ROLL][PID_I]);
-    	flightLog.info_buffer[39+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_ROLL][PID_D]);
-    	flightLog.info_buffer[40+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_ROLL][PID_FF]);
-    	flightLog.info_buffer[41+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_ROLL][PID_Dmax]);
+    	flightLog.info_buffer[37+idx]  = (uint8_t)(pidProfile.pid[FD_ROLL].P);
+    	flightLog.info_buffer[38+idx]  = (uint8_t)(pidProfile.pid[FD_ROLL].I);
+    	flightLog.info_buffer[39+idx]  = (uint8_t)(pidProfile.pid[FD_ROLL].D);
+    	flightLog.info_buffer[40+idx]  = (uint8_t)(pidProfile.pid[FD_ROLL].F);
+    	flightLog.info_buffer[41+idx]  = (uint8_t)(pidProfile.d_max[FD_ROLL]);
 
-    	flightLog.info_buffer[42+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_PITCH][PID_P]);
-    	flightLog.info_buffer[43+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_PITCH][PID_I]);
-    	flightLog.info_buffer[44+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_PITCH][PID_D]);
-    	flightLog.info_buffer[45+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_PITCH][PID_FF]);
-    	flightLog.info_buffer[46+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_PITCH][PID_Dmax]);
+    	flightLog.info_buffer[42+idx]  = (uint8_t)(pidProfile.pid[FD_PITCH].P);
+    	flightLog.info_buffer[43+idx]  = (uint8_t)(pidProfile.pid[FD_PITCH].I);
+    	flightLog.info_buffer[44+idx]  = (uint8_t)(pidProfile.pid[FD_PITCH].D);
+    	flightLog.info_buffer[45+idx]  = (uint8_t)(pidProfile.pid[FD_PITCH].F);
+    	flightLog.info_buffer[46+idx]  = (uint8_t)(pidProfile.d_max[FD_PITCH]);
 
-    	flightLog.info_buffer[47+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_YAW][PID_P]);
-    	flightLog.info_buffer[48+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_YAW][PID_I]);
-    	flightLog.info_buffer[49+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_YAW][PID_D]);
-    	flightLog.info_buffer[50+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_YAW][PID_FF]);
-    	flightLog.info_buffer[51+idx]  = (uint8_t)(PID_SELECTED_PROFILE[FD_YAW][PID_Dmax]);
+    	flightLog.info_buffer[47+idx]  = (uint8_t)(pidProfile.pid[FD_YAW].P);
+    	flightLog.info_buffer[48+idx]  = (uint8_t)(pidProfile.pid[FD_YAW].I);
+    	flightLog.info_buffer[49+idx]  = (uint8_t)(pidProfile.pid[FD_YAW].D);
+    	flightLog.info_buffer[50+idx]  = (uint8_t)(pidProfile.pid[FD_YAW].F);
+    	flightLog.info_buffer[51+idx]  = (uint8_t)(pidProfile.d_max[FD_YAW]);
 
-    	/*
-    	flightLog.info_buffer[52+idx]  = (uint8_t)(CK_PID_GetMaster_Multiplier() 	* 10.0f);
-    	flightLog.info_buffer[53+idx]  = (uint8_t)(CK_PID_GetITerm_Multiplier() 	* 10.0f);
-    	flightLog.info_buffer[54+idx]  = (uint8_t)(CK_PID_GetDTerm_Multiplier() 	* 10.0f);
-    	flightLog.info_buffer[55+idx]  = (uint8_t)(CK_PID_GetFF_Multiplier() 		* 10.0f);
-    	flightLog.info_buffer[56+idx]  = (uint8_t)(CK_PID_GetRoll_Multiplier() 		* 10.0f);
-    	flightLog.info_buffer[57+idx]  = (uint8_t)(CK_PID_GetPitch_Multiplier() 	* 10.0f);
-    	flightLog.info_buffer[58+idx]  = (uint8_t)(CK_PID_GetYaw_Multiplier() 		* 10.0f);
-		*/
-    	flightLog.info_buffer[52+idx]  = (uint8_t)(1.0f 	* 10.0f);
-		flightLog.info_buffer[53+idx]  = (uint8_t)(1.0f 	* 10.0f);
-		flightLog.info_buffer[54+idx]  = (uint8_t)(1.0f 	* 10.0f);
-		flightLog.info_buffer[55+idx]  = (uint8_t)(1.0f 	* 10.0f);
-		flightLog.info_buffer[56+idx]  = (uint8_t)(1.0f 	* 10.0f);
-		flightLog.info_buffer[57+idx]  = (uint8_t)(1.0f 	* 10.0f);
-		flightLog.info_buffer[58+idx]  = (uint8_t)(1.0f 	* 10.0f);
+    	flightLog.info_buffer[52+idx]  = (uint8_t)(pidProfile.simplified_master_multiplier);
+    	flightLog.info_buffer[53+idx]  = (uint8_t)(pidProfile.simplified_pi_gain);
+    	flightLog.info_buffer[54+idx]  = (uint8_t)(pidProfile.simplified_feedforward_gain);
+    	flightLog.info_buffer[55+idx]  = (uint8_t)(pidProfile.simplified_roll_pitch_ratio);
+    	flightLog.info_buffer[56+idx]  = (uint8_t)(pidProfile.simplified_i_gain);
+    	flightLog.info_buffer[57+idx]  = (uint8_t)(pidProfile.simplified_d_gain);
+    	flightLog.info_buffer[58+idx]  = (uint8_t)(pidProfile.simplified_d_max_gain);
+    	flightLog.info_buffer[59+idx]  = (uint8_t)(pidProfile.simplified_pitch_pi_gain);
 
     	// 1 is true 0 is false flags to know which parameters are debugged and logged for analyzer to know
     	//
 		#if defined(LOG_DEBUG_PIDLEVEL_PARAMETERS)
-    	flightLog.info_buffer[59+idx]  = 1;
+    	flightLog.info_buffer[60+idx]  = 1;
     	#endif
 
 

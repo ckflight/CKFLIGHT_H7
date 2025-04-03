@@ -179,21 +179,21 @@ pidProfile_t pidProfile = {
 		.level_race_mode 				= false,
 		.vbat_sag_compensation 			= 0,
 		.simplified_pids_mode 			= PID_SIMPLIFIED_TUNING_RPY,
-		.simplified_master_multiplier 	= SIMPLIFIED_TUNING_DEFAULT,
-		.simplified_roll_pitch_ratio 	= SIMPLIFIED_TUNING_DEFAULT,
-		.simplified_i_gain 				= SIMPLIFIED_TUNING_DEFAULT,
-		.simplified_d_gain 				= SIMPLIFIED_TUNING_D_DEFAULT,
-		.simplified_pi_gain 			= SIMPLIFIED_TUNING_DEFAULT,
-		.simplified_d_max_gain 			= SIMPLIFIED_TUNING_D_DEFAULT,
-		.simplified_feedforward_gain 	= SIMPLIFIED_TUNING_DEFAULT,
-		.simplified_pitch_pi_gain 		= SIMPLIFIED_TUNING_DEFAULT,
+		.simplified_master_multiplier 	= 130,	//SIMPLIFIED_TUNING_DEFAULT, // SIMPLIFIED_TUNING_DEFAULT = 100 = 1.0
+		.simplified_pi_gain 			= 110,	//SIMPLIFIED_TUNING_DEFAULT,
+		.simplified_feedforward_gain 	= 130,	//SIMPLIFIED_TUNING_DEFAULT,
+		.simplified_roll_pitch_ratio 	= 100,	//SIMPLIFIED_TUNING_DEFAULT,
+		.simplified_i_gain 				= 100,	//SIMPLIFIED_TUNING_DEFAULT,
+		.simplified_d_gain 				= 100,	//SIMPLIFIED_TUNING_D_DEFAULT,
+		.simplified_d_max_gain 			= 100,	//SIMPLIFIED_TUNING_D_DEFAULT,
+		.simplified_pitch_pi_gain 		= 100,//SIMPLIFIED_TUNING_DEFAULT,
 		.simplified_dterm_filter 		= true,
 		.simplified_dterm_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT,
 		.anti_gravity_cutoff_hz 		= 5,
 		.anti_gravity_p_gain 			= 100,
-		.tpa_mode 						= TPA_MODE_D,
-		.tpa_rate 						= 65,
-		.tpa_breakpoint 				= 1350,
+		.tpa_mode 						= TPA_MODE_D, // Attenuates D so decreasing makes high D for throttle to eliminate osc
+		.tpa_rate 						= 50,
+		.tpa_breakpoint 				= 1800,
 		.angle_feedforward_smoothing_ms = 80,
 		.angle_earth_ref 				= 100,
 		.horizon_delay_ms 				= 500, // 500ms time constant on any increase in horizon strength
@@ -283,7 +283,7 @@ static float calcWingThrottle(void)
     }
 
     return getMotorOutputRms() * batteryThrottleFactor;
-}
+}tpaMultiplier
 
 static float calcWingAcceleration(float throttle, float pitchAngleRadians)
 {

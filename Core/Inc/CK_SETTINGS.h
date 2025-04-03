@@ -33,7 +33,7 @@
 #define LOG_FLASH_				0
 #define LOG_DUALBUFFER_			0
 #define LOG_MULTIWRITE_			0// spi works in single mode
-#define TEST_LOG				1
+#define TEST_LOG				0
 
 #define BUZZER_PWM				0
 #define BUZZER_DC				1
@@ -89,7 +89,7 @@
 
 #define USE_ACC
 #define USE_THRUST_LINEARIZATION
-//#define USE_SIMPLIFIED_TUNING
+#define USE_SIMPLIFIED_TUNING
 
 // I will allocate 34 bytes left from 128 byte log for debugging parameters.
 // I will implement debug section for each part i want to check and select them here

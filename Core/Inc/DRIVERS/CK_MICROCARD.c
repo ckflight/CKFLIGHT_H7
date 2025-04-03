@@ -1185,6 +1185,11 @@ void CK_MICROCARD_DeselectCard(void){
     CK_GPIO_SetPin(CK_MICROCARD_CS_PORT, CK_MICROCARD_CS_PIN);
 }
 
+void CK_MICROCARD_DeselectCardNoTransfer(void){
+
+    CK_GPIO_SetPin(CK_MICROCARD_CS_PORT, CK_MICROCARD_CS_PIN);
+}
+
 void CK_MICROCARD_SelectCard(void){
 
     CK_GPIO_ClearPin(CK_MICROCARD_CS_PORT, CK_MICROCARD_CS_PIN);
@@ -1244,7 +1249,10 @@ uint8_t CK_MICROCARD_CheckIsCardBusy(void){
 
     resp = CK_SPI_Transfer(CK_MICROCARD_SPI, 0xFF);// 0xFF means OK.
 
-    CK_MICROCARD_DeselectCard();
+    //CK_MICROCARD_DeselectCard();
+
+    // Already checking with above transfer. This one is not needed if resp not 0xFF next time it will check again.
+    CK_MICROCARD_DeselectCardNoTransfer();
 
     if(resp == 0xFF){
     	resp = HAL_OK;
@@ -1401,7 +1409,7 @@ void MICROCARD_DMA_TX_Handler(void){
     			card.transfer_mode = SPI_DMA_INTERRUPT_MULTIBLOCK;
     		}
 
-    		CK_MICROCARD_DeselectCard();
+    		CK_MICROCARD_DeselectCard(); // Do not change it. Only card high not enough
     	}
     	// Data log tx interrupt
     	else{

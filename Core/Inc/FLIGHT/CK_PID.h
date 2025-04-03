@@ -59,8 +59,11 @@ typedef enum{
 #define ITERM_ACCELERATOR_GAIN_OFF 0
 #define ITERM_ACCELERATOR_GAIN_MAX 250
 
-#define PID_ROLL_DEFAULT  { 45, 80, 30, 120, 0 }
-#define PID_PITCH_DEFAULT { 47, 84, 34, 125, 0 }
+// This parameters are loaded to eeprom and also to pidProfile.pid and pidProfile.d_max
+// If last dmax defaults are 0 then pid_init pidInitializeParameters() writes zero for d_max
+// because of that i added D_MAX_DEFAULT values to default pid column as 43, 49 and 0. It was 0 0 0 before
+#define PID_ROLL_DEFAULT  { 45, 80, 30, 120, 40 }
+#define PID_PITCH_DEFAULT { 47, 84, 34, 125, 46 }
 #define PID_YAW_DEFAULT   { 45, 80,  0, 120, 0 }
 #define D_MAX_DEFAULT     { 40, 46, 0 }
 

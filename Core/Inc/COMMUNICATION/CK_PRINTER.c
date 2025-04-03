@@ -196,6 +196,7 @@ void CK_PRINTER_Update(CK_PRINT_TIMEx print_freq, uint32_t compT){
 		print_cmd = '.';// To not enter here again unless typed
 	}
 	else if(print_cmd == 'h' && is_printer_motor_mode_enabled == false){
+		CK_PRINTER_PrintPIDDefault();
 		CK_PRINTER_PrintPID();
 		CK_PRINTER_PrintRC();
 		CK_PRINTER_Transfer();
@@ -347,10 +348,10 @@ void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t){
 
 		printerCounter = 0;
 
-		CK_USBD_StringPrint("ADC_LIPO:    ");CK_USBD_FloatPrintln(CK_ADC_GetLipoResult());
-		CK_USBD_StringPrint("LIPO VOLT:    ");CK_USBD_FloatPrintln(CK_ADC_GetLipoResult() * VOLT_CALIBRATION_MULTIPLIER);
-		CK_USBD_StringPrint("ADC_CURRENT: ");CK_USBD_FloatPrintln(CK_ADC_GetCurrentResult());
-		CK_USBD_StringPrint("ADC_TEMPERATUR: ");CK_USBD_FloatPrintln(CK_ADC_GetTemperatureResult());
+		CK_USBD_StringPrint("ADC_LIPO:    		");CK_USBD_FloatPrintln(CK_ADC_GetLipoResult());
+		CK_USBD_StringPrint("LIPO VOLT:    		");CK_USBD_FloatPrintln(CK_ADC_GetLipoResult() * VOLT_CALIBRATION_MULTIPLIER);
+		CK_USBD_StringPrint("ADC_CURRENT: 		");CK_USBD_FloatPrintln(CK_ADC_GetCurrentResult());
+		CK_USBD_StringPrint("ADC_TEMPERATUR: 	");CK_USBD_FloatPrintln(CK_ADC_GetTemperatureResult());
 		CK_USBD_StringPrint("SENSOR_TEMPERATUR: ");CK_USBD_FloatPrintln(monitor_get_gyroacc_temp());
 		CK_USBD_StringPrintln("");
 
@@ -360,45 +361,95 @@ void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t){
 }
 
 void CK_PRINTER_PrintPID(void){
+    CK_USBD_StringPrintln("");
+    CK_USBD_StringPrintln("PID VALUES:");
+    CK_USBD_StringPrintln("-------------------------------------------------");
+    CK_USBD_StringPrintln("       P       I       D      FF     Dmax");
 
-	CK_USBD_StringPrintln("                P        I        D");
-	CK_USBD_StringPrint("ROLL:   ");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_P]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_I]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_D]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_FF]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_Dmax]);CK_USBD_StringPrintln("");
+    CK_USBD_StringPrint("ROLL:  ");
+    CK_USBD_IntPrint(pidProfile.pid[FD_ROLL].P); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_ROLL].I); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_ROLL].D); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_ROLL].F); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.d_max[FD_ROLL]); CK_USBD_StringPrintln("");
 
-	CK_USBD_StringPrint("PITCH:         ");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_P]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_I]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_D]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_FF]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_Dmax]);CK_USBD_StringPrintln("");
+    CK_USBD_StringPrint("PITCH: ");
+    CK_USBD_IntPrint(pidProfile.pid[FD_PITCH].P); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_PITCH].I); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_PITCH].D); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_PITCH].F); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.d_max[FD_PITCH]); CK_USBD_StringPrintln("");
 
-	CK_USBD_StringPrint("YAW:           ");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_P]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_I]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_D]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_FF]);CK_USBD_StringPrint(",");
-	CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_Dmax]);CK_USBD_StringPrintln("");
+    CK_USBD_StringPrint("YAW:   ");
+    CK_USBD_IntPrint(pidProfile.pid[FD_YAW].P); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_YAW].I); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_YAW].D); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.pid[FD_YAW].F); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.d_max[FD_YAW]); CK_USBD_StringPrintln("");
 
+    CK_USBD_StringPrint("TPA_POINT: "); CK_USBD_IntPrintln(pidProfile.tpa_breakpoint);
+    CK_USBD_StringPrint("TPA_RATE:  "); CK_USBD_IntPrintln(pidProfile.tpa_rate);
 
-	CK_USBD_StringPrint("TPA_POINT:     ");CK_USBD_IntPrintln(pidProfile.tpa_breakpoint);
-	CK_USBD_StringPrint("TPA_RATE:      ");CK_USBD_IntPrintln(pidProfile.tpa_rate);
+    CK_USBD_Transmit();
+}
 
-	CK_USBD_Transmit();
+void CK_PRINTER_PrintPIDDefault(void){
+    CK_USBD_StringPrintln("");
+    CK_USBD_StringPrintln("PID DEFAULT VALUES:");
+    CK_USBD_StringPrintln("-------------------------------------------------");
+    CK_USBD_StringPrintln("       P       I       D      FF     Dmax");
+
+    CK_USBD_StringPrint("ROLL:  ");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_P]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_I]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_D]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_FF]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_ROLL][PID_Dmax]); CK_USBD_StringPrintln("");
+
+    CK_USBD_StringPrint("PITCH: ");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_P]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_I]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_D]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_FF]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_PITCH][PID_Dmax]); CK_USBD_StringPrintln("");
+
+    CK_USBD_StringPrint("YAW:   ");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_P]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_I]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_D]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_FF]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(PID_SELECTED_PROFILE[FD_YAW][PID_Dmax]); CK_USBD_StringPrintln("");
+
+    CK_USBD_StringPrint("TPA_POINT: "); CK_USBD_IntPrintln(pidProfile.tpa_breakpoint);
+    CK_USBD_StringPrint("TPA_RATE:  "); CK_USBD_IntPrintln(pidProfile.tpa_rate);
+
+    CK_USBD_Transmit();
 }
 
 void CK_PRINTER_PrintRC(void){
+	CK_USBD_StringPrintln("");
+    CK_USBD_StringPrintln("RC SETTINGS:");
+    CK_USBD_StringPrintln("--------------------------------------");
 
-	CK_USBD_StringPrint("ROLL PITCH DEADBAND: ");CK_USBD_IntPrintln(rc_config.deadband);
-	CK_USBD_StringPrint("YAW_DEADBAND:  	  ");CK_USBD_IntPrintln(rc_config.yaw_deadband);
-	CK_USBD_StringPrint("RC_RATE:       	  ");CK_USBD_IntPrint(rc_config.rcRates[FD_ROLL]);CK_USBD_StringPrint(" ");CK_USBD_IntPrint(rc_config.rcRates[FD_PITCH]);CK_USBD_StringPrint("  ");CK_USBD_IntPrintln(rc_config.rcRates[FD_YAW]);
-	CK_USBD_StringPrint("RC_EXPO:       	  ");CK_USBD_IntPrint(rc_config.rcExpo[FD_ROLL]);CK_USBD_StringPrint("  ");CK_USBD_IntPrint(rc_config.rcExpo[FD_PITCH]);CK_USBD_StringPrint("  ");CK_USBD_IntPrintln(rc_config.rcExpo[FD_YAW]);
-	CK_USBD_StringPrint("RATES:         	  ");CK_USBD_IntPrint(rc_config.rates[FD_ROLL]);CK_USBD_StringPrint("  ");CK_USBD_IntPrint(rc_config.rates[FD_PITCH]);CK_USBD_StringPrint("  ");CK_USBD_IntPrintln(rc_config.rates[FD_YAW]);
+    CK_USBD_StringPrint("ROLL PITCH DEADBAND: "); CK_USBD_IntPrintln(rc_config.deadband);
+    CK_USBD_StringPrint("YAW_DEADBAND:        "); CK_USBD_IntPrintln(rc_config.yaw_deadband);
 
-	CK_USBD_Transmit();
+    CK_USBD_StringPrint("RC_RATE:    ");
+    CK_USBD_IntPrint(rc_config.rcRates[FD_ROLL]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(rc_config.rcRates[FD_PITCH]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrintln(rc_config.rcRates[FD_YAW]);
+
+    CK_USBD_StringPrint("RC_EXPO:    ");
+    CK_USBD_IntPrint(rc_config.rcExpo[FD_ROLL]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(rc_config.rcExpo[FD_PITCH]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrintln(rc_config.rcExpo[FD_YAW]);
+
+    CK_USBD_StringPrint("RATES:      ");
+    CK_USBD_IntPrint(rc_config.rates[FD_ROLL]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(rc_config.rates[FD_PITCH]); CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrintln(rc_config.rates[FD_YAW]);
+
+    CK_USBD_Transmit();
 }
 
 void CK_PRINTER_PrintNavigation(CK_PRINT_TIMEx time, uint32_t t){
