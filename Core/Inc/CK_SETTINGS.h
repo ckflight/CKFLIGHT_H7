@@ -60,6 +60,8 @@
 
 #define BUZZER_WARNING_			0
 
+#define BATTERY_CELL			6
+
 #if SCOPE_CHECK_
 	#define SCOPE_CHECK_OSD				0
 	#define SCOPE_CHECK_LOG				1
