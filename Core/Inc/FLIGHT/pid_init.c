@@ -542,8 +542,28 @@ uint16_t pidGetDefaultProfile(uint8_t* copy_buffer){
 
 	copy_buffer[buffer_size++] = (pidProfile.tpa_breakpoint >> 8) & 0xFF;
 	copy_buffer[buffer_size++] = pidProfile.tpa_breakpoint & 0xFF;
-
 	copy_buffer[buffer_size++] = pidProfile.tpa_rate;
+	copy_buffer[buffer_size++] = pidProfile.tpa_mode;
+
+	copy_buffer[buffer_size++] = pidProfile.anti_gravity_cutoff_hz;
+	copy_buffer[buffer_size++] = pidProfile.anti_gravity_p_gain;
+	copy_buffer[buffer_size++] = pidProfile.anti_gravity_gain;
+
+	copy_buffer[buffer_size++] = pidProfile.simplified_pids_mode;
+	copy_buffer[buffer_size++] = pidProfile.simplified_master_multiplier;
+	copy_buffer[buffer_size++] = pidProfile.simplified_pi_gain;
+	copy_buffer[buffer_size++] = pidProfile.simplified_feedforward_gain;
+	copy_buffer[buffer_size++] = pidProfile.simplified_roll_pitch_ratio;
+	copy_buffer[buffer_size++] = pidProfile.simplified_i_gain;
+	copy_buffer[buffer_size++] = pidProfile.simplified_d_gain;
+	copy_buffer[buffer_size++] = pidProfile.simplified_d_max_gain;
+	copy_buffer[buffer_size++] = pidProfile.simplified_pitch_pi_gain;
+
+	copy_buffer[buffer_size++] = pidProfile.feedforward_averaging;
+	copy_buffer[buffer_size++] = pidProfile.feedforward_max_rate_limit;
+	copy_buffer[buffer_size++] = pidProfile.feedforward_smooth_factor;
+	copy_buffer[buffer_size++] = pidProfile.feedforward_jitter_factor;
+	copy_buffer[buffer_size++] = pidProfile.feedforward_boost;
 
 	return buffer_size;
 
@@ -586,8 +606,31 @@ void pidLoadParameter(void){
 		}
 	}
 
-	pidProfile.tpa_breakpoint = (pid_buffer[PID_ARRAY_ROW * PID_ARRAY_COLUMN] << 8) | pid_buffer[PID_ARRAY_ROW * PID_ARRAY_COLUMN + 1];
-	pidProfile.tpa_rate = pid_buffer[PID_ARRAY_ROW * PID_ARRAY_COLUMN + 2];
+	uint8_t idx = PID_ARRAY_ROW * PID_ARRAY_COLUMN;
+
+	pidProfile.tpa_breakpoint 				= (pid_buffer[idx] << 8) | pid_buffer[idx + 1];
+	pidProfile.tpa_rate 					= pid_buffer[idx + 2];
+	pidProfile.tpa_mode 					= pid_buffer[idx + 3];
+
+	pidProfile.anti_gravity_cutoff_hz 		= pid_buffer[idx + 4];
+	pidProfile.anti_gravity_p_gain			= pid_buffer[idx + 5];
+	pidProfile.anti_gravity_gain 			= pid_buffer[idx + 6];
+
+	pidProfile.simplified_pids_mode 		= pid_buffer[idx + 7];
+	pidProfile.simplified_master_multiplier = pid_buffer[idx + 8];
+	pidProfile.simplified_pi_gain 			= pid_buffer[idx + 9];
+	pidProfile.simplified_feedforward_gain 	= pid_buffer[idx + 10];
+	pidProfile.simplified_roll_pitch_ratio 	= pid_buffer[idx + 11];
+	pidProfile.simplified_i_gain 			= pid_buffer[idx + 12];
+	pidProfile.simplified_d_gain 			= pid_buffer[idx + 13];
+	pidProfile.simplified_d_max_gain 		= pid_buffer[idx + 14];
+	pidProfile.simplified_pitch_pi_gain 	= pid_buffer[idx + 15];
+
+	pidProfile.feedforward_averaging 		= pid_buffer[idx + 16];
+	pidProfile.feedforward_max_rate_limit 	= pid_buffer[idx + 17];
+	pidProfile.feedforward_smooth_factor 	= pid_buffer[idx + 18];
+	pidProfile.feedforward_jitter_factor 	= pid_buffer[idx + 19];
+	pidProfile.feedforward_boost 			= pid_buffer[idx + 20];
 
 }
 
