@@ -179,9 +179,9 @@ pidProfile_t pidProfile = {
 		.level_race_mode 				= false,
 		.vbat_sag_compensation 			= 0,
 		.simplified_pids_mode 			= PID_SIMPLIFIED_TUNING_RPY,
-		.simplified_master_multiplier 	= 130,	//SIMPLIFIED_TUNING_DEFAULT, // SIMPLIFIED_TUNING_DEFAULT = 100 = 1.0
-		.simplified_pi_gain 			= 110,	//SIMPLIFIED_TUNING_DEFAULT,
-		.simplified_feedforward_gain 	= 130,	//SIMPLIFIED_TUNING_DEFAULT,
+		.simplified_master_multiplier 	= 100,	//SIMPLIFIED_TUNING_DEFAULT, // SIMPLIFIED_TUNING_DEFAULT = 100 = 1.0
+		.simplified_pi_gain 			= 100,	//SIMPLIFIED_TUNING_DEFAULT,
+		.simplified_feedforward_gain 	= 100,	//SIMPLIFIED_TUNING_DEFAULT,
 		.simplified_roll_pitch_ratio 	= 100,	//SIMPLIFIED_TUNING_DEFAULT,
 		.simplified_i_gain 				= 100,	//SIMPLIFIED_TUNING_DEFAULT,
 		.simplified_d_gain 				= 100,	//SIMPLIFIED_TUNING_D_DEFAULT,
