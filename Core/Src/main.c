@@ -159,7 +159,7 @@ int main(void){
 
     CK_ADJUSTMENT_Init(TARGET_2HZ_US, TARGET_MAIN_TIME_US);
 
-    CK_RECEIVER_WaitARM(); // Buzzer tone 1
+    //CK_RECEIVER_WaitARM(); // Buzzer tone 1
 
 #if GPS_
     CK_GPS_Init(GPS_UART, GPS_MODULE);

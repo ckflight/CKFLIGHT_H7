@@ -20,8 +20,14 @@ typedef struct{
 
 	uint8_t config_buffer[EEPROM_BUFFER_SIZE];
 
+	uint8_t term_buffer[128];
+	uint16_t term_index;
+
 	uint8_t gui_buffer[128];
 	uint16_t gui_index;
+
+	uint8_t is_term_done;
+	uint8_t is_term_input_done;
 
 	uint8_t is_gui_done;
 	uint8_t is_gui_input_done;
@@ -33,10 +39,10 @@ config_t config = {
 	.is_check_completed 	= 0,
 	.is_eeprom_configured 	= 0,
 
-	.gui_index = 0,
+	.term_index = 0,
 
-	.is_gui_done = 0,
-	.is_gui_input_done = 0
+	.is_term_done = 0,
+	.is_term_input_done = 0
 
 };
 
@@ -152,14 +158,15 @@ void CK_CONFIGURATION_Init(void){
 
 void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size){
 
-	// C<$ is the command
+	// CK<$_T,G is the command
 
-	if(buffer_size != 3){
+	if(buffer_size != 6){
 		return;
 	}
 
 	int state = 0;
-	uint8_t is_config_enabled = 0;
+	uint8_t is_terminal_config_enabled 	= 0;
+	uint8_t is_gui_config_enabled 		= 0;
 
 	for(int i = 0; i < buffer_size; i++){
 
@@ -175,7 +182,7 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size){
 				break;
 
 			case 1:
-				if(current_data == '<'){
+				if(current_data == 'K'){
 					state++;
 					break;
 				}
@@ -183,12 +190,41 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size){
 				break;
 
 			case 2:
-				if(current_data == '$'){
-					is_config_enabled = 1;
+				if(current_data == '<'){
+					state++;
 					break;
 				}
 				state = 0;
 				break;
+
+			case 3:
+				if(current_data == '$'){
+					state++;
+					break;
+				}
+				state = 0;
+				break;
+
+			case 4:
+				if(current_data == '_'){
+					state++;
+					break;
+				}
+				state = 0;
+				break;
+
+			case 5:
+				if(current_data == 'T'){
+					is_terminal_config_enabled = 1;
+					break;
+				}
+				if(current_data == 'G'){
+					is_gui_config_enabled = 1;
+					break;
+				}
+				state = 0;
+				break;
+
 
 			default:
 				break;
@@ -196,15 +232,41 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size){
 		}
 	}
 
-	if(is_config_enabled){
+	if(is_terminal_config_enabled) CK_CONFIGURATION_TerminalCMD();
+	if(is_gui_config_enabled) CK_CONFIGURATION_GuiCMD();
 
-		CK_CONFIGURATION_StartCMD();
+
+}
+
+void CK_CONFIGURATION_GuiCMD(void){
+
+	uint8_t rx_data;
+
+	while(!config.is_gui_done){
+
+		CK_USBD_StringPrintln("CK>$_G");
+		CK_USBD_Transmit();
+
+		// Read user inputs
+		while(CK_USBD_ReadData(&rx_data) == 1){
+
+			config.term_buffer[config.term_index++] = rx_data;
+
+		}
+
+		// Define the byte number to be received
+		// With header it sends around 69 bytes
+		if(config.term_index>64){
+			int t = 0;
+			t++;
+
+		}
 
 	}
 
 }
 
-void CK_CONFIGURATION_StartCMD(void){
+void CK_CONFIGURATION_TerminalCMD(void){
 
 	uint8_t rx_data;
 
@@ -213,7 +275,7 @@ void CK_CONFIGURATION_StartCMD(void){
 	// For example to configure TPA_Rate 40 type -> 1j40,
 	// For example to configure RC Rates type -> 3a120,120,120,
 
-	while(!config.is_gui_done){
+	while(!config.is_term_done){
 
 		CK_USBD_StringPrintln("1. PID Configuration");
 		CK_USBD_StringPrint(" 1a. Roll, 1b.Pitch 1c.Yaw, 1d.Althold, 1e.Velocity, ");
@@ -232,19 +294,19 @@ void CK_CONFIGURATION_StartCMD(void){
 		CK_USBD_StringPrintln("");
 		CK_USBD_Transmit();
 
-		while(!config.is_gui_input_done){
+		while(!config.is_term_input_done){
 
 			while(CK_USBD_ReadData(&rx_data) == 1){
 
-				config.gui_buffer[config.gui_index++] = rx_data;
+				config.term_buffer[config.term_index++] = rx_data;
 			}
 
-			if(config.gui_index){
+			if(config.term_index){
 
 				uint8_t resp = CK_CONFIGURATION_ConfigureParameters();
 
-				config.gui_index = 0;
-				config.is_gui_input_done = 1;
+				config.term_index = 0;
+				config.is_term_input_done = 1;
 
 				if(resp){
 
@@ -264,10 +326,10 @@ void CK_CONFIGURATION_StartCMD(void){
 			CK_TIME_DelayMilliSec(1);
 		}
 
-		config.is_gui_input_done = 0;
+		config.is_term_input_done = 0;
 	}
 
-	config.is_gui_done = 0;
+	config.is_term_done = 0;
 
 	CK_USBD_StringPrintln("Configuration is Done. Nice Fligths!");
 	CK_USBD_StringPrintln("Restarting the system.");
@@ -280,7 +342,7 @@ void CK_CONFIGURATION_StartCMD(void){
 uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 
 	uint8_t resp = 0;
-	uint8_t menu_selection = config.gui_buffer[0];
+	uint8_t menu_selection = config.term_buffer[0];
 
 	uint16_t parameters_buffer[16];
 	uint8_t parameters_index = 0;
@@ -289,9 +351,9 @@ uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 	if(menu_selection == '1'){
 
 		// Min 4 max 14 characters
-		if(config.gui_index >= 4 && config.gui_index <= 14){
+		if(config.term_index >= 4 && config.term_index <= 14){
 
-			uint8_t pid_sub_menu = config.gui_buffer[1];
+			uint8_t pid_sub_menu = config.term_buffer[1];
 			uint8_t pid_axis = pid_sub_menu - 97; // 'a' = 97
 			char range1 = 'a';
 			char range2 = 'l';
@@ -299,12 +361,12 @@ uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 
 				int start_index = 2;
 				int end_index = 0;
-				for(int i = 2; i < config.gui_index; i++){
+				for(int i = 2; i < config.term_index; i++){
 
-					if(config.gui_buffer[i] == ','){
+					if(config.term_buffer[i] == ','){
 
 						end_index = i - 1;
-						uint16_t num = CK_CONFIGURATION_AsciiToNumber(config.gui_buffer, start_index, end_index);
+						uint16_t num = CK_CONFIGURATION_AsciiToNumber(config.term_buffer, start_index, end_index);
 						parameters_buffer[parameters_index++] = num;
 
 						start_index = i + 1;
@@ -348,10 +410,10 @@ uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 	else if(menu_selection == '2'){
 
 		// Min 4 max 6 characters
-		if(config.gui_index >= 4 && config.gui_index <= 7){
+		if(config.term_index >= 4 && config.term_index <= 7){
 
 			uint16_t num = 0;
-			uint8_t rc_sub_menu = config.gui_buffer[1];
+			uint8_t rc_sub_menu = config.term_buffer[1];
 			int option = rc_sub_menu - 97 + 1; // 'a' = 97
 			char range1 = 'a';
 			char range2 = 'c';
@@ -359,12 +421,12 @@ uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 
 				int start_index = 2;
 				int end_index = 0;
-				for(int i = 2; i < config.gui_index; i++){
+				for(int i = 2; i < config.term_index; i++){
 
-					if(config.gui_buffer[i] == ','){
+					if(config.term_buffer[i] == ','){
 
 						end_index = i - 1;
-						num = CK_CONFIGURATION_AsciiToNumber(config.gui_buffer, start_index, end_index);
+						num = CK_CONFIGURATION_AsciiToNumber(config.term_buffer, start_index, end_index);
 
 						start_index = i + 1;
 
@@ -412,9 +474,9 @@ uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 
 		// 4a. RC_Rate, 4b.RC_Expo, 4c.Rates
 		// Min 8 max 14 characters
-		if(config.gui_index >= 8 && config.gui_index <= 14){
+		if(config.term_index >= 8 && config.term_index <= 14){
 
-			uint8_t rates_sub_menu = config.gui_buffer[1];
+			uint8_t rates_sub_menu = config.term_buffer[1];
 			int option = rates_sub_menu - 97 + 1; // 'a' = 97
 			char range1 = 'a';
 			char range2 = 'h';
@@ -422,12 +484,12 @@ uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 
 				int start_index = 2;
 				int end_index = 0;
-				for(int i = 2; i < config.gui_index; i++){
+				for(int i = 2; i < config.term_index; i++){
 
-					if(config.gui_buffer[i] == ','){
+					if(config.term_buffer[i] == ','){
 
 						end_index = i - 1;
-						uint8_t num = (uint8_t)CK_CONFIGURATION_AsciiToNumber(config.gui_buffer, start_index, end_index);
+						uint8_t num = (uint8_t)CK_CONFIGURATION_AsciiToNumber(config.term_buffer, start_index, end_index);
 						parameters_buffer[parameters_index++] = num;
 
 						start_index = i + 1;
@@ -463,7 +525,7 @@ uint8_t CK_CONFIGURATION_ConfigureParameters(void){
 
 		resp = 1;
 
-		config.is_gui_done = 1;
+		config.is_term_done = 1;
 
 	}
 	else{
