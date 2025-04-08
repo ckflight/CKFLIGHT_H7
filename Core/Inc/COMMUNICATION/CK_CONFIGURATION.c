@@ -241,29 +241,84 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size){
 void CK_CONFIGURATION_GuiCMD(void){
 
 	uint8_t rx_data;
+	uint8_t state = 0;
+	uint32_t timeout = 0;
 
 	while(!config.is_gui_done){
 
-		CK_USBD_StringPrintln("CK>$_G");
-		CK_USBD_Transmit();
+		switch(state){
 
-		// Read user inputs
-		while(CK_USBD_ReadData(&rx_data) == 1){
+		case 0:
+			CK_USBD_StringPrintln("CK>$_G");
+			CK_USBD_Transmit();
 
-			config.term_buffer[config.term_index++] = rx_data;
+			timeout = CK_TIME_GetMicroSec();
+			state = 1;
+			break;
 
-		}
+		case 1:
 
-		// Define the byte number to be received
-		// With header it sends around 69 bytes
-		if(config.term_index>64){
-			int t = 0;
-			t++;
+			// Read user inputs
+			while(CK_USBD_ReadData(&rx_data) == 1){
+
+				config.term_buffer[config.term_index++] = rx_data;
+
+			}
+
+			if(CK_TIME_GetMicroSec() - timeout > 100000){
+				state = 0;
+			}
+
+			// Define the byte number to be received
+			// With header it sends around 69 bytes
+			if(config.term_index>32){
+				state = 2;
+			}
+
+			break;
+
+		case 2:
+
+			float values[32];
+			decode_params_from_buffer(config.term_buffer, config.term_index, values);
+			state = 3;
+
+			break;
+
+		case 3:
+			break;
+
+		default:
+			break;
 
 		}
 
 	}
 
+}
+
+void decode_params_from_buffer(const uint8_t *buffer, size_t length, float *values) {
+    char temp[128];
+
+    // Ensure the data is null-terminated
+    if (length >= sizeof(temp)) length = sizeof(temp) - 1;
+    memcpy(temp, buffer, length);
+    temp[length] = '\0';
+
+    char *token = strtok(temp, ",");
+    while (token != NULL) {
+        int param_num = 0;
+        float value = 0.0f;
+
+        // Add space before %f to skip any whitespace
+        if (sscanf(token, "P%d: %f", &param_num, &value) == 2) {
+            if (param_num >= 1 && param_num <= 8) {
+                values[param_num - 1] = value;
+            }
+        }
+
+        token = strtok(NULL, ",");
+    }
 }
 
 void CK_CONFIGURATION_TerminalCMD(void){

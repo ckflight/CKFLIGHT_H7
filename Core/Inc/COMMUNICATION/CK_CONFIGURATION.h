@@ -26,6 +26,8 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size);
 
 void CK_CONFIGURATION_GuiCMD(void);
 
+void decode_params_from_buffer(const uint8_t *buffer, size_t length, float *values);
+
 void CK_CONFIGURATION_TerminalCMD(void);
 
 uint8_t CK_CONFIGURATION_ConfigureParameters(void);
