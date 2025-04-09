@@ -242,7 +242,6 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 	uint8_t rx_data;
 	uint8_t state = 0;
-	uint32_t timeout = 0;
 
 	while(!config.is_gui_done){
 
@@ -266,11 +265,15 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 		case 1:
 
+			CK_USBD_StringPrintln("flight controller data");
+			CK_USBD_Transmit();
 			state = 2;
 
 			break;
 
 		case 2:
+
+			int c = 1;
 			break;
 
 		default:
