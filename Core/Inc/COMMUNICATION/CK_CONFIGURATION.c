@@ -265,7 +265,11 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 		case 1:
 
-			CK_USBD_StringPrintln("flight controller data");
+			CK_USBD_StringPrint("Received data:");
+			for(int i = 0; i < config.term_index; i++){
+				CK_USBD_IntPrint(config.term_buffer[i]);
+			}
+			CK_USBD_StringPrintln("");
 			CK_USBD_Transmit();
 			state = 2;
 
