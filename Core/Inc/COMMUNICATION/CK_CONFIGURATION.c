@@ -243,6 +243,10 @@ void CK_CONFIGURATION_GuiCMD(void){
 	uint8_t rx_data;
 	uint8_t state = 0;
 
+	/*
+	 * Gui will read input data and save that data to eeprom.
+	 * Then it will start listening new data until exit button is clicked gui
+	 */
 	while(!config.is_gui_done){
 
 		switch(state){
@@ -257,7 +261,16 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 			// Define the byte number to be received
 			// With header it sends around 69 bytes
-			if(config.term_index > 7){
+			if(config.term_index){
+
+				// Echo received data to gui which will print on terminal
+				CK_USBD_StringPrint("Received data:");
+				for(int i = 0; i < config.term_index; i++){
+					CK_USBD_IntPrint(config.term_buffer[i]);
+				}
+				CK_USBD_StringPrintln("");
+				CK_USBD_Transmit();
+
 				state = 1;
 			}
 
@@ -265,12 +278,8 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 		case 1:
 
-			CK_USBD_StringPrint("Received data:");
-			for(int i = 0; i < config.term_index; i++){
-				CK_USBD_IntPrint(config.term_buffer[i]);
-			}
-			CK_USBD_StringPrintln("");
-			CK_USBD_Transmit();
+			// Decode data
+			CK_CONFIGURATION_DecodeGUIData();
 			state = 2;
 
 			break;
@@ -286,6 +295,13 @@ void CK_CONFIGURATION_GuiCMD(void){
 		}
 
 	}
+
+}
+
+void CK_CONFIGURATION_DecodeGUIData(void){
+
+	// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
+	// Example PID Data : CK + 0x01 + 0x08 + 8 byte data + CRC
 
 }
 

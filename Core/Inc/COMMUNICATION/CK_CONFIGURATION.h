@@ -26,6 +26,8 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size);
 
 void CK_CONFIGURATION_GuiCMD(void);
 
+void CK_CONFIGURATION_DecodeGUIData(void);
+
 void CK_CONFIGURATION_TerminalCMD(void);
 
 uint8_t CK_CONFIGURATION_ConfigureParameters(void);
