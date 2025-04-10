@@ -46,6 +46,18 @@ config_t config = {
 
 };
 
+typedef enum{
+
+	GUI_PID_DATA 	= 0x01,
+	GUI_RC_DATA 	= 0x02,
+	GUI_IMU_DATA 	= 0x03,
+	GUI_STATUS		= 0x04,
+	GUI_CONFIG		= 0x05
+
+}GUI_PacketType;
+
+#define GUI_PID_DATA_LEN		8
+
 /*
  * CK_CONFIGURATION_Init is responsible of configuring eeprom with default settings for once if eeprom is erased
  * Flags indicates if eeprom is loaded with data.
@@ -286,7 +298,6 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 		case 2:
 
-			int c = 1;
 			break;
 
 		default:
@@ -298,10 +309,98 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 }
 
-void CK_CONFIGURATION_DecodeGUIData(void){
+bool CK_CONFIGURATION_DecodeGUIData(void){
 
 	// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
 	// Example PID Data : CK + 0x01 + 0x08 + 8 byte data + CRC
+
+	uint8_t state = 0;
+	bool is_packet_valid = false;
+	bool is_done = false;
+	uint8_t crc = CK_CONFIGURATION_CalculateCRC();
+
+	if(crc == config.term_buffer[config.term_index - 1]){
+		while(!is_done){
+
+			switch(state){
+			case 0:
+
+				if(config.term_buffer[0] == 'C' && config.term_buffer[1] == 'K'){
+					state = 1;
+				}
+				else{
+					is_done = true;
+					is_packet_valid = false;
+				}
+				break;
+
+			case 1:
+
+				// Check packet type and payload len
+				if(config.term_buffer[2] == GUI_PID_DATA && config.term_buffer[3] == GUI_PID_DATA_LEN){
+
+					pidProfile.simplified_master_multiplier = config.term_buffer[4];
+					pidProfile.simplified_pi_gain 			= config.term_buffer[5];
+					pidProfile.simplified_feedforward_gain 	= config.term_buffer[6];
+					pidProfile.simplified_roll_pitch_ratio 	= config.term_buffer[7];
+					pidProfile.simplified_i_gain 			= config.term_buffer[8];
+					pidProfile.simplified_d_gain 			= config.term_buffer[9];
+					pidProfile.simplified_d_max_gain 		= config.term_buffer[10];
+					pidProfile.simplified_pitch_pi_gain 	= config.term_buffer[11];
+
+					state = 2;
+
+				}
+				else if(config.term_buffer[2] == GUI_RC_DATA){
+
+					state = 2;
+				}
+				else if(config.term_buffer[2] == GUI_IMU_DATA){
+
+					state = 2;
+				}
+				else if(config.term_buffer[2] == GUI_STATUS){
+
+					state = 2;
+				}
+				else if(config.term_buffer[2] == GUI_CONFIG){
+
+					state = 2;
+				}
+				else{
+					is_done = true;
+					is_packet_valid = false;
+				}
+
+			case 2:
+
+				// Call save to eeprom here
+
+
+				is_done = true;
+				is_packet_valid = true;
+
+				break;
+
+			default:
+				break;
+
+
+			}
+		}
+	}
+	return is_packet_valid;
+
+}
+
+uint8_t CK_CONFIGURATION_CalculateCRC(void){
+
+	uint8_t crc = 0x00;
+	for(int i = 0; i < config.term_index - 1; i++){
+		crc += config.term_buffer[i];
+	}
+
+	return (crc & 0xFF); // return mod 256 of crc
 
 }
 
