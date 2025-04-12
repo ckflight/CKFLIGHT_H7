@@ -550,14 +550,14 @@ uint16_t pidGetDefaultProfile(uint8_t* copy_buffer){
 	copy_buffer[buffer_size++] = pidProfile.anti_gravity_gain;
 
 	copy_buffer[buffer_size++] = pidProfile.simplified_pids_mode;
-	copy_buffer[buffer_size++] = pidProfile.simplified_master_multiplier;
+	copy_buffer[buffer_size++] = pidProfile.simplified_d_gain;
 	copy_buffer[buffer_size++] = pidProfile.simplified_pi_gain;
 	copy_buffer[buffer_size++] = pidProfile.simplified_feedforward_gain;
-	copy_buffer[buffer_size++] = pidProfile.simplified_roll_pitch_ratio;
-	copy_buffer[buffer_size++] = pidProfile.simplified_i_gain;
-	copy_buffer[buffer_size++] = pidProfile.simplified_d_gain;
 	copy_buffer[buffer_size++] = pidProfile.simplified_d_max_gain;
+	copy_buffer[buffer_size++] = pidProfile.simplified_i_gain;
+	copy_buffer[buffer_size++] = pidProfile.simplified_roll_pitch_ratio;
 	copy_buffer[buffer_size++] = pidProfile.simplified_pitch_pi_gain;
+	copy_buffer[buffer_size++] = pidProfile.simplified_master_multiplier;
 
 	copy_buffer[buffer_size++] = pidProfile.feedforward_averaging;
 	copy_buffer[buffer_size++] = pidProfile.feedforward_max_rate_limit;
@@ -617,14 +617,14 @@ void pidLoadParameter(void){
 	pidProfile.anti_gravity_gain 			= pid_buffer[idx + 6];
 
 	pidProfile.simplified_pids_mode 		= pid_buffer[idx + 7];
-	pidProfile.simplified_master_multiplier = pid_buffer[idx + 8];
+	pidProfile.simplified_d_gain			= pid_buffer[idx + 8];
 	pidProfile.simplified_pi_gain 			= pid_buffer[idx + 9];
 	pidProfile.simplified_feedforward_gain 	= pid_buffer[idx + 10];
-	pidProfile.simplified_roll_pitch_ratio 	= pid_buffer[idx + 11];
+	pidProfile.simplified_d_max_gain 		= pid_buffer[idx + 11];
 	pidProfile.simplified_i_gain 			= pid_buffer[idx + 12];
-	pidProfile.simplified_d_gain 			= pid_buffer[idx + 13];
-	pidProfile.simplified_d_max_gain 		= pid_buffer[idx + 14];
-	pidProfile.simplified_pitch_pi_gain 	= pid_buffer[idx + 15];
+	pidProfile.simplified_roll_pitch_ratio 	= pid_buffer[idx + 13];
+	pidProfile.simplified_pitch_pi_gain 	= pid_buffer[idx + 14];
+	pidProfile.simplified_master_multiplier = pid_buffer[idx + 15];
 
 	pidProfile.feedforward_averaging 		= pid_buffer[idx + 16];
 	pidProfile.feedforward_max_rate_limit 	= pid_buffer[idx + 17];

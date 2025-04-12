@@ -198,6 +198,7 @@ void CK_PRINTER_Update(CK_PRINT_TIMEx print_freq, uint32_t compT){
 	else if(print_cmd == 'h' && is_printer_motor_mode_enabled == false){
 		CK_PRINTER_PrintPIDDefault();
 		CK_PRINTER_PrintPID();
+		CK_PRINTER_PrintPIDSliders();
 		CK_PRINTER_PrintRC();
 		CK_PRINTER_Transfer();
 		print_cmd = '.';// To not enter here again unless typed
@@ -393,6 +394,25 @@ void CK_PRINTER_PrintPID(void){
     CK_USBD_Transmit();
 }
 
+void CK_PRINTER_PrintPIDSliders(void){
+    CK_USBD_StringPrintln("");
+    CK_USBD_StringPrintln("PID SLIDER VALUES:");
+    CK_USBD_StringPrintln("-------------------------------------------------");
+    CK_USBD_StringPrintln("MM\tPI\tFF\tRPR\tI\tD\tDMAX\tPPI");
+
+    CK_USBD_IntPrint(pidProfile.simplified_master_multiplier);	CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.simplified_pi_gain);			CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.simplified_feedforward_gain);	CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.simplified_roll_pitch_ratio);	CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.simplified_i_gain);				CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.simplified_d_gain);				CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.simplified_d_max_gain);			CK_USBD_StringPrint("\t");
+    CK_USBD_IntPrint(pidProfile.simplified_pitch_pi_gain);		CK_USBD_StringPrintln("");
+
+    CK_USBD_Transmit();
+
+}
+
 void CK_PRINTER_PrintPIDDefault(void){
     CK_USBD_StringPrintln("");
     CK_USBD_StringPrintln("PID DEFAULT VALUES:");
@@ -447,7 +467,7 @@ void CK_PRINTER_PrintRC(void){
     CK_USBD_StringPrint("RATES:      ");
     CK_USBD_IntPrint(rc_config.rates[FD_ROLL]); CK_USBD_StringPrint("\t");
     CK_USBD_IntPrint(rc_config.rates[FD_PITCH]); CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrintln(rc_config.rates[FD_YAW]);
+    CK_USBD_IntPrintln(rc_config.rates[FD_YAW]); CK_USBD_StringPrintln("");
 
     CK_USBD_Transmit();
 }

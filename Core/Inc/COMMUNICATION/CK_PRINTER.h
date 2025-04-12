@@ -84,6 +84,8 @@ void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t);
 
 void CK_PRINTER_PrintPID(void);
 
+void CK_PRINTER_PrintPIDSliders(void);
+
 void CK_PRINTER_PrintPIDDefault(void);
 
 void CK_PRINTER_PrintRC(void);
