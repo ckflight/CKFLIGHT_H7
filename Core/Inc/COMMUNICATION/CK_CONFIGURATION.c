@@ -12,6 +12,7 @@
 #include "MOTION/CK_ACC.h"
 
 #include "DRIVERS/CK_TIME_HAL.h"
+#include "DRIVERS/CK_BUZZER.h"
 
 typedef struct{
 
@@ -228,10 +229,12 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size){
 			case 5:
 				if(current_data == 'T'){
 					is_terminal_config_enabled = 1;
+					CK_BUZZER_Disable();
 					break;
 				}
 				if(current_data == 'G'){
 					is_gui_config_enabled = 1;
+					CK_BUZZER_Disable();
 					break;
 				}
 				state = 0;
@@ -291,7 +294,7 @@ void CK_CONFIGURATION_GuiCMD(void){
 		case 1:
 
 			// Decode data
-			CK_CONFIGURATION_DecodeGUIData();
+			config.is_gui_done = CK_CONFIGURATION_DecodeGUIData();
 			state = 2;
 
 			break;
@@ -339,14 +342,14 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 				// Check packet type and payload len
 				if(config.term_buffer[2] == GUI_PID_DATA && config.term_buffer[3] == GUI_PID_DATA_LEN){
 
-					pidProfile.simplified_master_multiplier = config.term_buffer[4];
+					pidProfile.simplified_d_gain 			= config.term_buffer[4];
 					pidProfile.simplified_pi_gain 			= config.term_buffer[5];
 					pidProfile.simplified_feedforward_gain 	= config.term_buffer[6];
-					pidProfile.simplified_roll_pitch_ratio 	= config.term_buffer[7];
+					pidProfile.simplified_d_max_gain 		= config.term_buffer[7];
 					pidProfile.simplified_i_gain 			= config.term_buffer[8];
-					pidProfile.simplified_d_gain 			= config.term_buffer[9];
-					pidProfile.simplified_d_max_gain 		= config.term_buffer[10];
-					pidProfile.simplified_pitch_pi_gain 	= config.term_buffer[11];
+					pidProfile.simplified_roll_pitch_ratio 	= config.term_buffer[9];
+					pidProfile.simplified_pitch_pi_gain 	= config.term_buffer[10];
+					pidProfile.simplified_master_multiplier = config.term_buffer[11];
 
 					state = 2;
 
@@ -375,7 +378,21 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 			case 2:
 
 				// Call save to eeprom here
+				// Read the content of flash first to get parameters that are not changed.
+				CK_FLASH_ReadParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE, CONFIG_ID_OFFSET);
 
+				uint8_t idx = CONFIG_PID_OFFSET + (PID_ARRAY_ROW * PID_ARRAY_COLUMN);
+
+				config.config_buffer[idx + 8]  = pidProfile.simplified_d_gain;
+				config.config_buffer[idx + 9]  = pidProfile.simplified_pi_gain;
+				config.config_buffer[idx + 10] = pidProfile.simplified_feedforward_gain;
+				config.config_buffer[idx + 11] = pidProfile.simplified_d_max_gain;
+				config.config_buffer[idx + 12] = pidProfile.simplified_i_gain;
+				config.config_buffer[idx + 13] = pidProfile.simplified_roll_pitch_ratio;
+				config.config_buffer[idx + 14] = pidProfile.simplified_pitch_pi_gain;
+				config.config_buffer[idx + 15] = pidProfile.simplified_master_multiplier;
+
+				CK_FLASH_WriteParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE);
 
 				is_done = true;
 				is_packet_valid = true;
@@ -389,7 +406,7 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 			}
 		}
 	}
-	return is_packet_valid;
+	return is_packet_valid & is_done;
 
 }
 
