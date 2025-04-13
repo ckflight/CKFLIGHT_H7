@@ -248,8 +248,78 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size){
 	}
 
 	if(is_terminal_config_enabled) CK_CONFIGURATION_TerminalCMD();
-	if(is_gui_config_enabled) CK_CONFIGURATION_GuiCMD();
+	if(is_gui_config_enabled){
 
+		CK_CONFIGURATION_SendParametersToGui();
+
+		CK_CONFIGURATION_GuiCMD();
+	}
+
+
+}
+
+void CK_CONFIGURATION_SendParametersToGui(){
+
+	uint8_t pid_buffer[CONFIG_PID_BYTES];
+	uint8_t parameters_buffer[CONFIG_PID_BYTES + 5]; // CK COMMAND LEN PAYLOAD CRC
+	uint8_t parameter_idx = 0;
+
+	CK_FLASH_ReadParameters(TARGET_MCU_FLASH, pid_buffer, CONFIG_PID_BYTES, CONFIG_PID_OFFSET);
+
+	parameters_buffer[parameter_idx++] = 'C';
+	parameters_buffer[parameter_idx++] = 'K';
+	parameters_buffer[parameter_idx++] = GUI_CONFIG;
+	parameters_buffer[parameter_idx++] = CONFIG_PID_BYTES;
+
+	for(int r = 0; r < PID_ARRAY_ROW; r++){
+
+		for(int c = 0; c < PID_ARRAY_COLUMN; c++){
+
+			parameters_buffer[parameter_idx++] = pid_buffer[(r*PID_ARRAY_COLUMN) + c];
+
+		}
+	}
+
+	uint8_t idx = PID_ARRAY_ROW * PID_ARRAY_COLUMN;
+
+	parameters_buffer[parameter_idx++] = pid_buffer[idx]; 		// pidProfile.tpa_breakpoint
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 1]; 	// pidProfile.tpa_breakpoint
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 2]; 	// pidProfile.tpa_rate
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 3];	// pidProfile.tpa_mode
+
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 4];	// pidProfile.anti_gravity_cutoff_hz
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 5];	// pidProfile.anti_gravity_p_gain
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 6];	// pidProfile.anti_gravity_gain
+
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 7];	// pidProfile.simplified_pids_mode
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 8];	// pidProfile.simplified_d_gain
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 9];	// pidProfile.simplified_pi_gain
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 10];	// pidProfile.simplified_feedforward_gain
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 11];	// pidProfile.simplified_d_max_gain
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 12];	// pidProfile.simplified_i_gain
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 13];	// pidProfile.simplified_roll_pitch_ratio
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 14];	// pidProfile.simplified_pitch_pi_gain
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 15];	// pidProfile.simplified_master_multiplier
+
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 16];	// pidProfile.feedforward_averaging
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 17];	// pidProfile.feedforward_max_rate_limit
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 18];	// pidProfile.feedforward_smooth_factor
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 19];	// pidProfile.feedforward_jitter_factor
+	parameters_buffer[parameter_idx++] = pid_buffer[idx + 20];	// pidProfile.feedforward_boost
+
+	// Send data with packet format
+	// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
+	uint8_t crc = CK_CONFIGURATION_CalculateCRC(parameters_buffer, parameter_idx);
+
+	parameters_buffer[parameter_idx++] = crc;
+
+	for(int i = 0; i < parameter_idx; i++){
+
+		CK_USBD_IntPrint(parameters_buffer[i]);
+		CK_USBD_StringPrint("/");
+	}
+
+	CK_USBD_Transmit();
 
 }
 
@@ -320,7 +390,7 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 	uint8_t state = 0;
 	bool is_packet_valid = false;
 	bool is_done = false;
-	uint8_t crc = CK_CONFIGURATION_CalculateCRC();
+	uint8_t crc = CK_CONFIGURATION_CalculateCRC(config.term_buffer, config.term_index - 1);
 
 	if(crc == config.term_buffer[config.term_index - 1]){
 		while(!is_done){
@@ -410,11 +480,11 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 }
 
-uint8_t CK_CONFIGURATION_CalculateCRC(void){
+uint8_t CK_CONFIGURATION_CalculateCRC(uint8_t* buf, uint16_t len){
 
 	uint8_t crc = 0x00;
-	for(int i = 0; i < config.term_index - 1; i++){
-		crc += config.term_buffer[i];
+	for(int i = 0; i < len; i++){
+		crc += buf[i];
 	}
 
 	return (crc & 0xFF); // return mod 256 of crc
