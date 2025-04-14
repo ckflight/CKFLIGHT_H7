@@ -49,12 +49,13 @@ config_t config = {
 
 typedef enum{
 
-	GUI_PID_CMD 			= 0x01,
-	GUI_CONFIG_CMD			= 0x02,
-	GUI_RC_CMD 				= 0x03,
-	GUI_SETTINGS_CMD		= 0x04,
-	GUI_MODES_CMD			= 0x05,
-	GUI_SEND_DEFAULTS_CMD	= 0x06
+	GUI_PID_CMD 				= 0x01,
+	GUI_CONFIG_CMD				= 0x02,
+	GUI_RC_CMD 					= 0x03,
+	GUI_SETTINGS_CMD			= 0x04,
+	GUI_MODES_CMD				= 0x05,
+	GUI_SEND_DEFAULTS_CMD		= 0x06,
+	GUI_FC_RESPONSE_CMD			= 0x07
 
 }GUI_PacketType;
 
@@ -479,9 +480,6 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 					CK_FLASH_WriteParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE);
 
-					is_done = true;
-					is_packet_valid = true;
-
 					state = 2;
 
 				}
@@ -517,7 +515,34 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 			case 2:
 
-				// Send a config correct packet to gui
+				// Send a data is saved response to gui
+				uint8_t parameters_buffer[16]; // CK COMMAND LEN PAYLOAD CRC
+				uint8_t parameter_idx = 0;
+
+				parameters_buffer[parameter_idx++] = 'C';
+				parameters_buffer[parameter_idx++] = 'K';
+				parameters_buffer[parameter_idx++] = GUI_FC_RESPONSE_CMD;
+				parameters_buffer[parameter_idx++] = 1; // 1 payload
+
+				parameters_buffer[parameter_idx++] = 0xFF;	// 0xFF saved
+
+				// Send data with packet format
+				// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
+				uint8_t crc = CK_CONFIGURATION_CalculateCRC(parameters_buffer, parameter_idx);
+
+				parameters_buffer[parameter_idx++] = crc;
+
+				for(int i = 0; i < parameter_idx; i++){
+
+					CK_USBD_IntPrint(parameters_buffer[i]);
+					CK_USBD_StringPrint("/");
+				}
+
+				CK_USBD_Transmit();
+
+				is_done = true;
+				is_packet_valid = true;
+
 				break;
 
 			default:

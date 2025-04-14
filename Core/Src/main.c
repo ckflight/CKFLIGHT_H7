@@ -274,7 +274,6 @@ int main(void){
 
         CK_ACC_Update();
 
-
 		#if USE_MAG_
         CK_MAGNETO_Update();
 		#endif
