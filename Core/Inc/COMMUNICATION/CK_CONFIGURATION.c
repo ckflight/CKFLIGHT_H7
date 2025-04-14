@@ -49,15 +49,16 @@ config_t config = {
 
 typedef enum{
 
-	GUI_PID_DATA 	= 0x01,
-	GUI_RC_DATA 	= 0x02,
-	GUI_IMU_DATA 	= 0x03,
-	GUI_STATUS		= 0x04,
-	GUI_CONFIG		= 0x05
+	GUI_PID_CMD 			= 0x01,
+	GUI_CONFIG_CMD			= 0x02,
+	GUI_RC_CMD 				= 0x03,
+	GUI_SETTINGS_CMD		= 0x04,
+	GUI_MODES_CMD			= 0x05,
+	GUI_SEND_DEFAULTS_CMD	= 0x06
 
 }GUI_PacketType;
 
-#define GUI_PID_DATA_LEN		8
+#define GUI_PID_DATA_LEN		21
 
 /*
  * CK_CONFIGURATION_Init is responsible of configuring eeprom with default settings for once if eeprom is erased
@@ -268,7 +269,7 @@ void CK_CONFIGURATION_SendParametersToGui(){
 
 	parameters_buffer[parameter_idx++] = 'C';
 	parameters_buffer[parameter_idx++] = 'K';
-	parameters_buffer[parameter_idx++] = GUI_CONFIG;
+	parameters_buffer[parameter_idx++] = GUI_SEND_DEFAULTS_CMD;
 	parameters_buffer[parameter_idx++] = CONFIG_PID_BYTES;
 
 	for(int r = 0; r < PID_ARRAY_ROW; r++){
@@ -327,7 +328,8 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 	uint8_t rx_data;
 	uint8_t state = 0;
-
+	config.is_gui_done = false;
+	config.term_index = 0;
 	/*
 	 * Gui will read input data and save that data to eeprom.
 	 * Then it will start listening new data until exit button is clicked gui
@@ -365,11 +367,8 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 			// Decode data
 			config.is_gui_done = CK_CONFIGURATION_DecodeGUIData();
-			state = 2;
 
-			break;
-
-		case 2:
+			state = 0;
 
 			break;
 
@@ -392,6 +391,15 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 	bool is_done = false;
 	uint8_t crc = CK_CONFIGURATION_CalculateCRC(config.term_buffer, config.term_index - 1);
 
+	/*
+	GUI_PID_CMD 			= 0x01,
+	GUI_CONFIG_CMD			= 0x02,
+	GUI_RC_CMD 				= 0x03,
+	GUI_SETTINGS_CMD		= 0x04,
+	GUI_MODES_CMD			= 0x05,
+	GUI_READ_DEFAULTS_CMD	= 0x06
+	 */
+
 	if(crc == config.term_buffer[config.term_index - 1]){
 		while(!is_done){
 
@@ -408,38 +416,100 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 				break;
 
 			case 1:
-
+				// Get PID data
 				// Check packet type and payload len
-				if(config.term_buffer[2] == GUI_PID_DATA && config.term_buffer[3] == GUI_PID_DATA_LEN){
+				if(config.term_buffer[2] == GUI_PID_CMD && config.term_buffer[3] == GUI_PID_DATA_LEN){
 
-					pidProfile.simplified_d_gain 			= config.term_buffer[4];
-					pidProfile.simplified_pi_gain 			= config.term_buffer[5];
-					pidProfile.simplified_feedforward_gain 	= config.term_buffer[6];
-					pidProfile.simplified_d_max_gain 		= config.term_buffer[7];
-					pidProfile.simplified_i_gain 			= config.term_buffer[8];
-					pidProfile.simplified_roll_pitch_ratio 	= config.term_buffer[9];
-					pidProfile.simplified_pitch_pi_gain 	= config.term_buffer[10];
-					pidProfile.simplified_master_multiplier = config.term_buffer[11];
+					// I am not receiving pids from python since code calculates with below parameters and default pids.
+
+					pidProfile.tpa_breakpoint 				= (config.term_buffer[4] << 8) | config.term_buffer[5];
+					pidProfile.tpa_rate 					= config.term_buffer[6];
+					pidProfile.tpa_mode 					= config.term_buffer[7];
+
+					pidProfile.anti_gravity_gain			= config.term_buffer[8];
+					pidProfile.anti_gravity_p_gain			= config.term_buffer[9];
+					pidProfile.anti_gravity_cutoff_hz		= config.term_buffer[10];
+
+					pidProfile.simplified_pids_mode			= config.term_buffer[11];
+					pidProfile.simplified_d_gain 			= config.term_buffer[12];
+					pidProfile.simplified_pi_gain 			= config.term_buffer[13];
+					pidProfile.simplified_feedforward_gain 	= config.term_buffer[14];
+					pidProfile.simplified_d_max_gain 		= config.term_buffer[15];
+					pidProfile.simplified_i_gain 			= config.term_buffer[16];
+					pidProfile.simplified_roll_pitch_ratio 	= config.term_buffer[17];
+					pidProfile.simplified_pitch_pi_gain 	= config.term_buffer[18];
+					pidProfile.simplified_master_multiplier = config.term_buffer[19];
+
+					pidProfile.feedforward_jitter_factor 	= config.term_buffer[20];
+					pidProfile.feedforward_smooth_factor 	= config.term_buffer[21];
+					pidProfile.feedforward_boost 			= config.term_buffer[22];
+					pidProfile.feedforward_max_rate_limit 	= config.term_buffer[23];
+					pidProfile.feedforward_averaging		= config.term_buffer[24];
+
+					// Call save to eeprom here
+					// Read the content of flash first to get parameters that are not changed.
+					CK_FLASH_ReadParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE, CONFIG_ID_OFFSET);
+
+					uint8_t idx = CONFIG_PID_OFFSET + (PID_ARRAY_ROW * PID_ARRAY_COLUMN);
+
+					config.config_buffer[idx++] = pidProfile.tpa_breakpoint >> 8;
+					config.config_buffer[idx++] = pidProfile.tpa_breakpoint & 0xFF;
+					config.config_buffer[idx++] = pidProfile.tpa_rate;
+					config.config_buffer[idx++] = pidProfile.tpa_mode;
+
+					config.config_buffer[idx++] = pidProfile.anti_gravity_cutoff_hz;
+					config.config_buffer[idx++] = pidProfile.anti_gravity_p_gain;
+					config.config_buffer[idx++] = pidProfile.anti_gravity_gain;
+
+					config.config_buffer[idx++] = pidProfile.simplified_pids_mode;
+					config.config_buffer[idx++] = pidProfile.simplified_d_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_pi_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_feedforward_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_d_max_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_i_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_roll_pitch_ratio;
+					config.config_buffer[idx++] = pidProfile.simplified_pitch_pi_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_master_multiplier;
+
+					config.config_buffer[idx++] = pidProfile.feedforward_averaging;
+					config.config_buffer[idx++] = pidProfile.feedforward_max_rate_limit;
+					config.config_buffer[idx++] = pidProfile.feedforward_smooth_factor;
+					config.config_buffer[idx++] = pidProfile.feedforward_jitter_factor;
+					config.config_buffer[idx++] = pidProfile.feedforward_boost;
+
+					CK_FLASH_WriteParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE);
+
+					is_done = true;
+					is_packet_valid = true;
 
 					state = 2;
 
 				}
-				else if(config.term_buffer[2] == GUI_RC_DATA){
+
+				// Get config data. I did not decide what to send here yet.
+				else if(config.term_buffer[2] == GUI_CONFIG_CMD){
 
 					state = 2;
 				}
-				else if(config.term_buffer[2] == GUI_IMU_DATA){
+
+				// Send RC parameters
+				else if(config.term_buffer[2] == GUI_RC_CMD){
 
 					state = 2;
 				}
-				else if(config.term_buffer[2] == GUI_STATUS){
+
+				// Get CK_SETTINGS here to configure
+				else if(config.term_buffer[2] == GUI_SETTINGS_CMD){
 
 					state = 2;
 				}
-				else if(config.term_buffer[2] == GUI_CONFIG){
+
+				// Get Flight Modes to set such as acro level gps rescue along with switch range
+				else if(config.term_buffer[2] == GUI_MODES_CMD){
 
 					state = 2;
 				}
+
 				else{
 					is_done = true;
 					is_packet_valid = false;
@@ -447,26 +517,7 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 			case 2:
 
-				// Call save to eeprom here
-				// Read the content of flash first to get parameters that are not changed.
-				CK_FLASH_ReadParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE, CONFIG_ID_OFFSET);
-
-				uint8_t idx = CONFIG_PID_OFFSET + (PID_ARRAY_ROW * PID_ARRAY_COLUMN);
-
-				config.config_buffer[idx + 8]  = pidProfile.simplified_d_gain;
-				config.config_buffer[idx + 9]  = pidProfile.simplified_pi_gain;
-				config.config_buffer[idx + 10] = pidProfile.simplified_feedforward_gain;
-				config.config_buffer[idx + 11] = pidProfile.simplified_d_max_gain;
-				config.config_buffer[idx + 12] = pidProfile.simplified_i_gain;
-				config.config_buffer[idx + 13] = pidProfile.simplified_roll_pitch_ratio;
-				config.config_buffer[idx + 14] = pidProfile.simplified_pitch_pi_gain;
-				config.config_buffer[idx + 15] = pidProfile.simplified_master_multiplier;
-
-				CK_FLASH_WriteParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE);
-
-				is_done = true;
-				is_packet_valid = true;
-
+				// Send a config correct packet to gui
 				break;
 
 			default:
