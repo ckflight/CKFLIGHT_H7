@@ -514,7 +514,6 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 				else if(config.term_buffer[2] == GUI_CONFIG_DONE_CMD && config.term_buffer[3] == GUI_CONFIG_DONE_DATA_LEN){
 
 					config.is_gui_done = config.term_buffer[4];
-					state = 0;
 					is_done = true;
 					is_packet_valid = true;
 				}
@@ -555,7 +554,6 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 				is_done = true;
 				is_packet_valid = true;
-				config.term_index = 0;
 
 				break;
 
