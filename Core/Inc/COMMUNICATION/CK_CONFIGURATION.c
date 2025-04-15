@@ -55,11 +55,14 @@ typedef enum{
 	GUI_SETTINGS_CMD			= 0x04,
 	GUI_MODES_CMD				= 0x05,
 	GUI_SEND_DEFAULTS_CMD		= 0x06,
-	GUI_FC_RESPONSE_CMD			= 0x07
+	GUI_FC_RESPONSE_CMD			= 0x07,
+	GUI_CONFIG_DONE_CMD			= 0x08
 
 }GUI_PacketType;
 
-#define GUI_PID_DATA_LEN		21
+#define GUI_PID_DATA_LEN			21
+#define GUI_FC_RESPONSE_DATA_LEN	1
+#define GUI_CONFIG_DONE_DATA_LEN	1
 
 /*
  * CK_CONFIGURATION_Init is responsible of configuring eeprom with default settings for once if eeprom is erased
@@ -367,8 +370,9 @@ void CK_CONFIGURATION_GuiCMD(void){
 		case 1:
 
 			// Decode data
-			config.is_gui_done = CK_CONFIGURATION_DecodeGUIData();
-
+			bool is_correct_packet_received = CK_CONFIGURATION_DecodeGUIData();
+			UNUSED(is_correct_packet_received);
+			config.term_index = 0;
 			state = 0;
 
 			break;
@@ -507,11 +511,20 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 					state = 2;
 				}
+				else if(config.term_buffer[2] == GUI_CONFIG_DONE_CMD && config.term_buffer[3] == GUI_CONFIG_DONE_DATA_LEN){
+
+					config.is_gui_done = config.term_buffer[4];
+					state = 0;
+					is_done = true;
+					is_packet_valid = true;
+				}
 
 				else{
 					is_done = true;
 					is_packet_valid = false;
 				}
+
+				break;
 
 			case 2:
 
@@ -522,7 +535,7 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 				parameters_buffer[parameter_idx++] = 'C';
 				parameters_buffer[parameter_idx++] = 'K';
 				parameters_buffer[parameter_idx++] = GUI_FC_RESPONSE_CMD;
-				parameters_buffer[parameter_idx++] = 1; // 1 payload
+				parameters_buffer[parameter_idx++] = GUI_FC_RESPONSE_DATA_LEN; // 1 payload
 
 				parameters_buffer[parameter_idx++] = 0xFF;	// 0xFF saved
 
@@ -542,10 +555,12 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 				is_done = true;
 				is_packet_valid = true;
+				config.term_index = 0;
 
 				break;
 
 			default:
+
 				break;
 
 
