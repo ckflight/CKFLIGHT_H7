@@ -516,6 +516,9 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 					CK_USBD_Transmit();
 
+					is_done = true;
+					is_packet_valid = true;
+
 				}
 
 				else if(config.term_buffer[2] == GUI_CONFIG_DONE_CMD && config.term_buffer[3] == GUI_CONFIG_DONE_DATA_LEN){
@@ -578,7 +581,7 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 uint8_t CK_CONFIGURATION_CalculateCRC(uint8_t* buf, uint16_t len){
 
-	uint8_t crc = 0x00;
+	uint16_t crc = 0x00;
 	for(int i = 0; i < len; i++){
 		crc += buf[i];
 	}
