@@ -521,6 +521,73 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 				}
 
+				// GUI sends get default pid data command. Send data to gui
+				else if (config.term_buffer[2] == GUI_GET_RC_DEFAULTS_CMD){
+
+					uint8_t rc_buffer[CONFIG_PID_BYTES];
+					uint8_t parameters_buffer[CONFIG_PID_BYTES + 5]; // CK COMMAND LEN PAYLOAD CRC
+					uint8_t parameter_idx = 0;
+
+					CK_FLASH_ReadParameters(TARGET_MCU_FLASH, rc_buffer, CONFIG_RC_BYTES, CONFIG_RC_OFFSET);
+
+					parameters_buffer[parameter_idx++] = 'C';
+					parameters_buffer[parameter_idx++] = 'K';
+					parameters_buffer[parameter_idx++] = GUI_GET_RC_DEFAULTS_CMD;
+					parameters_buffer[parameter_idx++] = CONFIG_PID_BYTES;
+
+					parameters_buffer[parameter_idx++] = rc_buffer[0]; 		// rc_config.deadband
+					parameters_buffer[parameter_idx++] = rc_buffer[1]; 		// rc_config.yaw_deadband
+					parameters_buffer[parameter_idx++] = rc_buffer[2]; 		// (rc_config.midrc >> 8) & 0xFF
+					parameters_buffer[parameter_idx++] = rc_buffer[3];		// rc_config.midrc & 0xFF
+
+					parameters_buffer[parameter_idx++] = rc_buffer[4];		// (rc_config.rate_limit[ROLL] >> 8) & 0xFF
+					parameters_buffer[parameter_idx++] = rc_buffer[5];		// rc_config.rate_limit[ROLL] & 0xFF
+
+					parameters_buffer[parameter_idx++] = rc_buffer[6];		// (rc_config.rate_limit[PITCH] >> 8) & 0xFF
+					parameters_buffer[parameter_idx++] = rc_buffer[7];		// rc_config.rate_limit[PITCH] & 0xFF
+
+					parameters_buffer[parameter_idx++] = rc_buffer[8];		// (rc_config.rate_limit[YAW] >> 8) & 0xFF
+					parameters_buffer[parameter_idx++] = rc_buffer[9];		// rc_config.rate_limit[YAW] & 0xFF
+
+					parameters_buffer[parameter_idx++] = rc_buffer[10];	// rc_config.rcRates[ROLL]
+					parameters_buffer[parameter_idx++] = rc_buffer[11];	// rc_config.rcRates[PITCH]
+					parameters_buffer[parameter_idx++] = rc_buffer[12];	// rc_config.rcRates[YAW]
+
+					parameters_buffer[parameter_idx++] = rc_buffer[13];	// rc_config.rcExpo[ROLL]
+					parameters_buffer[parameter_idx++] = rc_buffer[14];	// rc_config.rcExpo[PITCH]
+					parameters_buffer[parameter_idx++] = rc_buffer[15];	// rc_config.rcExpo[YAW]
+
+					parameters_buffer[parameter_idx++] = rc_buffer[16];	// rc_config.rates[ROLL]
+					parameters_buffer[parameter_idx++] = rc_buffer[17];	// rc_config.rates[PITCH]
+					parameters_buffer[parameter_idx++] = rc_buffer[18];	// rc_config.rates[YAW]
+
+					parameters_buffer[parameter_idx++] = rc_buffer[19];	// rc_config.rc_smoothing_mode
+					parameters_buffer[parameter_idx++] = rc_buffer[20];	// rc_config.rc_smoothing_setpoint_cutoff
+					parameters_buffer[parameter_idx++] = rc_buffer[21];	// rc_config.rc_smoothing_feedforward_cutoff
+					parameters_buffer[parameter_idx++] = rc_buffer[22];	// rc_config.rc_smoothing_throttle_cutoff
+					parameters_buffer[parameter_idx++] = rc_buffer[23];	// rc_config.rc_smoothing_debug_axis
+					parameters_buffer[parameter_idx++] = rc_buffer[24];	// rc_config.rc_smoothing_auto_factor_rpy
+					parameters_buffer[parameter_idx++] = rc_buffer[25];	// rc_config.rc_smoothing_auto_factor_throttle
+
+					// Send data with packet format
+					// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
+					uint8_t crc = CK_CONFIGURATION_CalculateCRC(parameters_buffer, parameter_idx);
+
+					parameters_buffer[parameter_idx++] = crc;
+
+					for(int i = 0; i < parameter_idx; i++){
+
+						CK_USBD_IntPrint(parameters_buffer[i]);
+						CK_USBD_StringPrint("/");
+					}
+
+					CK_USBD_Transmit();
+
+					is_done = true;
+					is_packet_valid = true;
+
+				}
+
 				else if(config.term_buffer[2] == GUI_CONFIG_DONE_CMD && config.term_buffer[3] == GUI_CONFIG_DONE_DATA_LEN){
 
 					config.is_gui_done = config.term_buffer[4];
