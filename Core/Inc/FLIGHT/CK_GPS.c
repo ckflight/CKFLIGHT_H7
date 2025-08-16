@@ -13,8 +13,19 @@
 #define GPS_DEFAULT_BAUDRATE        9600
 #define GPS_CONFIGURED_BAUDRATE     115200
 
-#define SATTELITE_NUM_THRESHOLD     3
+#define SATTELITE_NUM_THRESHOLD     10
 #define SATTELITE_FIX_THRESHOLD     2
+
+#define GPS_SUM						20
+#define KALMAN_INIT_SAMPLES 		20
+
+
+/*
+ * Kalman filter needs realiable data to initialize
+ * So i will add average gps datas to a certain number
+ * it will take some time for example 20 sample averaging give 1 average in 2sec
+ * I will sum 20 average values so kalman will start 40sec after good fix
+ */
 
 typedef struct {
     float distanceToHomeCm;
@@ -76,6 +87,17 @@ void CK_GPS_Init(USART_TypeDef* uart_, sensorModel_e module_type){
 
 	gps.isSatFixed = false;
 
+	gps.sum_counter = 0;
+	gps.lon_sum = 0;
+	gps.lat_sum = 0;
+
+    gps.kalman_sum_lon 		= 0;
+    gps.kalman_sum_lat 		= 0;
+    gps.kalman_average_lon 	= 0;
+    gps.kalman_average_lat 	= 0;
+    gps.kalman_sum_counter 	= 0;
+	gps.kalman_init 		= false;
+
     module = module_type;
 
     if(module == GPS_UBLOX7){
@@ -129,6 +151,154 @@ void CK_GPS_Init(USART_TypeDef* uart_, sensorModel_e module_type){
 
 }
 
+void Kalman_Init(KalmanFilter2D* kf, int32_t init_lat_e7, int32_t init_lon_e7, float dt_sec) {
+    kf->state.lat = init_lat_e7;
+    kf->state.lon = init_lon_e7;
+    kf->state.v_lat = 0;
+    kf->state.v_lon = 0;
+    kf->dt = dt_sec;
+
+    // Initialize P (state covariance)
+    memset(kf->P, 0, sizeof(kf->P));
+    kf->P[0][0] = 10.0f;
+    kf->P[1][1] = 10.0f;
+    kf->P[2][2] = 1.0f;
+    kf->P[3][3] = 1.0f;
+
+    // Initialize Q (process noise)
+    memset(kf->Q, 0, sizeof(kf->Q));
+    kf->Q[0][0] = 0.01f;
+    kf->Q[1][1] = 0.01f;
+    kf->Q[2][2] = 0.1f;
+    kf->Q[3][3] = 0.1f;
+
+    // Initialize R (measurement noise)
+    memset(kf->R, 0, sizeof(kf->R));
+    kf->R[0][0] = 5.0f;
+    kf->R[1][1] = 5.0f;
+}
+
+// --- Kalman filter update step for GPS measurement ---
+void Kalman_Update(KalmanFilter2D* kf, int32_t meas_lat_e7, int32_t meas_lon_e7) {
+    float dt = kf->dt;
+
+    // Predict state
+    KalmanState2D pred;
+    pred.lat   = kf->state.lat + (int32_t)(kf->state.v_lat * dt);
+    pred.lon   = kf->state.lon + (int32_t)(kf->state.v_lon * dt);
+    pred.v_lat = kf->state.v_lat;
+    pred.v_lon = kf->state.v_lon;
+
+    // State transition matrix F
+    float F[4][4] = {
+        {1, 0, dt, 0},
+        {0, 1, 0, dt},
+        {0, 0, 1, 0},
+        {0, 0, 0, 1}
+    };
+
+    // Predict covariance: P = F * P * F^T + Q
+    float FP[4][4] = {0};
+    float Ft[4][4] = {0};
+    float P_pred[4][4] = {0};
+
+    // FP = F * P
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            for (int k = 0; k < 4; ++k)
+                FP[i][j] += F[i][k] * kf->P[k][j];
+
+    // Ft = F^T
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            Ft[i][j] = F[j][i];
+
+    // P_pred = FP * Ft + Q
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j) {
+            P_pred[i][j] = kf->Q[i][j];
+            for (int k = 0; k < 4; ++k)
+                P_pred[i][j] += FP[i][k] * Ft[k][j];
+        }
+
+    // Measurement matrix H (2x4)
+    float H[2][4] = {
+        {1, 0, 0, 0},
+        {0, 1, 0, 0}
+    };
+
+    // Innovation (measurement residual)
+    float z[2] = { (float)meas_lat_e7, (float)meas_lon_e7 };
+    float Hx[2] = { (float)pred.lat, (float)pred.lon };
+    float y[2] = { z[0] - Hx[0], z[1] - Hx[1] };
+
+    // Compute S = H * P * H^T + R
+    float HP[2][4] = {0};
+    float S[2][2] = {0};
+
+    for (int i = 0; i < 2; ++i)
+        for (int j = 0; j < 4; ++j)
+            for (int k = 0; k < 4; ++k)
+                HP[i][j] += H[i][k] * P_pred[k][j];
+
+    for (int i = 0; i < 2; ++i)
+        for (int j = 0; j < 2; ++j) {
+            S[i][j] = kf->R[i][j];
+            for (int k = 0; k < 4; ++k)
+                S[i][j] += HP[i][k] * H[j][k];  // Note: H^T[k][j] = H[j][k]
+        }
+
+    // Invert S (2x2)
+    float det = S[0][0]*S[1][1] - S[0][1]*S[1][0];
+    if (fabs(det) < 1e-6f) return;
+    float invDet = 1.0f / det;
+    float S_inv[2][2] = {
+        {  S[1][1] * invDet, -S[0][1] * invDet },
+        { -S[1][0] * invDet,  S[0][0] * invDet }
+    };
+
+    // Compute Kalman Gain: K = P * H^T * S^-1
+    float PHt[4][2] = {0};
+    float K[4][2] = {0};
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 2; ++j)
+            for (int k = 0; k < 4; ++k)
+                PHt[i][j] += P_pred[i][k] * H[j][k];
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 2; ++j)
+            for (int k = 0; k < 2; ++k)
+                K[i][j] += PHt[i][k] * S_inv[k][j];
+
+    // Update state with Kalman gain and measurement residual
+    kf->state.lat   = pred.lat   + (int32_t)(K[0][0]*y[0] + K[0][1]*y[1]);
+    kf->state.lon   = pred.lon   + (int32_t)(K[1][0]*y[0] + K[1][1]*y[1]);
+    kf->state.v_lat = pred.v_lat + (int32_t)(K[2][0]*y[0] + K[2][1]*y[1]);
+    kf->state.v_lon = pred.v_lon + (int32_t)(K[3][0]*y[0] + K[3][1]*y[1]);
+
+    // Update covariance: P = (I - K*H) * P
+    float KH[4][4] = {0};
+    float I_KH[4][4] = {0};
+    float newP[4][4] = {0};
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            for (int k = 0; k < 2; ++k)
+                KH[i][j] += K[i][k] * H[k][j];
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            I_KH[i][j] = (i == j ? 1.0f : 0.0f) - KH[i][j];
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            for (int k = 0; k < 4; ++k)
+                newP[i][j] += I_KH[i][k] * P_pred[k][j];
+
+    memcpy(kf->P, newP, sizeof(kf->P));
+}
+
 void CK_GPS_Update(void){
 
 	if(gps.isGpsInit){
@@ -153,7 +323,7 @@ void CK_GPS_Update(void){
 
 	        gps.current_heightSeaLevel  = pvt.nav_pvt_hMSL / 10;        // Convert mm to cm
 
-	        gps.groundCourse         = pvt.nav_pvt_headMot / 10000; // Heading 2D deg * 100000 rescaled to deg * 10 (because i multiply with 10.000 rather than 100.000)
+	        gps.groundCourse         	= pvt.nav_pvt_headMot / 10000; // Heading 2D deg * 100000 rescaled to deg * 10 (because i multiply with 10.000 rather than 100.000)
 
 	        gps.groundSpeed             = pvt.nav_pvt_gSpeed / 10;      // mm/sec to cm/sec
 
@@ -162,6 +332,57 @@ void CK_GPS_Update(void){
 	        if(gps.heightDifference <= 0){
 	            gps.heightDifference = 0;
 	        }
+
+	        if(gps.sum_counter < GPS_SUM){
+	        	gps.lon_sum += gps.current_lon;
+	        	gps.lat_sum += gps.current_lat;
+
+	        	gps.sum_counter++; // sum 20 gps data to get average for more reliable data
+	        }
+	        else{
+	        	gps.average_lon = gps.lon_sum / gps.sum_counter;
+	        	gps.average_lat = gps.lat_sum / gps.sum_counter;
+
+	        	gps.sum_counter = 0;
+	        	gps.lon_sum = 0;
+	        	gps.lat_sum = 0;
+
+	        	// Collect average gps data until kalman initialization
+	        	// 20 average make 40 sec.
+	        	if(gps.kalman_init == false){
+					if(gps.kalman_sum_counter < KALMAN_INIT_SAMPLES){
+
+						gps.kalman_sum_lon += gps.average_lon;
+						gps.kalman_sum_lat += gps.average_lat;
+						gps.kalman_sum_counter++; // sum 20 average gps data to get accurate data for kalman initialization
+					}
+					else{
+						gps.kalman_average_lon = gps.kalman_sum_lon / gps.kalman_sum_counter;
+						gps.kalman_average_lat = gps.kalman_sum_lat / gps.kalman_sum_counter;
+
+						gps.kalman_sum_lon = 0;
+						gps.kalman_sum_lat = 0;
+						gps.kalman_sum_counter = 0;
+
+						Kalman_Init(&gps.kalmanFilter, gps.kalman_average_lat, gps.kalman_average_lon, 0.1f);
+						gps.kalman_init = true;
+					}
+	        	}
+	        	else{
+
+	        	    // Kalman update every GPS fix with current raw lat/lon
+	        	    Kalman_Update(&gps.kalmanFilter, gps.average_lat , gps.average_lon);
+
+	        	    // Use filtered values for your position
+	        	    gps.kalman_filtered_lat = gps.kalmanFilter.state.lat - 227; // i subtract offset
+	        	    gps.kalman_filtered_lon = gps.kalmanFilter.state.lon;
+
+	        	}
+	        }
+
+	        gps.current_lon_degree_f = gps.current_lon / 10000000.0;
+	        gps.current_lat_degree_f = gps.current_lat / 10000000.0;
+
 
 	        #if defined(COMPUTE_DMS)
 	        /*
@@ -196,7 +417,19 @@ void CK_GPS_Update(void){
 	        gps.lon_sec = roundf(gps.lon_sec * 1000) / 1000;
 	        #endif
 
-	        CK_GPS_CalculateDistanceAndHeading(gps.current_lat, gps.current_lon, gps.destination_lat, gps.destination_lon, &gps.distanceToDestination, &gps.headingToDestination);
+
+	        // floating point loosing precision when converted to floating point.
+	        // Last 3 digit rounding causes meters of error
+	        CK_GPS_CalculateDistanceAndHeading_E7(gps.current_lat, gps.current_lon, gps.destination_lat, gps.destination_lon,
+	        	        									  &gps.distanceToDestination, &gps.headingToDestination);
+
+	        static int32_t dummyBearing = 0;
+	        CK_GPS_CalculateDistanceAndHeading_E7(gps.current_lat, gps.current_lon, gps.average_lat, gps.average_lon,
+	        									  &gps.distanceToAverage, &dummyBearing);
+
+
+	        CK_GPS_CalculateDistanceAndHeading_E7(gps.current_lat, gps.current_lon, gps.kalman_filtered_lat, gps.kalman_filtered_lon,
+	        	        									  &gps.distanceToKalman, &dummyBearing);
 
 	        gps_dataReceived = false;
 
@@ -210,14 +443,64 @@ void CK_GPS_Update(void){
 
 }
 
+void CK_GPS_CalculateAveragePosition(void){
+
+    int64_t sumLat = 0;
+    int64_t sumLon = 0;
+
+    const uint16_t sampleCount = 100;
+    uint16_t collected = 0;
+
+    while (collected < sampleCount)
+    {
+        if (gps_dataReceived)
+        {
+            CK_GPS_Update();
+
+            sumLat += gps.current_lat;
+            sumLon += gps.current_lon;
+
+            collected++;
+        }
+
+        CK_TIME_DelayMicroSec(100);
+		CK_PRINTER_PrintString(".");
+
+    }
+
+    gps.average_lat = (int32_t)(sumLat / sampleCount);
+    gps.average_lon = (int32_t)(sumLon / sampleCount);
+}
+
 void CK_GPS_WaitSatteliteFix(void){
 
+	uint32_t gps_fix_print_counter = 0; // to print message to console while waiting for gps fix
+	uint32_t gps_fix_print_new_line_counter = 0;
 	if(gps.isGpsInit){
+
+		CK_PRINTER_PrintlnString("GPS FIX CHECK");
 
 	    // Not enough sattelite and not fixed yet.
 	    while(gps.numOfSattelite < SATTELITE_NUM_THRESHOLD || gps.satteliteFix < SATTELITE_FIX_THRESHOLD){
 
 	    	CK_GPS_Update();
+
+	    	if(gps_fix_print_counter > 10000000){
+	    		gps_fix_print_counter = 0;
+
+	    		CK_PRINTER_PrintString(".");
+
+	    		if(gps_fix_print_new_line_counter > 20){
+	    			gps_fix_print_new_line_counter = 0;
+	    			CK_PRINTER_PrintlnString("WAITING FOR A GPS FIX");
+	    		}
+	    		else{
+	    			gps_fix_print_new_line_counter++;
+	    		}
+	    	}
+	    	else{
+	    		gps_fix_print_counter++;
+	    	}
 
 	    }
 	    CK_GPS_SaveDestinationLocationAndStartHeight();
@@ -225,6 +508,8 @@ void CK_GPS_WaitSatteliteFix(void){
 	    gps.isSatFixed = true;
 
 	    CK_BUZZER_Tone1();
+
+	    CK_PRINTER_PrintlnString("GPS IS FIXED");
 	}
 
 }
@@ -423,6 +708,52 @@ void CK_GPS_CalculateDistanceAndHeading(float currentLat1, float currentLon1, fl
 
 }
 
+#define EARTH_RADIUS_CM 637100000.0f // Earth's radius in centimeters
+#define DEG_TO_RAD (3.14159265359f / 180.0f)
+
+// Converts E7 coordinates to radians (as double)
+static inline double e7_to_rad(int32_t coord_e7) {
+    return ((double)coord_e7) * 1e-7 * DEG_TO_RAD;
+}
+
+// Calculates distance and heading using E7 coords
+void CK_GPS_CalculateDistanceAndHeading_E7(int32_t currentLat_e7, int32_t currentLon_e7,
+                                           int32_t destLat_e7, int32_t destLon_e7,
+                                           uint32_t* dist_cm, int32_t* bearing_100deg) {
+    // Convert to radians (high precision)
+    double lat1 = e7_to_rad(currentLat_e7);
+    double lon1 = e7_to_rad(currentLon_e7);
+    double lat2 = e7_to_rad(destLat_e7);
+    double lon2 = e7_to_rad(destLon_e7);
+
+    // Haversine Formula for distance
+    double dLat = lat2 - lat1;
+    double dLon = lon2 - lon1;
+
+    double a = sin(dLat / 2.0) * sin(dLat / 2.0) +
+               cos(lat1) * cos(lat2) *
+               sin(dLon / 2.0) * sin(dLon / 2.0);
+
+    double c = 2.0 * atan2(sqrt(a), sqrt(1 - a));
+    double distance_cm = EARTH_RADIUS_CM * c;
+
+    // Compute bearing
+    double y = sin(dLon) * cos(lat2);
+    double x = cos(lat1) * sin(lat2) -
+               sin(lat1) * cos(lat2) * cos(dLon);
+    double initial_bearing_rad = atan2(y, x);
+
+    int32_t bearing = (int32_t)(initial_bearing_rad * (180.0 / 3.14159265359) * 100.0); // convert to degrees * 100
+
+    if (bearing < 0) {
+        bearing += 36000;
+    }
+
+    // Output results
+    *dist_cm = (uint32_t)(distance_cm);
+    *bearing_100deg = bearing;
+}
+
 void CK_GPS_InitConfig(){
 
     // Commands for configuring gps.
@@ -566,7 +897,6 @@ void USART6_IRQHandler(void){
 }
 
 #endif
-
 
 
 

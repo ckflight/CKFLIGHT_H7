@@ -84,8 +84,6 @@ void CK_PRINTER_PrintADC(CK_PRINT_TIMEx time, uint32_t t);
 
 void CK_PRINTER_PrintPID(void);
 
-void CK_PRINTER_PrintPIDSliders(void);
-
 void CK_PRINTER_PrintPIDDefault(void);
 
 void CK_PRINTER_PrintRC(void);
@@ -94,9 +92,7 @@ void CK_PRINTER_PrintNavigation(CK_PRINT_TIMEx time, uint32_t t);
 
 void CK_PRINTER_PrintGPS(CK_PRINT_TIMEx time, uint32_t t);
 
-void CK_PRINTER_PrintGPS2(CK_PRINT_TIMEx time, uint32_t t);
-
-void CK_PRINTER_PrintGPS3(CK_PRINT_TIMEx time, uint32_t t);
+void CK_PRINTER_AverageGPS(void);
 
 void CK_PRINTER_PrintMotorFinalResults(CK_PRINT_TIMEx time, uint32_t t);
 

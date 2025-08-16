@@ -156,6 +156,10 @@ void CK_PRINTER_Update(CK_PRINT_TIMEx print_freq, uint32_t compT){
 	else if(print_cmd == 'g' && is_printer_motor_mode_enabled == false){
 	    CK_PRINTER_PrintGPS(EVERY_100MS, compT);
 	}
+	else if(print_cmd == 'G' && is_printer_motor_mode_enabled == false){
+		CK_PRINTER_AverageGPS();
+		print_cmd = '.';// To not enter here again unless typed
+	}
 	else if(print_cmd == 'n' && is_printer_motor_mode_enabled == false){
 	    CK_PRINTER_PrintNavigation(EVERY_100MS, compT);
 	}
@@ -198,7 +202,6 @@ void CK_PRINTER_Update(CK_PRINT_TIMEx print_freq, uint32_t compT){
 	else if(print_cmd == 'h' && is_printer_motor_mode_enabled == false){
 		CK_PRINTER_PrintPIDDefault();
 		CK_PRINTER_PrintPID();
-		CK_PRINTER_PrintPIDSliders();
 		CK_PRINTER_PrintRC();
 		CK_PRINTER_Transfer();
 		print_cmd = '.';// To not enter here again unless typed
@@ -394,25 +397,6 @@ void CK_PRINTER_PrintPID(void){
     CK_USBD_Transmit();
 }
 
-void CK_PRINTER_PrintPIDSliders(void){
-    CK_USBD_StringPrintln("");
-    CK_USBD_StringPrintln("PID SLIDER VALUES:");
-    CK_USBD_StringPrintln("-------------------------------------------------");
-    CK_USBD_StringPrintln("MM\tPI\tFF\tRPR\tI\tD\tDMAX\tPPI");
-
-    CK_USBD_IntPrint(pidProfile.simplified_master_multiplier);	CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrint(pidProfile.simplified_pi_gain);			CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrint(pidProfile.simplified_feedforward_gain);	CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrint(pidProfile.simplified_roll_pitch_ratio);	CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrint(pidProfile.simplified_i_gain);				CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrint(pidProfile.simplified_d_gain);				CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrint(pidProfile.simplified_d_max_gain);			CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrint(pidProfile.simplified_pitch_pi_gain);		CK_USBD_StringPrintln("");
-
-    CK_USBD_Transmit();
-
-}
-
 void CK_PRINTER_PrintPIDDefault(void){
     CK_USBD_StringPrintln("");
     CK_USBD_StringPrintln("PID DEFAULT VALUES:");
@@ -467,7 +451,7 @@ void CK_PRINTER_PrintRC(void){
     CK_USBD_StringPrint("RATES:      ");
     CK_USBD_IntPrint(rc_config.rates[FD_ROLL]); CK_USBD_StringPrint("\t");
     CK_USBD_IntPrint(rc_config.rates[FD_PITCH]); CK_USBD_StringPrint("\t");
-    CK_USBD_IntPrintln(rc_config.rates[FD_YAW]); CK_USBD_StringPrintln("");
+    CK_USBD_IntPrintln(rc_config.rates[FD_YAW]);
 
     CK_USBD_Transmit();
 }
@@ -512,11 +496,17 @@ void CK_PRINTER_PrintGPS(CK_PRINT_TIMEx time, uint32_t t){
 
 		printerCounter = 0;
 
-		CK_USBD_StringPrint("Cur.Lat: ");CK_USBD_IntPrintln(gps.current_lat);
+		CK_USBD_StringPrint("Lat. Lon. Current: ");CK_USBD_IntPrint(gps.current_lat);CK_USBD_StringPrint(", ");CK_USBD_IntPrintln(gps.current_lon);
 
-		CK_USBD_StringPrint("Cur.Long: ");CK_USBD_IntPrintln(gps.current_lon);
+		CK_USBD_StringPrint("Lat. Lon. Average: ");CK_USBD_IntPrint(gps.average_lat);CK_USBD_StringPrint(", ");CK_USBD_IntPrintln(gps.average_lon);
+
+		CK_USBD_StringPrint("Lat. Lon. Kalman: ");CK_USBD_IntPrint(gps.kalman_filtered_lat);CK_USBD_StringPrint(", ");CK_USBD_IntPrintln(gps.kalman_filtered_lon);
+
+		CK_USBD_StringPrint("Distance to Aver.: ");CK_USBD_IntPrint(gps.distanceToAverage);CK_USBD_StringPrintln(" cm");
 
 		CK_USBD_StringPrint("Distance to Dest.: ");CK_USBD_IntPrint(gps.distanceToDestination);CK_USBD_StringPrintln(" cm");
+
+		CK_USBD_StringPrint("Distance to Kalman.: ");CK_USBD_IntPrint(gps.distanceToKalman);CK_USBD_StringPrintln(" cm");
 
 		CK_USBD_StringPrint("Heading to Dest.: ");CK_USBD_IntPrint(gps.headingToDestination/100);CK_USBD_StringPrintln(" deg");
 
@@ -534,6 +524,18 @@ void CK_PRINTER_PrintGPS(CK_PRINT_TIMEx time, uint32_t t){
 
 		CK_USBD_Transmit();
 	}
+
+}
+
+void CK_PRINTER_AverageGPS(void){
+
+	CK_GPS_CalculateAveragePosition();
+
+	CK_USBD_StringPrintln("GPS is calibrated");
+
+	CK_USBD_StringPrint("Average Lat: ");CK_USBD_IntPrintln(gps.average_lat);
+
+	CK_USBD_StringPrint("Average Long: ");CK_USBD_IntPrintln(gps.average_lon);
 
 }
 
