@@ -485,14 +485,17 @@ void CK_GPS_WaitSatteliteFix(void){
 
 	    	CK_GPS_Update();
 
-	    	if(gps_fix_print_counter > 10000000){
+	    	if(gps_fix_print_counter > 2000000){
 	    		gps_fix_print_counter = 0;
 
 	    		CK_PRINTER_PrintString(".");
 
 	    		if(gps_fix_print_new_line_counter > 20){
 	    			gps_fix_print_new_line_counter = 0;
-	    			CK_PRINTER_PrintlnString("WAITING FOR A GPS FIX");
+	    			CK_PRINTER_PrintString("WAITING FOR A GPS FIX: ");
+	    			CK_PRINTER_PrintInt(gps.numOfSattelite);
+	    			CK_PRINTER_PrintString(",");
+	    			CK_PRINTER_PrintlnInt(gps.satteliteFix);
 	    		}
 	    		else{
 	    			gps_fix_print_new_line_counter++;

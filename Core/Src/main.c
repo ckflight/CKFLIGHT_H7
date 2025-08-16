@@ -241,7 +241,7 @@ int main(void){
     CK_PRINTER_Init(TARGET_MAIN_TIME_US);
 
 #if GPS_
-    //CK_GPS_WaitSatteliteFix();  // Buzzer tone 1
+    CK_GPS_WaitSatteliteFix();  // Buzzer tone 1
 #endif
 
     CK_BUZZER_Tone2(); // Loop starting
