@@ -879,6 +879,10 @@ void UART5_IRQHandler(void){
 void USART6_IRQHandler(void){
 #endif
 
+#if GPS_INTERRUPT_ == 7
+void UART7_IRQHandler(void){
+#endif
+
 	#if USE_F4 == 1
 	if(FLIGHT_GPS_UART->SR & CK_USART_SR_RXNE){
 		uint8_t rxData = FLIGHT_GPS_UART->DR;

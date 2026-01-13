@@ -20,7 +20,7 @@
 #define USE_BARO_				0
 
 #define MAG_SPI_				0	// Init peripheral CS important for common SPI
-#define MAG_I2C_				1
+#define MAG_I2C_				0
 #define USE_MAG_				0
 
 #define BNO055_					0
@@ -28,15 +28,15 @@
 #define GPS_					1
 #define GPS_MODULE				GPS_UBLOX8
 
-#define LOG_SPI_				1
-#define LOG_SDIO_				0
+#define LOG_SPI_				0
+#define LOG_SDIO_				1
 #define LOG_FLASH_				0
 #define LOG_DUALBUFFER_			0
 #define LOG_MULTIWRITE_			0// spi works in single mode
 #define TEST_LOG				0
 
-#define BUZZER_PWM				0
-#define BUZZER_DC				1
+#define BUZZER_PWM				1
+#define BUZZER_DC				0
 
 #define OSD_ONBOARD_			0
 #define OSD_PDB_				0
@@ -45,7 +45,7 @@
 #define RGB_					1
 
 #define LED1_					1
-#define LED2_					0
+#define LED2_					1
 
 #define RX_PWM_					0
 #define SBUS_					0

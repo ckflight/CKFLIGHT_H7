@@ -19,33 +19,34 @@
 	#define MAIN_INTERRUPT_IRQn			TIM16_IRQn
 
 // Define SPI pins here for an automatic SPI pin initialization
-#define USE_SPI1		true
-#define SPI1_SCK_GPIO 	GPIOA
-#define SPI1_SCK_PIN  	5
-#define SPI1_SCK_AF		CK_GPIO_AF5
+#define USE_SPI1			true
+#define SPI1_SCK_GPIO 		GPIOA
+#define SPI1_SCK_PIN  		5
+#define SPI1_SCK_AF			CK_GPIO_AF5
 
-#define SPI1_MISO_GPIO	GPIOA
-#define SPI1_MISO_PIN	6
-#define SPI1_MISO_AF	CK_GPIO_AF5
+#define SPI1_MISO_GPIO		GPIOA
+#define SPI1_MISO_PIN		6
+#define SPI1_MISO_AF		CK_GPIO_AF5
 
-#define SPI1_MOSI_GPIO	GPIOD
-#define SPI1_MOSI_PIN	7
-#define SPI1_MOSI_AF	CK_GPIO_AF5
+#define SPI1_MOSI_GPIO		GPIOA
+#define SPI1_MOSI_PIN		7
+#define SPI1_MOSI_AF		CK_GPIO_AF5
 
 #if GYRO1_SPI_
-	#define GYRO1_SPI           		SPI1 // Checked on hardware
-	#define GYRO1_CS_PORT				GPIOC // Checked on hardware
-	#define GYRO1_CS_PIN				15
-	#define TARGET_GYRO1				IIM42652_GYRO
+	#define GYRO1_SPI           		SPI1
+	#define GYRO1_CS_PORT				GPIOA
+	#define GYRO1_CS_PIN				3
+	#define TARGET_GYRO1				MPU6000_GYRO
 
 	#define GYRO1_USE_INT				0
-	#define GYRO1_INT_PORT				GPIOB
+	#define GYRO1_INT_PORT				GPIOA
 	#define GYRO1_INT_PIN				2
 
 	#define USE_DMA_SENSOR				1
 	#define USE_DMA_SENSOR_ICM42688P	0
 	#define USE_DMA_SENSOR_ICM20602		0
-	#define USE_DMA_SENSOR_IIM42652		1
+	#define USE_DMA_SENSOR_IIM42652		0
+	#define USE_DMA_SENSOR_MPU6000		1
 	#define SENSOR_DMA					DMA1
 	#define SENSOR_DMA_TX_Stream		DMA1_Stream6
 	#define SENSOR_DMA_RX_Stream		DMA1_Stream7
@@ -63,9 +64,9 @@
 
 #if ACC1_SPI_
 	#define ACC1_SPI           			SPI1
-	#define ACC1_CS_PORT				GPIOC
-	#define ACC1_CS_PIN					15
-	#define TARGET_ACC1					IIM42652_ACC
+	#define ACC1_CS_PORT				GPIOA
+	#define ACC1_CS_PIN					3
+	#define TARGET_ACC1					MPU6000_ACC
 
 	#define ACC1_SPI_CLOCK				16000000L // ICM42688P 24MHz but works with 32MHz
 #endif
@@ -160,6 +161,7 @@
 
 #if MAG_I2C_
 	#define MAG_I2C           			I2C1
+	#define TARGET_MAG					QMC5883L_MAGNETO
 #endif
 
 #if BNO055_
@@ -168,20 +170,20 @@
 
 // GPS
 #if GPS_
-	#define GPS_UART					USART1
+	#define GPS_UART					UART7
 	#define USE_INTERRUPT_GPS			1
-	#define GPS_INTERRUPT_				1
+	#define GPS_INTERRUPT_				7
 
-	#define GPS_UART_TX_GPIO			GPIOA
-	#define GPS_UART_TX_PIN				9
-	#define GPS_UART_TX_AF				CK_GPIO_AF7
+	#define GPS_UART_TX_GPIO			GPIOB
+	#define GPS_UART_TX_PIN				4
+	#define GPS_UART_TX_AF				CK_GPIO_AF11
 
-	#define GPS_UART_RX_GPIO			GPIOA
-	#define GPS_UART_RX_PIN				10
-	#define GPS_UART_RX_AF				CK_GPIO_AF7
+	#define GPS_UART_RX_GPIO			GPIOB
+	#define GPS_UART_RX_PIN				3
+	#define GPS_UART_RX_AF				CK_GPIO_AF11
 #endif
 
-	#define BUZZER_GPIO					GPIOA // BUZ- pin is DC active low but i use pwm to set volume
+	#define BUZZER_GPIO					GPIOA
 	#define BUZZER_GPIO_PIN				15
 
 #if BUZZER_PWM
@@ -305,14 +307,14 @@
 #endif
 
 #if LED1_
-	#define LED1_GPIO					GPIOE
-	#define LED1_GPIO_PIN				3
+	#define LED1_GPIO					GPIOD
+	#define LED1_GPIO_PIN				12
 	#define LED1_ACTIVE_LOW				1
 #endif
 
 #if LED2_
-	#define LED2_GPIO					GPIOE
-	#define LED2_GPIO_PIN				4
+	#define LED2_GPIO					GPIOD
+	#define LED2_GPIO_PIN				13
 	#define LED2_ACTIVE_LOW				1
 #endif
 
