@@ -1324,11 +1324,10 @@ void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd){
 
 void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd){
 
-	#if LED1_
-	CK_LED_ToggleLed(1);
-	#endif
-	#if LED2_
+	#if LED1_ & LED2_
 	CK_LED_ToggleLed(2);
+	#else
+	CK_LED_ToggleLed(1);
 	#endif
 
 	card.is_dma_ready = true;  // dma transfer is done
