@@ -11,26 +11,26 @@
 #define TARGET_PERIPHERAL_TIME_US	TARGET_8KHZ_US
 #define TARGET_FLASH				FLASH_STM32H7_
 
-	// Updates receiver and rc for response
-	// Interrupt cannot be used for all method updates
-	#define MAIN_INTERRUPT_TIM			TIM16
-	#define MAIN_INTERRUPT_TIM_CH		TIM_CHANNEL_1
-	#define MAIN_INTERRUPT_Handler		TIM16_IRQHandler
-	#define MAIN_INTERRUPT_IRQn			TIM16_IRQn
+// Updates receiver and rc for response
+// Interrupt cannot be used for all method updates
+#define MAIN_INTERRUPT_TIM			TIM16
+#define MAIN_INTERRUPT_TIM_CH		TIM_CHANNEL_1
+#define MAIN_INTERRUPT_Handler		TIM16_IRQHandler
+#define MAIN_INTERRUPT_IRQn			TIM16_IRQn
 
 // Define SPI pins here for an automatic SPI pin initialization
-#define USE_SPI1			true
-#define SPI1_SCK_GPIO 		GPIOA
-#define SPI1_SCK_PIN  		5
-#define SPI1_SCK_AF			CK_GPIO_AF5
+#define USE_SPI1						true
+#define SPI1_SCK_GPIO 					GPIOA
+#define SPI1_SCK_PIN  					5
+#define SPI1_SCK_AF						CK_GPIO_AF5
 
-#define SPI1_MISO_GPIO		GPIOA
-#define SPI1_MISO_PIN		6
-#define SPI1_MISO_AF		CK_GPIO_AF5
+#define SPI1_MISO_GPIO					GPIOA
+#define SPI1_MISO_PIN					6
+#define SPI1_MISO_AF					CK_GPIO_AF5
 
-#define SPI1_MOSI_GPIO		GPIOA
-#define SPI1_MOSI_PIN		7
-#define SPI1_MOSI_AF		CK_GPIO_AF5
+#define SPI1_MOSI_GPIO					GPIOA
+#define SPI1_MOSI_PIN					7
+#define SPI1_MOSI_AF					CK_GPIO_AF5
 
 #if GYRO1_SPI_
 	#define GYRO1_SPI           		SPI1
@@ -151,6 +151,11 @@
 	#define BARO_SPI_CLOCK				10000000L
 #endif
 
+#if BARO_I2C_
+	#define BARO_I2C           			I2C2
+	#define TARGET_BARO					DPS310_BAROMETER
+#endif
+
 #if MAG_SPI_
 	#define MAG_SPI           			SPI1
 	#define MAG_CS_PORT					GPIOB
@@ -161,7 +166,7 @@
 
 #if MAG_I2C_
 	#define MAG_I2C           			I2C1
-	#define TARGET_MAG					QMC5883L_MAGNETO
+	#define TARGET_MAG					MAG3110_MAGNETO
 #endif
 
 #if BNO055_
