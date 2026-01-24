@@ -175,7 +175,22 @@ void CK_BAROMETER_Update(void){
 				CK_BMP280_Calculate();
 			}
 
-			CK_BAROMETER_CheckTimeout();
+			else if(barometer.sensor == DPS310_BAROMETER)
+			{
+			    // Read + compensate inside driver
+			    CK_DPS310_ReadBaro();
+
+			    // Convert float Pa -> int32 Pa (your pipeline uses 101325 Pa reference)
+			    barometer.pressure = (int32_t)CK_DPS310_GetPressurePa();
+
+			    // Feed your existing median + moving sum pipeline
+			    barometer.pressureSum = CK_BAROMETER_RecalculateTotal(21, barometer.pressure);
+
+			    barometer.temperature = CK_DPS310_GetTemperatureC();
+			}
+
+
+			//CK_BAROMETER_CheckTimeout();
 
 			#if defined(DEBUG_TIMING)
 			barometer_debug.update_time = CK_TIME_GetMicroSec() - barometer_debug.start_time;
@@ -296,6 +311,28 @@ void CK_BAROMETER_PerformBaroCalibration(void){
 				}
 			}
 
+		}
+		else if(barometer.sensor == DPS310_BAROMETER)
+		{
+		    CK_DPS310_ReadBaro();
+		    barometer.pressure = (int32_t)CK_DPS310_GetPressurePa();
+
+		    barometer.pressureSum = CK_BAROMETER_RecalculateTotal(21, barometer.pressure);
+
+		    if(barometer.isBarometerReady){
+		        static int32_t savedGroundPressure = 0;
+
+		        baroGroundPressure -= baroGroundPressure / 8;
+		        baroGroundPressure += barometer.pressureSum / PRESSURE_SAMPLE_COUNT;
+		        barometer.groundAltitude = (1.0f - powf((baroGroundPressure / 8) / 101325.0f, 0.190295f)) * 4433000.0f;
+
+		        if (baroGroundPressure == savedGroundPressure)
+		            calibratingB = 0;
+		        else {
+		            calibratingB--;
+		            savedGroundPressure = baroGroundPressure;
+		        }
+		    }
 		}
 
 		CK_TIME_DelayMilliSec(10);
