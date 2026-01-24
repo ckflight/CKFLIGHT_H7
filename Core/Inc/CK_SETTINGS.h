@@ -16,8 +16,8 @@
 #define ACC_I2C_				0
 
 #define BARO_SPI_				0	// Init peripheral cs etc.
-#define BARO_I2C_				0	// Init peripheral cs etc.
-#define USE_BARO_				0
+#define BARO_I2C_				1	// Init peripheral cs etc.
+#define USE_BARO_				1
 
 #define MAG_SPI_				0	// Init peripheral CS important for common SPI
 #define MAG_I2C_				0
