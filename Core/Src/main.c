@@ -72,6 +72,11 @@ uint32_t computeStartTime, computeEndTime;
 
 // todo: dma reads gyro acc temp at the same time but acc is 1k gyro 8k check this!!!
 
+
+// CK_IMU 508, 659 MAGNETO COMMENTED!!!
+
+// CK_NAVIGATION 259, 260 COMMENTED!!!
+
 uint32_t main_t1, main_t2;
 int main(void){
 
@@ -159,7 +164,7 @@ int main(void){
 
     CK_ADJUSTMENT_Init(TARGET_2HZ_US, TARGET_MAIN_TIME_US);
 
-    CK_RECEIVER_WaitARM(); // Buzzer tone 1
+    //CK_RECEIVER_WaitARM(); // Buzzer tone 1
 
 #if GPS_
     CK_GPS_Init(GPS_UART, GPS_MODULE);
@@ -215,12 +220,16 @@ int main(void){
     CK_MAGNETO_Init2(MAG_I2C, TARGET_MAG, TARGET_10HZ_US, TARGET_MAIN_TIME_US);
 #endif
 
-#if USE_BARO_
+#if BARO_SPI_
     CK_BAROMETER_Init(BARO_SPI, BARO_CS_PORT, BARO_CS_PIN, TARGET_BARO, TARGET_100HZ_US, TARGET_MAIN_TIME_US);
 #endif
 
+#if BARO_I2C_
+    CK_BAROMETER_Init2(BARO_I2C, TARGET_BARO, TARGET_25HZ_US, TARGET_MAIN_TIME_US);
+#endif
+
 #if BNO055_
-   	CK_BNO055_Init(TARGET_100HZ_US, TARGET_MAIN_TIME_US);
+   	CK_BNO055_Init(BNO055_I2C, TARGET_100HZ_US, TARGET_MAIN_TIME_US);
 #endif
 
 #if LOG_FLASH_

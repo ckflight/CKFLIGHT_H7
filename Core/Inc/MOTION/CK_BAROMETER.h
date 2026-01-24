@@ -31,6 +31,8 @@ extern barometerSensor_t barometer;
 
 void CK_BAROMETER_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, sensorModel_e sensor, uint32_t barometerT, uint32_t mainT);
 
+void CK_BAROMETER_Init2(I2C_TypeDef* i2c_, sensorModel_e sensor, uint32_t barometerT, uint32_t mainT);
+
 void CK_BAROMETER_Update(void);
 
 uint32_t CK_BAROMETER_RecalculateTotal(uint8_t baroSampleCount, int32_t newPressureReading);
