@@ -1,355 +1,283 @@
 // ============================================================
-// CK_DPS310.c  (DPS310 Baro Driver - CK format + WHO-AM-I + CK_I2C timeout integration)
+// CK_DPS310.c  (DPS310 Baro Driver - CK format, Adafruit-aligned)
 // ============================================================
 
 #include "DRIVERS/CK_I2C.h"
 #include "DRIVERS/CK_TIME_HAL.h"
 #include "DRIVERS/CK_BUZZER.h"
-
-#include "SENSORS/dps310.h"
-
 #include <stdbool.h>
 #include <stdint.h>
 
-// ============================================================
-// DPS310 I2C Address (7-bit)
-// ============================================================
-//  - 0x76 if SDO low
-#define DPS310_ADDRESS              0x76
+// -------------------- I2C address (7-bit) --------------------
+#define DPS310_ADDRESS              0x76  // SDO low -> 0x76, SDO high -> 0x77
 
-// ============================================================
-// DPS310 Registers
-// ============================================================
+// -------------------- Registers --------------------
 #define DPS310_PRS_B2               0x00
-#define DPS310_PRS_B1               0x01
-#define DPS310_PRS_B0               0x02
-
 #define DPS310_TMP_B2               0x03
-#define DPS310_TMP_B1               0x04
-#define DPS310_TMP_B0               0x05
 
 #define DPS310_PRS_CFG              0x06
 #define DPS310_TMP_CFG              0x07
 #define DPS310_MEAS_CFG             0x08
 #define DPS310_CFG_REG              0x09
 
-#define DPS310_INT_STS              0x0A
-#define DPS310_FIFO_STS             0x0B
-
 #define DPS310_RESET                0x0C
-#define DPS310_PROD_ID              0x0D     // PROD_ID/REV_ID (WHO-AM-I style)
+#define DPS310_PROD_ID              0x0D
 
-#define DPS310_COEF_BASE            0x10     // 0x10..0x21 (18 bytes)
+#define DPS310_COEF_BASE            0x10  // 0x10..0x21 (18 bytes)
+#define DPS310_TMPCOEFSRCE          0x28  // bit7 source used by Adafruit
+
 #define DPS310_RESET_CMD            0x89
 
-// ============================================================
-// Sizes
-// ============================================================
+// -------------------- MEAS_CFG bits (Adafruit) --------------------
+#define DPS310_BIT_CALIB_RDY        (1u << 7)
+#define DPS310_BIT_SENSOR_RDY       (1u << 6)
+#define DPS310_BIT_TMP_RDY          (1u << 5)
+#define DPS310_BIT_PRS_RDY          (1u << 4)
+
+// -------------------- CFG_REG shift bits (Adafruit) -------------
+#define DPS310_BIT_P_SHIFT          (1u << 2)
+#define DPS310_BIT_T_SHIFT          (1u << 3)
+
+// -------------------- sizes --------------------
 #define DPS310_COEF_READ_SIZE       18
-#define DPS310_RAW_READ_SIZE        6   // 3 bytes P + 3 bytes T
+#define DPS310_RAW3_SIZE            3
 
-// ============================================================
-// Internal I2C handle
-// ============================================================
-static I2C_TypeDef* DPS310_I2C = 0;
-
-// ============================================================
-// Parameters struct (CK style)
-// ============================================================
-typedef struct
-{
-    bool    BaroInit;
-
-    uint8_t rxArray[DPS310_RAW_READ_SIZE];
-    uint8_t coefArray[DPS310_COEF_READ_SIZE];
-
-    // decoded coefficients (signed)
-    int16_t  c0;
-    int16_t  c1;
-    int32_t  c00;
-    int32_t  c10;
-    int16_t  c01;
-    int16_t  c11;
-    int16_t  c20;
-    int16_t  c21;
-    int16_t  c30;
-
-    // OSR codes used (0..7)
-    uint8_t prs_osr;
-    uint8_t tmp_osr;
-
-    // last raw values (signed 24-bit)
-    int32_t prs_raw;
-    int32_t tmp_raw;
-
-    // last compensated outputs
-    float   pressure_pa;
-    float   temperature_c;
-
-}DPS310_PARAMETERS_t;
-
-static DPS310_PARAMETERS_t dps310 =
-{
-    .BaroInit = false,
-    .rxArray = {0,0,0,0,0,0},
-    .coefArray = {0},
-
-    .c0 = 0, .c1 = 0,
-    .c00 = 0, .c10 = 0,
-    .c01 = 0, .c11 = 0, .c20 = 0, .c21 = 0, .c30 = 0,
-
-    .prs_osr = 0,
-    .tmp_osr = 0,
-
-    .prs_raw = 0,
-    .tmp_raw = 0,
-
-    .pressure_pa = 0.0f,
-    .temperature_c = 0.0f
+// -------------------- oversample scaling table (Adafruit) -------
+static const int32_t dps310_osr_scale[8] = {
+    524288, 1572864, 3670016, 7864320,
+    253952, 516096, 1040384, 2088960
 };
 
-// ============================================================
-// Local wrappers: integrate CK_I2C timeout counters
-// ============================================================
+// -------------------- internal state ----------------------------
+static I2C_TypeDef* DPS310_I2C = 0;
 
-static bool DPS310_I2C_IsReady(I2C_TypeDef* i2c)
+typedef struct {
+    bool BaroInit;
+
+    // calib
+    int16_t  c0, c1;
+    int32_t  c00, c10;
+    int16_t  c01, c11, c20, c21, c30;
+
+    // config
+    uint8_t  prs_osr;        // 0..7
+    uint8_t  tmp_osr;        // 0..7
+    int32_t  prs_scale;
+    int32_t  tmp_scale;
+
+    // last
+    int32_t  raw_p;
+    int32_t  raw_t;
+    float    pressure_pa;
+    float    temperature_c;
+    float    scaled_rawtemp;
+
+} dps310_t;
+
+static dps310_t s = {0};
+
+// -------------------- helpers --------------------
+static int32_t twosComplement(int32_t val, uint8_t bits)
 {
-    // Your CK_I2C_CheckInitialized returns 1 when ready, 0 not init, 2 error
-    return (CK_I2C_CheckInitialized(i2c) == 1);
+    if (val & ((uint32_t)1u << (bits - 1))) {
+        val -= (uint32_t)1u << bits;
+    }
+    return val;
 }
 
-static void DPS310_I2C_WriteReg(I2C_TypeDef* i2c, uint8_t reg, uint8_t data)
+static void i2c_write(uint8_t reg, uint8_t v)
 {
-    CK_I2C_Transfer(i2c, DPS310_ADDRESS, reg, data);
-    // If your CK_I2C layer increments timeout elsewhere, you can leave this.
-    // Otherwise, we at least can reset on writes we assume succeed.
-    CK_I2C_ResetTimeOut(i2c);
+    CK_I2C_Transfer(DPS310_I2C, DPS310_ADDRESS, reg, v);
 }
 
-static void DPS310_I2C_Read(I2C_TypeDef* i2c, uint8_t reg, uint8_t* buf, int len)
+static void i2c_read(uint8_t reg, uint8_t* buf, int len)
 {
-    CK_I2C_ReadMulti(i2c, DPS310_ADDRESS, reg, buf, len);
-    //CK_I2C_ResetTimeOut(i2c);
+    CK_I2C_ReadMulti(DPS310_I2C, DPS310_ADDRESS, reg, buf, len);
 }
 
-// ============================================================
-// Helpers
-// ============================================================
-
-static int32_t DPS310_SignExtend24(uint32_t x)
+static uint8_t read_u8(uint8_t reg)
 {
-    if (x & 0x800000U) { x |= 0xFF000000U; }
-    return (int32_t)x;
+    uint8_t v = 0;
+    i2c_read(reg, &v, 1);
+    return v;
 }
 
-static int32_t DPS310_SignExtend20(uint32_t x)
+static void wait_ready(uint8_t mask, uint32_t timeout_ms)
 {
-    if (x & 0x80000U) { x |= 0xFFF00000U; }
-    return (int32_t)x;
-}
+    // simple polling helper
+    uint32_t t0 = CK_TIME_GetMicroSec();
+    while (1) {
+        uint8_t m = read_u8(DPS310_MEAS_CFG);
+        if ((m & mask) == mask) return;
 
-static int16_t DPS310_SignExtend12(uint16_t x)
-{
-    if (x & 0x0800U) { x |= 0xF000U; }
-    return (int16_t)x;
-}
-
-// Consistent scaling table (SHIFT disabled).
-// This table is commonly used in DPS310 reference implementations.
-static float DPS310_GetScaleFactor(uint8_t osr_code)
-{
-    switch (osr_code & 0x07U)
-    {
-        default:
-        case 0: return 524288.0f;    // x1
-        case 1: return 1572864.0f;   // x2
-        case 2: return 3670016.0f;   // x4
-        case 3: return 7864320.0f;   // x8
-        case 4: return 253952.0f;    // x16   (DPS310 uses an internal shift scheme in some modes; keep SHIFT disabled with this)
-        case 5: return 516096.0f;    // x32
-        case 6: return 1040384.0f;   // x64
-        case 7: return 2088960.0f;   // x128
+        if (((CK_TIME_GetMicroSec() - t0) / 1000u) > timeout_ms) return;
+        CK_TIME_DelayMilliSec(1);
     }
 }
 
-static void DPS310_DecodeCoefficients(void)
+static bool check_whoami(void)
 {
-    const uint8_t* c = dps310.coefArray;
-
-    uint16_t c0_u  = (uint16_t)((((uint16_t)c[0]) << 4) | (c[1] >> 4));
-    uint16_t c1_u  = (uint16_t)((((uint16_t)(c[1] & 0x0F)) << 8) | c[2]);
-
-    uint32_t c00_u = (uint32_t)((((uint32_t)c[3]) << 12) | (((uint32_t)c[4]) << 4) | (c[5] >> 4));
-    uint32_t c10_u = (uint32_t)((((uint32_t)(c[5] & 0x0F)) << 16) | (((uint32_t)c[6]) << 8) | c[7]);
-
-    dps310.c0  = DPS310_SignExtend12(c0_u);
-    dps310.c1  = DPS310_SignExtend12(c1_u);
-
-    dps310.c00 = DPS310_SignExtend20(c00_u);
-    dps310.c10 = DPS310_SignExtend20(c10_u);
-
-    dps310.c01 = (int16_t)((((int16_t)c[8])  << 8) | c[9]);
-    dps310.c11 = (int16_t)((((int16_t)c[10]) << 8) | c[11]);
-    dps310.c20 = (int16_t)((((int16_t)c[12]) << 8) | c[13]);
-    dps310.c21 = (int16_t)((((int16_t)c[14]) << 8) | c[15]);
-    dps310.c30 = (int16_t)((((int16_t)c[16]) << 8) | c[17]);
+    uint8_t id = read_u8(DPS310_PROD_ID);
+    // Adafruit expects exactly 0x10
+    return (id == 0x10);
 }
 
-static void DPS310_Compensate(void)
+static void read_calibration(void)
 {
-    float prs_sc = (float)dps310.prs_raw / DPS310_GetScaleFactor(dps310.prs_osr);
-    float tmp_sc = (float)dps310.tmp_raw / DPS310_GetScaleFactor(dps310.tmp_osr);
+    // Wait CALIB_RDY
+    wait_ready(DPS310_BIT_CALIB_RDY, 100);
 
-    // Temperature (°C)
-    dps310.temperature_c = (0.5f * (float)dps310.c0) + ((float)dps310.c1 * tmp_sc);
+    uint8_t c[DPS310_COEF_READ_SIZE];
+    i2c_read(DPS310_COEF_BASE, c, DPS310_COEF_READ_SIZE);
 
-    // Pressure (Pa)
-    float p =
-        (float)dps310.c00
-        + prs_sc * ((float)dps310.c10 + prs_sc * ((float)dps310.c20 + prs_sc * (float)dps310.c30))
-        + tmp_sc * ((float)dps310.c01 + prs_sc * ((float)dps310.c11 + prs_sc * (float)dps310.c21));
+    int32_t c0  = ((uint16_t)c[0] << 4) | ((c[1] >> 4) & 0x0F);
+    int32_t c1  = (((uint16_t)c[1] & 0x0F) << 8) | c[2];
 
-    dps310.pressure_pa = p;
+    int32_t c00 = ((uint32_t)c[3] << 12) | ((uint32_t)c[4] << 4) | ((c[5] >> 4) & 0x0F);
+    int32_t c10 = (((uint32_t)c[5] & 0x0F) << 16) | ((uint32_t)c[6] << 8) | (uint32_t)c[7];
+
+    s.c0  = (int16_t)twosComplement(c0, 12);
+    s.c1  = (int16_t)twosComplement(c1, 12);
+    s.c00 = (int32_t)twosComplement(c00, 20);
+    s.c10 = (int32_t)twosComplement(c10, 20);
+
+    s.c01 = (int16_t)twosComplement(((uint16_t)c[8]  << 8) | c[9],  16);
+    s.c11 = (int16_t)twosComplement(((uint16_t)c[10] << 8) | c[11], 16);
+    s.c20 = (int16_t)twosComplement(((uint16_t)c[12] << 8) | c[13], 16);
+    s.c21 = (int16_t)twosComplement(((uint16_t)c[14] << 8) | c[15], 16);
+    s.c30 = (int16_t)twosComplement(((uint16_t)c[16] << 8) | c[17], 16);
 }
 
-// WHO-AM-I style check (robust for your CK_I2C with no status return)
-static bool DPS310_CheckWhoAmI(I2C_TypeDef* i2c)
+static void configure_pressure(uint8_t rate_code, uint8_t osr_code)
 {
-    uint8_t id = 0x00;
+    // PRS_CFG: rate[6:4], osr[3:0]
+    uint8_t v = (uint8_t)((rate_code & 0x07u) << 4) | (osr_code & 0x0Fu);
+    i2c_write(DPS310_PRS_CFG, v);
 
-    DPS310_I2C_Read(i2c, DPS310_PROD_ID, &id, 1);
+    // SHIFT handling (Adafruit): if osr > 8 samples => enable P_SHIFT
+    uint8_t cfg = read_u8(DPS310_CFG_REG);
+    if (osr_code > 3) cfg |= DPS310_BIT_P_SHIFT;
+    else              cfg &= (uint8_t)~DPS310_BIT_P_SHIFT;
+    i2c_write(DPS310_CFG_REG, cfg);
 
-    // Fast reject: bus floating / no device often reads 0x00 or 0xFF.
-    if (id == 0x00U || id == 0xFFU) {
-        return false;
-    }
-
-    // DPS310: upper nibble is product id (0x1), lower nibble revision
-    if ( (id & 0xF0U) != 0x10U ) {
-        return false;
-    }
-
-    return true;
+    s.prs_osr   = osr_code & 0x07u;
+    s.prs_scale = dps310_osr_scale[s.prs_osr];
 }
 
-// Map your barometer loop time (us) to DPS310 rate code.
-// baroFreq: your "targetLoopTime" (likely microseconds).
-static uint8_t DPS310_SelectRateCode(uint32_t baroFreq_us)
+static void configure_temperature(uint8_t rate_code, uint8_t osr_code)
 {
-    // Conservative mapping:
-    // If you call baro at ~100Hz, pick 64Hz. If ~50Hz pick 32Hz, etc.
-    // You can tune this later.
-    if (baroFreq_us <= 8000U)   return 6; // <= 8ms  -> 64Hz
-    if (baroFreq_us <= 16000U)  return 5; // <=16ms  -> 32Hz
-    if (baroFreq_us <= 32000U)  return 4; // <=32ms  -> 16Hz
-    if (baroFreq_us <= 64000U)  return 3; // <=64ms  -> 8Hz
-    if (baroFreq_us <= 125000U) return 2; // <=125ms -> 4Hz
-    if (baroFreq_us <= 250000U) return 1; // <=250ms -> 2Hz
-    return 0; // 1Hz
+    // TMP_CFG: rate[6:4], osr[3:0]
+    uint8_t v = (uint8_t)((rate_code & 0x07u) << 4) | (osr_code & 0x0Fu);
+
+    // Copy temp coeff source bit7 into TMP_CFG bit7 (Adafruit behavior)
+    uint8_t src = read_u8(DPS310_TMPCOEFSRCE);
+    if (src & 0x80u) v |= 0x80u;
+    else             v &= 0x7Fu;
+
+    i2c_write(DPS310_TMP_CFG, v);
+
+    // SHIFT handling (Adafruit): if osr > 8 samples => enable T_SHIFT
+    uint8_t cfg = read_u8(DPS310_CFG_REG);
+    if (osr_code > 3) cfg |= DPS310_BIT_T_SHIFT;
+    else              cfg &= (uint8_t)~DPS310_BIT_T_SHIFT;
+    i2c_write(DPS310_CFG_REG, cfg);
+
+    s.tmp_osr   = osr_code & 0x07u;
+    s.tmp_scale = dps310_osr_scale[s.tmp_osr];
 }
 
-// ============================================================
-// Public API
-// ============================================================
-
-void CK_DPS310_Init(I2C_TypeDef* I2Cn, uint32_t baroFreq)
+// -------------------- public API --------------------
+void CK_DPS310_Init(I2C_TypeDef* I2Cn, uint32_t baroLoopTime_us)
 {
+    (void)baroLoopTime_us;
+
     DPS310_I2C = I2Cn;
-    dps310.BaroInit = false;
+    s.BaroInit = false;
 
-    // Guard: ensure I2C peripheral was initialized in your system
-    if (!DPS310_I2C_IsReady(DPS310_I2C))
-    {
-        // Optional: beep
+    if (CK_I2C_CheckInitialized(DPS310_I2C) != 1) {
         CK_BUZZER_Tone3();
         return;
     }
 
-	// WHO-AM-I check before reset (quick wiring/address validation)
-	if (!DPS310_CheckWhoAmI(DPS310_I2C))
-	{
-		return;
-	}
+    if (!check_whoami()) {
+        // wrong address / wiring
+        return;
+    }
 
     // Reset
-    DPS310_I2C_WriteReg(DPS310_I2C, DPS310_RESET, DPS310_RESET_CMD);
+    i2c_write(DPS310_RESET, DPS310_RESET_CMD);
     CK_TIME_DelayMilliSec(10);
 
-    // Optional: WHO-AM-I check again after reset (some boards prefer this)
-    if (!DPS310_CheckWhoAmI(DPS310_I2C))
-    {
-        return;
-    }
+    // Wait SENSOR_RDY after reset (Adafruit)
+    wait_ready(DPS310_BIT_SENSOR_RDY, 100);
 
-    // Read coefficients
-    DPS310_I2C_Read(DPS310_I2C, DPS310_COEF_BASE, dps310.coefArray, DPS310_COEF_READ_SIZE);
-    DPS310_DecodeCoefficients();
+    // Read calib
+    read_calibration();
 
-    // --------------------------------------------------------
-    // Configure DPS310
-    // --------------------------------------------------------
-    uint8_t rate_code = DPS310_SelectRateCode(baroFreq); // based on your loop time
-    uint8_t osr_code  = 3; // x8 default (good tradeoff)
+    // Adafruit defaults: 64Hz, 64 samples (osr=6)
+    // rate_code: 64Hz is 6 in DPS310 (matches Adafruit enum)
+    // osr_code : 64 samples is 6
+    configure_pressure(6, 6);
+    configure_temperature(6, 6);
 
-    dps310.prs_osr = osr_code;
-    dps310.tmp_osr = osr_code;
+    // Continuous pressure+temperature mode = 0x07? (Adafruit uses DPS310_CONT_PRESTEMP)
+    // In their code they set modebits(3 bits, pos0). For DPS310_CONT_PRESTEMP it is 7.
+    // Many examples also use 0x07. If your board only works with 0x05, keep 0x05.
+    // We'll match Adafruit:
+    uint8_t meas = read_u8(DPS310_MEAS_CFG);
+    meas = (uint8_t)((meas & ~0x07u) | 0x07u);
+    i2c_write(DPS310_MEAS_CFG, meas);
 
-    // PRS_CFG: [7:4]=rate, [3:0]=osr
-    DPS310_I2C_WriteReg(DPS310_I2C, DPS310_PRS_CFG, (uint8_t)((rate_code << 4) | (osr_code & 0x0F)));
+    // Wait first data ready (Adafruit loop)
+    // temperatureAvailable() bit5, pressureAvailable() bit4
+    wait_ready((uint8_t)(DPS310_BIT_TMP_RDY | DPS310_BIT_PRS_RDY), 200);
 
-    // TMP_CFG: [7:4]=rate, [3:0]=osr
-    // Also TMP_EXT bit exists on some DPS3xx variants; keeping default internal temp.
-    DPS310_I2C_WriteReg(DPS310_I2C, DPS310_TMP_CFG, (uint8_t)((rate_code << 4) | (osr_code & 0x0F)));
-
-    // CFG_REG:
-    // - Keep SHIFT disabled for simplicity (0x00)
-    // - If you later use high OSR (>= x64), consider enabling shift and adjusting scale factors.
-    DPS310_I2C_WriteReg(DPS310_I2C, DPS310_CFG_REG, 0x00);
-
-    // MEAS_CFG:
-    // 0x05 = continuous pressure + temperature
-    DPS310_I2C_WriteReg(DPS310_I2C, DPS310_MEAS_CFG, 0x05);
-
-    dps310.BaroInit = true;
-}
-
-void CK_DPS310_ReadBaroRaw(void)
-{
-    if (!dps310.BaroInit || DPS310_I2C == 0) {
-        return;
-    }
-
-    DPS310_I2C_Read(DPS310_I2C, DPS310_PRS_B2, dps310.rxArray, DPS310_RAW_READ_SIZE);
-
-    uint32_t prs_u = ((uint32_t)dps310.rxArray[0] << 16)
-                   | ((uint32_t)dps310.rxArray[1] << 8)
-                   |  (uint32_t)dps310.rxArray[2];
-
-    uint32_t tmp_u = ((uint32_t)dps310.rxArray[3] << 16)
-                   | ((uint32_t)dps310.rxArray[4] << 8)
-                   |  (uint32_t)dps310.rxArray[5];
-
-    dps310.prs_raw = DPS310_SignExtend24(prs_u);
-    dps310.tmp_raw = DPS310_SignExtend24(tmp_u);
-}
-
-void CK_DPS310_ReadBaro(void)
-{
-    CK_DPS310_ReadBaroRaw();
-    DPS310_Compensate();
-}
-
-float CK_DPS310_GetPressurePa(void)
-{
-    return dps310.pressure_pa;
-}
-
-float CK_DPS310_GetTemperatureC(void)
-{
-    return dps310.temperature_c;
+    s.BaroInit = true;
 }
 
 bool CK_DPS310_isBaroSensorInitialized(void)
 {
-    return dps310.BaroInit;
+    return s.BaroInit;
+}
+
+void CK_DPS310_ReadBaro(void)
+{
+    if (!s.BaroInit || DPS310_I2C == 0) return;
+
+    // Optional: only update when new data is ready
+    uint8_t m = read_u8(DPS310_MEAS_CFG);
+    if (((m & DPS310_BIT_TMP_RDY) == 0u) || ((m & DPS310_BIT_PRS_RDY) == 0u)) {
+        return;
+    }
+
+    uint8_t pb[3], tb[3];
+    i2c_read(DPS310_PRS_B2, pb, 3);
+    i2c_read(DPS310_TMP_B2, tb, 3);
+
+    int32_t raw_p = ((int32_t)pb[0] << 16) | ((int32_t)pb[1] << 8) | (int32_t)pb[2];
+    int32_t raw_t = ((int32_t)tb[0] << 16) | ((int32_t)tb[1] << 8) | (int32_t)tb[2];
+
+    s.raw_p = twosComplement(raw_p, 24);
+    s.raw_t = twosComplement(raw_t, 24);
+
+    // Adafruit math
+    s.scaled_rawtemp = (float)s.raw_t / (float)s.tmp_scale;
+    s.temperature_c  = s.scaled_rawtemp * (float)s.c1 + ((float)s.c0 / 2.0f);
+
+    float p_sc = (float)s.raw_p / (float)s.prs_scale;
+
+    s.pressure_pa =
+        (float)s.c00 +
+        p_sc * ((float)s.c10 + p_sc * ((float)s.c20 + p_sc * (float)s.c30)) +
+        s.scaled_rawtemp * ((float)s.c01 + p_sc * ((float)s.c11 + p_sc * (float)s.c21));
+}
+
+float CK_DPS310_GetPressurePa(void)
+{
+    return s.pressure_pa;
+}
+
+float CK_DPS310_GetTemperatureC(void)
+{
+    return s.temperature_c;
 }
