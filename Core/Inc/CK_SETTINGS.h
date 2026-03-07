@@ -16,8 +16,8 @@
 #define ACC_I2C_				0
 
 #define BARO_SPI_				0	// Init peripheral cs etc.
-#define BARO_I2C_				1	// Init peripheral cs etc.
-#define USE_BARO_				1
+#define BARO_I2C_				0	// Init peripheral cs etc.
+#define USE_BARO_				0
 
 #define MAG_SPI_				0	// Init peripheral CS important for common SPI
 #define MAG_I2C_				0
@@ -38,9 +38,9 @@
 #define BUZZER_PWM				1
 #define BUZZER_DC				0
 
-#define OSD_ONBOARD_			0
+#define OSD_ONBOARD_			1
 #define OSD_PDB_				0
-#define OSD_DJI_				1
+#define OSD_DJI_				0
 
 #define RGB_					1
 

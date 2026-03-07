@@ -504,6 +504,7 @@ static void imuDebug_GPS_RESCUE_HEADING(void)
 }
 #endif // defined(USE_MAG_) && defined(GPS__RESCUE)
 
+/*
 #if USE_MAG_ == true
 // Calculate heading error derived from magnetometer
 // return value rotation around earth Z axis, pointing in directipon of smaller error, [rad/s]
@@ -539,7 +540,7 @@ float imuCalcMagErr(void)
 }
 
 #endif
-
+*/
 #if defined(GPS_)
 static void imuComputeQuaternionFromRPY(quaternionProducts *quatProd, int16_t initialRoll, int16_t initialPitch, int16_t initialYaw)
 {
@@ -654,7 +655,7 @@ static void imuCalculateEstimatedAttitude(timeUs_t currentTimeUs)
 			// *** magnetometer based error estimate ***
 			bool useMag = false;   // mag will suppress GPS correction
 			float magErr = 0;
-
+		/*
 		#if USE_MAG_ == true
 			if (sensors(SENSOR_MAG)
 				&& compassIsHealthy()
@@ -666,6 +667,7 @@ static void imuCalculateEstimatedAttitude(timeUs_t currentTimeUs)
 				magErr = imuCalcMagErr();
 			}
 		#endif
+		*/
 
 		#if defined(USE_MAG_) && defined(GPS__RESCUE)
 			// fill in GPS rescue debug value (leftover from code refactoring)

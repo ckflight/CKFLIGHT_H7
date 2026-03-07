@@ -6,7 +6,8 @@
 #include "git_commit_hash.h"
 
 #define 		CKFLIGHT_F4			false
-#define 		CKFLIGHT_H7			true
+#define 		CKFLIGHT_H7_V1		true
+#define 		CKFLIGHT_H7_V2		false
 #define 		KAKUTE_H7_1v3		false
 #define 		MATEKH743_SLIMV3	false
 #define 		RF_REVOLT			false
@@ -73,8 +74,17 @@
 #define USE_F4	0
 #endif
 
-#if CKFLIGHT_H7 == true
-#define TARGET_BOARD	"CKFLIGHT_H7"
+#if CKFLIGHT_H7_V1 == true
+#define TARGET_BOARD	"CKFLIGHT_H7_V1"
+#define TARGET_MCU 		"H7"
+
+// For dma cache etc so copy paste wont create problem
+#define USE_H7	1
+#define USE_F4	0
+#endif
+
+#if CKFLIGHT_H7_V2 == true
+#define TARGET_BOARD	"CKFLIGHT_H7_V2"
 #define TARGET_MCU 		"H7"
 
 // For dma cache etc so copy paste wont create problem
@@ -123,8 +133,12 @@
 #include "config/ckflightf4_v4.h"
 #endif
 
-#if CKFLIGHT_H7 == true
+#if CKFLIGHT_H7_V1 == true
 #include "config/ckflighth7_v1.h"
+#endif
+
+#if CKFLIGHT_H7_V2 == true
+#include "config/ckflighth7_v2.h"
 #endif
 
 #if KAKUTE_H7_1v3 == true

@@ -45,11 +45,12 @@
 #define SPI2_MOSI_PIN					15
 #define SPI2_MOSI_AF					CK_GPIO_AF5
 
+
 #if GYRO1_SPI_
 	#define GYRO1_SPI           		SPI1
 	#define GYRO1_CS_PORT				GPIOA
 	#define GYRO1_CS_PIN				3
-	#define TARGET_GYRO1				MPU6000_GYRO
+	#define TARGET_GYRO1				ICM20602_GYRO
 
 	#define GYRO1_USE_INT				0
 	#define GYRO1_INT_PORT				GPIOA
@@ -57,9 +58,9 @@
 
 	#define USE_DMA_SENSOR				1
 	#define USE_DMA_SENSOR_ICM42688P	0
-	#define USE_DMA_SENSOR_ICM20602		0
+	#define USE_DMA_SENSOR_ICM20602		1
 	#define USE_DMA_SENSOR_IIM42652		0
-	#define USE_DMA_SENSOR_MPU6000		1
+	#define USE_DMA_SENSOR_MPU6000		0
 	#define SENSOR_DMA					DMA1
 	#define SENSOR_DMA_TX_Stream		DMA1_Stream6
 	#define SENSOR_DMA_RX_Stream		DMA1_Stream7
@@ -79,23 +80,23 @@
 	#define ACC1_SPI           			SPI1
 	#define ACC1_CS_PORT				GPIOA
 	#define ACC1_CS_PIN					3
-	#define TARGET_ACC1					MPU6000_ACC
+	#define TARGET_ACC1					ICM20602_ACC
 
-	#define ACC1_SPI_CLOCK				16000000L // ICM42688P 24MHz but works with 32MHz
+	#define ACC1_SPI_CLOCK				16000000L
 #endif
 
 #if GYRO2_SPI_
-	#define GYRO2_SPI           		SPI4 // Checked on hardware
-	#define GYRO2_CS_PORT				GPIOC // Checked on hardware
-	#define GYRO2_CS_PIN				13
-	#define TARGET_GYRO2				ICM42688P_GYRO
+	#define GYRO2_SPI           		SPI4
+	#define GYRO2_CS_PORT				GPIOD
+	#define GYRO2_CS_PIN				8
+	#define TARGET_GYRO2				ICM20602_GYRO // ICM45686
 
 	#define GYRO2_USE_INT				0
 	#define GYRO2_INT_PORT				GPIOE
 	#define GYRO2_INT_PIN				15
 
 	#define USE_DMA_SENSOR				1
-	#define USE_DMA_SENSOR_ICM42688P	1
+	#define USE_DMA_SENSOR_ICM42688P	0
 	#define USE_DMA_SENSOR_ICM20602		0
 	#define USE_DMA_SENSOR_IIM42652		0
 	#define SENSOR_DMA					DMA1
@@ -109,14 +110,14 @@
 	#define SENSOR_DMA_TX_IRQn			DMA1_Stream6_IRQn
 	#define SENSOR_DMA_RX_IRQn			DMA1_Stream7_IRQn
 
-	#define GYRO2_SPI_CLOCK				16000000L
+	#define GYRO2_SPI_CLOCK				16000000L // works with higher clock
 #endif
 
 #if ACC2_SPI_
 	#define ACC2_SPI           			SPI4
-	#define ACC2_CS_PORT				GPIOC
-	#define ACC2_CS_PIN					13
-	#define TARGET_ACC2					ICM42688P_ACC
+	#define ACC2_CS_PORT				GPIOD
+	#define ACC2_CS_PIN					8
+	#define TARGET_ACC2					ICM20602_ACC
 
 	#define ACC2_SPI_CLOCK				16000000L
 #endif
@@ -201,13 +202,13 @@
 	#define GPS_UART_RX_AF				CK_GPIO_AF11
 #endif
 
-	#define BUZZER_GPIO					GPIOA
-	#define BUZZER_GPIO_PIN				15
+	#define BUZZER_GPIO					GPIOE
+	#define BUZZER_GPIO_PIN				5
 
 #if BUZZER_PWM
-	#define BUZZER_TIM					TIM2
+	#define BUZZER_TIM					TIM15
 	#define BUZZER_TIM_CH				TIM_CHANNEL_1
-	#define BUZZER_AF					CK_GPIO_AF1
+	#define BUZZER_AF					CK_GPIO_AF4
 #endif
 
 #if BUZZER_DC
@@ -252,25 +253,25 @@
 	#define MOTOR3_TIM					TIM5
 	#define MOTOR4_TIM					TIM5
 
-	#define MOTOR1_TIM_CH				TIM_CHANNEL_3
-	#define MOTOR2_TIM_CH				TIM_CHANNEL_4
-	#define MOTOR3_TIM_CH				TIM_CHANNEL_1
-	#define MOTOR4_TIM_CH				TIM_CHANNEL_2
+	#define MOTOR1_TIM_CH				TIM_CHANNEL_4
+	#define MOTOR2_TIM_CH				TIM_CHANNEL_3
+	#define MOTOR3_TIM_CH				TIM_CHANNEL_2
+	#define MOTOR4_TIM_CH				TIM_CHANNEL_1
 
 	#define MOTOR1_GPIO					GPIOB
-	#define MOTOR1_PIN					0
+	#define MOTOR1_PIN					1
 	#define MOTOR1_AF					CK_GPIO_AF2
 
 	#define MOTOR2_GPIO					GPIOB
-	#define MOTOR2_PIN					1
+	#define MOTOR2_PIN					0
 	#define MOTOR2_AF					CK_GPIO_AF2
 
 	#define MOTOR3_GPIO					GPIOA
-	#define MOTOR3_PIN					0
+	#define MOTOR3_PIN					1
 	#define MOTOR3_AF					CK_GPIO_AF2
 
 	#define MOTOR4_GPIO					GPIOA
-	#define MOTOR4_PIN					1
+	#define MOTOR4_PIN					0
 	#define MOTOR4_AF					CK_GPIO_AF2
 
 	#define DSHOT1_DMA					DMA1
@@ -359,21 +360,21 @@
 #endif
 
 #if OSD_PDB_
-	#define OSD_PDB_USART				UART2
+	#define OSD_PDB_USART				UART4
 
 	#define USE_INTERRUPT_OSD			1
-	#define OSD_INTERRUPT_				2
+	#define OSD_INTERRUPT_				4
 
 	#define USE_DMA_OSD					0
 	#define OSD_DMA						DMA2
 	#define OSD_DMA_Stream				DMA2_Stream2
 	#define OSD_DMA_Handler				DMA2_Stream2_IRQHandler
 	#define OSD_DMA_IRQn				DMA2_Stream2_IRQn
-	#define OSD_DMA_Request				DMA_REQUEST_USART2_TX
+	#define OSD_DMA_Request				DMA_REQUEST_UART4_TX
 
-	#define OSD_PDB_UART_TX_GPIO		GPIOD
-	#define OSD_PDB_UART_TX_PIN			5
-  	#define OSD_PDB_UART_TX_AF			CK_GPIO_AF7
+	#define OSD_PDB_UART_TX_GPIO		GPIOB
+	#define OSD_PDB_UART_TX_PIN			9
+  	#define OSD_PDB_UART_TX_AF			CK_GPIO_AF8
 #endif
 
 #if OSD_DJI_
