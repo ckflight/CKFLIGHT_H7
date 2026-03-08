@@ -271,10 +271,11 @@ void CK_PERIPHERAL_Init(targetFreq_e target_period){
 
 	CK_SYSTEM_TIMER_ClockEnable(BUZZER_TIM);
 
-	//CK_GPIO_ClockEnable(BUZZER_GPIO);
+	CK_GPIO_ClockEnable(BUZZER_GPIO);
 
-	//CK_GPIO_Init(BUZZER_GPIO, BUZZER_GPIO_PIN, CK_GPIO_AF_PP, BUZZER_AF, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
+	CK_GPIO_Init(BUZZER_GPIO, BUZZER_GPIO_PIN, CK_GPIO_AF_PP, BUZZER_AF, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
 
+	/*PA15 JTDI Pin working code. But not using on new h7 board.
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
 	__HAL_RCC_GPIOA_CLK_ENABLE();
@@ -287,7 +288,7 @@ void CK_PERIPHERAL_Init(targetFreq_e target_period){
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
+	*/
 #endif
 
 #if BUZZER_DC

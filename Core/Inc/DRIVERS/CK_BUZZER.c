@@ -100,7 +100,6 @@ void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, buzzer_mode_e md){
     BUZZER_TIM->CR1 |= 1u << 0; 	// Counter enable
 	*/
 
-    /*
     htim_buzzer.Instance 				= BUZZER_TIM;
     htim_buzzer.Init.Prescaler 			= 0;
     htim_buzzer.Init.CounterMode 		= TIM_COUNTERMODE_UP;
@@ -123,8 +122,8 @@ void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, buzzer_mode_e md){
 	HAL_TIM_PWM_ConfigChannel(&htim_buzzer, &sConfigOC, BUZZER_TIM_CH);
 
 	HAL_TIMEx_PWMN_Start(&htim_buzzer, BUZZER_TIM_CH);
-	*/
 
+    /* H7_V1 PA15 HAL Init
     TIM_MasterConfigTypeDef sMasterConfig = {0};
     TIM_OC_InitTypeDef sConfigOC = {0};
 
@@ -148,6 +147,7 @@ void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, buzzer_mode_e md){
 
     // Start PWM on TIM2 CH1
     HAL_TIM_PWM_Start(&htim_buzzer, TIM_CHANNEL_1);
+	*/
 
 	buzzer.is_init = true;
 
