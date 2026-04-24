@@ -6,8 +6,9 @@
 #include "git_commit_hash.h"
 
 #define 		CKFLIGHT_F4			false
-#define 		CKFLIGHT_H7			false
-#define 		KAKUTE_H7_1v3		true
+#define 		CKFLIGHT_H7_V1		false
+#define 		CKFLIGHT_H7_V2		true
+#define 		KAKUTE_H7_1v3		false
 #define 		MATEKH743_SLIMV3	false
 #define 		RF_REVOLT			false
 
@@ -73,8 +74,17 @@
 #define USE_F4	0
 #endif
 
-#if CKFLIGHT_H7 == true
-#define TARGET_BOARD	"CKFLIGHT_H7"
+#if CKFLIGHT_H7_V1 == true
+#define TARGET_BOARD	"CKFLIGHT_H7_V1"
+#define TARGET_MCU 		"H7"
+
+// For dma cache etc so copy paste wont create problem
+#define USE_H7	1
+#define USE_F4	0
+#endif
+
+#if CKFLIGHT_H7_V2 == true
+#define TARGET_BOARD	"CKFLIGHT_H7_V2"
 #define TARGET_MCU 		"H7"
 
 // For dma cache etc so copy paste wont create problem
@@ -123,8 +133,12 @@
 #include "config/ckflightf4_v4.h"
 #endif
 
-#if CKFLIGHT_H7 == true
+#if CKFLIGHT_H7_V1 == true
 #include "config/ckflighth7_v1.h"
+#endif
+
+#if CKFLIGHT_H7_V2 == true
+#include "config/ckflighth7_v2.h"
 #endif
 
 #if KAKUTE_H7_1v3 == true
@@ -195,6 +209,7 @@ typedef enum
 typedef enum
 {
 	ICM20602_GYRO,
+	ICM45686_GYRO,
 	ICM42688P_GYRO,
 	L3GD20H_GYRO,
 	ICM42605_GYRO,
@@ -202,6 +217,7 @@ typedef enum
 	MPU6000_GYRO,
 
 	ICM20602_ACC,
+	ICM45686_ACC,
 	ICM42688P_ACC,
 	IIM42652_ACC,
 	LSM303D_ACC,
@@ -219,6 +235,7 @@ typedef enum
 	MS5607_BAROMETER,
 	BMP280_BAROMETER,
 	MS5611_BAROMETER,
+	DPS310_BAROMETER,
 
 	BNO055_IMU,
 

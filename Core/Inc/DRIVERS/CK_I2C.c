@@ -64,8 +64,23 @@ void CK_I2C_Init(I2C_TypeDef* i2c, CK_I2C_Speed freq, CK_I2C_LIB lib){
 			// PB6     ------> I2C1_SCL
 			// PB7     ------> I2C1_SDA
 
+			__HAL_RCC_GPIOB_CLK_ENABLE();
 			CK_GPIO_Init(GPIOB, 6, CK_GPIO_AF_OD, CK_GPIO_AF4, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
 			CK_GPIO_Init(GPIOB, 7, CK_GPIO_AF_OD, CK_GPIO_AF4, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
+
+		}
+
+		else if(i2c == I2C2){
+
+			// Peripheral clock enable
+			__HAL_RCC_I2C2_CLK_ENABLE();
+
+			// I2C2 GPIO Configuration
+			// PB10     ------> I2C1_SCL
+			// PB11     ------> I2C1_SDA
+			__HAL_RCC_GPIOB_CLK_ENABLE();
+			CK_GPIO_Init(GPIOB, 10, CK_GPIO_AF_OD, CK_GPIO_AF4, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
+			CK_GPIO_Init(GPIOB, 11, CK_GPIO_AF_OD, CK_GPIO_AF4, CK_GPIO_VERYHIGH, CK_GPIO_NOPUPD);
 
 		}
 

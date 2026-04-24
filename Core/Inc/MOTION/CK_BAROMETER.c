@@ -8,6 +8,7 @@
 #include "SENSORS/CK_MS5607.h"
 #include "SENSORS/CK_MS5611.h"
 #include "SENSORS/CK_BMP280.h"
+#include "SENSORS/dps310.h"
 
 #include "MOTION/CK_BAROMETER.h"
 
@@ -31,6 +32,8 @@ DEBUG_TIME_t barometer_debug;
 SPI_TypeDef* MOTION_BARO_SPI;
 GPIO_TypeDef* MOTION_BARO_CS_PORT;
 uint8_t MOTION_BARO_CS_PIN;
+
+I2C_TypeDef* MOTION_BARO_I2C;
 
 void CK_BAROMETER_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, sensorModel_e sensor, uint32_t barometerT, uint32_t mainT){
 
@@ -77,6 +80,53 @@ void CK_BAROMETER_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pi
 	barometer.is_baro_init = true;
 
 }
+
+void CK_BAROMETER_Init2(I2C_TypeDef* i2c_, sensorModel_e sensor, uint32_t barometerT, uint32_t mainT){
+
+    MOTION_BARO_I2C = i2c_;
+
+    barometer.sensor = sensor;
+
+    barometer.sync.syncRate        = barometerT / mainT;
+    barometer.sync.targetLoopTime  = barometerT;
+    barometer.sync.syncCounter     = 0;
+
+    barometer.pressureSum          = 0;
+    barometer.isBarometerReady     = 0;
+    barometer.barometer_reInit_counter = 0;
+
+    // Only I2C sensors here
+    if(barometer.sensor == DPS310_BAROMETER)
+    {
+        if (MOTION_BARO_I2C == 0) {
+            CK_BUZZER_Tone3();
+            barometer.is_baro_init = false;
+            return;
+        }
+
+        CK_DPS310_Init(MOTION_BARO_I2C, barometer.sync.targetLoopTime);
+
+        if (!CK_DPS310_isBaroSensorInitialized()) {
+            CK_BUZZER_Tone3();
+            barometer.is_baro_init = false;
+            return;
+        }
+    }
+    else
+    {
+        // If user mistakenly selected a SPI baro here, fail clearly.
+        CK_BUZZER_Tone3();
+        barometer.is_baro_init = false;
+        return;
+    }
+
+    calibratingB = 200;
+
+    CK_BAROMETER_PerformBaroCalibration();
+
+    barometer.is_baro_init = true;
+}
+
 
 void CK_BAROMETER_Update(void){
 
@@ -125,7 +175,22 @@ void CK_BAROMETER_Update(void){
 				CK_BMP280_Calculate();
 			}
 
-			CK_BAROMETER_CheckTimeout();
+			else if(barometer.sensor == DPS310_BAROMETER)
+			{
+			    // Read + compensate inside driver
+			    CK_DPS310_ReadBaro();
+
+			    // Convert float Pa -> int32 Pa (your pipeline uses 101325 Pa reference)
+			    barometer.pressure = (int32_t)CK_DPS310_GetPressurePa();
+
+			    // Feed your existing median + moving sum pipeline
+			    barometer.pressureSum = CK_BAROMETER_RecalculateTotal(21, barometer.pressure);
+
+			    barometer.temperature = CK_DPS310_GetTemperatureC();
+			}
+
+
+			//CK_BAROMETER_CheckTimeout();
 
 			#if defined(DEBUG_TIMING)
 			barometer_debug.update_time = CK_TIME_GetMicroSec() - barometer_debug.start_time;
@@ -246,6 +311,28 @@ void CK_BAROMETER_PerformBaroCalibration(void){
 				}
 			}
 
+		}
+		else if(barometer.sensor == DPS310_BAROMETER)
+		{
+		    CK_DPS310_ReadBaro();
+		    barometer.pressure = (int32_t)CK_DPS310_GetPressurePa();
+
+		    barometer.pressureSum = CK_BAROMETER_RecalculateTotal(21, barometer.pressure);
+
+		    if(barometer.isBarometerReady){
+		        static int32_t savedGroundPressure = 0;
+
+		        baroGroundPressure -= baroGroundPressure / 8;
+		        baroGroundPressure += barometer.pressureSum / PRESSURE_SAMPLE_COUNT;
+		        barometer.groundAltitude = (1.0f - powf((baroGroundPressure / 8) / 101325.0f, 0.190295f)) * 4433000.0f;
+
+		        if (baroGroundPressure == savedGroundPressure)
+		            calibratingB = 0;
+		        else {
+		            calibratingB--;
+		            savedGroundPressure = baroGroundPressure;
+		        }
+		    }
 		}
 
 		CK_TIME_DelayMilliSec(10);

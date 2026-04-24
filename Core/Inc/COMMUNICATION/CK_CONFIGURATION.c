@@ -49,15 +49,21 @@ config_t config = {
 
 typedef enum{
 
-	GUI_PID_DATA 	= 0x01,
-	GUI_RC_DATA 	= 0x02,
-	GUI_IMU_DATA 	= 0x03,
-	GUI_STATUS		= 0x04,
-	GUI_CONFIG		= 0x05
+	GUI_PID_DATA 				= 0x01, // Gui is sending pid data to fc
+	GUI_CONFIG_DATA				= 0x02, // Gui is sending config data to fc
+	GUI_RC_DATA					= 0x03, // Gui is sending rc data to fc
+	GUI_SETTINGS_DATA			= 0x04, // Gui is sending settings data to fc
+	GUI_MODES_DATA				= 0x05, // Gui is sending modes data to fc
+	GUI_FC_RESPONSE_CMD			= 0x06, // Send response to gui such as parameters are saved
+	GUI_CONFIG_DONE_CMD			= 0x07, // Configuration is done exit gui command
+	GUI_GET_PID_DEFAULTS_CMD	= 0x08, // Get default pid parameters from fc to gui command
+	GUI_GET_RC_DEFAULTS_CMD		= 0x09 	// Get default rc parameters from fc to gui command
 
 }GUI_PacketType;
 
-#define GUI_PID_DATA_LEN		8
+#define GUI_PID_DATA_LEN			21
+#define GUI_FC_RESPONSE_DATA_LEN	1
+#define GUI_CONFIG_DONE_DATA_LEN	1
 
 /*
  * CK_CONFIGURATION_Init is responsible of configuring eeprom with default settings for once if eeprom is erased
@@ -248,7 +254,10 @@ void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size){
 	}
 
 	if(is_terminal_config_enabled) CK_CONFIGURATION_TerminalCMD();
-	if(is_gui_config_enabled) CK_CONFIGURATION_GuiCMD();
+	if(is_gui_config_enabled){
+
+		CK_CONFIGURATION_GuiCMD();
+	}
 
 
 }
@@ -257,7 +266,8 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 	uint8_t rx_data;
 	uint8_t state = 0;
-
+	config.is_gui_done = false;
+	config.term_index = 0;
 	/*
 	 * Gui will read input data and save that data to eeprom.
 	 * Then it will start listening new data until exit button is clicked gui
@@ -294,12 +304,10 @@ void CK_CONFIGURATION_GuiCMD(void){
 		case 1:
 
 			// Decode data
-			config.is_gui_done = CK_CONFIGURATION_DecodeGUIData();
-			state = 2;
-
-			break;
-
-		case 2:
+			bool is_correct_packet_received = CK_CONFIGURATION_DecodeGUIData();
+			UNUSED(is_correct_packet_received);
+			config.term_index = 0;
+			state = 0;
 
 			break;
 
@@ -314,13 +322,26 @@ void CK_CONFIGURATION_GuiCMD(void){
 
 bool CK_CONFIGURATION_DecodeGUIData(void){
 
-	// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
-	// Example PID Data : CK + 0x01 + 0x08 + 8 byte data + CRC
+	// 1. Data structure				: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
+	// 1. Example PID Data 				: CK + 0x01 + 0x08 + 8 byte data + CRC
+	// 2. Example Get PID Default Data 	: CK + 0x09 + 0x01 + 1 byte data 0xFF + CRC
 
 	uint8_t state = 0;
 	bool is_packet_valid = false;
 	bool is_done = false;
-	uint8_t crc = CK_CONFIGURATION_CalculateCRC();
+	uint8_t crc = CK_CONFIGURATION_CalculateCRC(config.term_buffer, config.term_index - 1);
+
+	/*
+	GUI_PID_DATA 				= 0x01,
+	GUI_CONFIG_DATA				= 0x02,
+	GUI_RC_DATA					= 0x03,
+	GUI_SETTINGS_DATA			= 0x04,
+	GUI_MODES_DATA				= 0x05,
+	GUI_FC_RESPONSE_CMD			= 0x06,
+	GUI_CONFIG_DONE_CMD			= 0x07,
+	GUI_GET_PID_DEFAULTS_CMD	= 0x08,
+	GUI_GET_RC_DEFAULTS_CMD		= 0x09
+	*/
 
 	if(crc == config.term_buffer[config.term_index - 1]){
 		while(!is_done){
@@ -337,62 +358,276 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 				}
 				break;
 
+			// GUI Commands:
 			case 1:
 
+				// Get PID data from gui
 				// Check packet type and payload len
 				if(config.term_buffer[2] == GUI_PID_DATA && config.term_buffer[3] == GUI_PID_DATA_LEN){
 
-					pidProfile.simplified_d_gain 			= config.term_buffer[4];
-					pidProfile.simplified_pi_gain 			= config.term_buffer[5];
-					pidProfile.simplified_feedforward_gain 	= config.term_buffer[6];
-					pidProfile.simplified_d_max_gain 		= config.term_buffer[7];
-					pidProfile.simplified_i_gain 			= config.term_buffer[8];
-					pidProfile.simplified_roll_pitch_ratio 	= config.term_buffer[9];
-					pidProfile.simplified_pitch_pi_gain 	= config.term_buffer[10];
-					pidProfile.simplified_master_multiplier = config.term_buffer[11];
+					// I am not receiving pids from python since code calculates with below parameters and default pids.
 
-					state = 2;
+					pidProfile.tpa_breakpoint 				= (config.term_buffer[4] << 8) | config.term_buffer[5];
+					pidProfile.tpa_rate 					= config.term_buffer[6];
+					pidProfile.tpa_mode 					= config.term_buffer[7];
+
+					pidProfile.anti_gravity_gain			= config.term_buffer[8];
+					pidProfile.anti_gravity_p_gain			= config.term_buffer[9];
+					pidProfile.anti_gravity_cutoff_hz		= config.term_buffer[10];
+
+					pidProfile.simplified_pids_mode			= config.term_buffer[11];
+					pidProfile.simplified_d_gain 			= config.term_buffer[12];
+					pidProfile.simplified_pi_gain 			= config.term_buffer[13];
+					pidProfile.simplified_feedforward_gain 	= config.term_buffer[14];
+					pidProfile.simplified_d_max_gain 		= config.term_buffer[15];
+					pidProfile.simplified_i_gain 			= config.term_buffer[16];
+					pidProfile.simplified_roll_pitch_ratio 	= config.term_buffer[17];
+					pidProfile.simplified_pitch_pi_gain 	= config.term_buffer[18];
+					pidProfile.simplified_master_multiplier = config.term_buffer[19];
+
+					pidProfile.feedforward_jitter_factor 	= config.term_buffer[20];
+					pidProfile.feedforward_smooth_factor 	= config.term_buffer[21];
+					pidProfile.feedforward_boost 			= config.term_buffer[22];
+					pidProfile.feedforward_max_rate_limit 	= config.term_buffer[23];
+					pidProfile.feedforward_averaging		= config.term_buffer[24];
+
+					// Call save to eeprom here
+					// Read the content of flash first to get parameters that are not changed.
+					CK_FLASH_ReadParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE, CONFIG_ID_OFFSET);
+
+					uint8_t idx = CONFIG_PID_OFFSET + (PID_ARRAY_ROW * PID_ARRAY_COLUMN);
+
+					config.config_buffer[idx++] = pidProfile.tpa_breakpoint >> 8;
+					config.config_buffer[idx++] = pidProfile.tpa_breakpoint & 0xFF;
+					config.config_buffer[idx++] = pidProfile.tpa_rate;
+					config.config_buffer[idx++] = pidProfile.tpa_mode;
+
+					config.config_buffer[idx++] = pidProfile.anti_gravity_cutoff_hz;
+					config.config_buffer[idx++] = pidProfile.anti_gravity_p_gain;
+					config.config_buffer[idx++] = pidProfile.anti_gravity_gain;
+
+					config.config_buffer[idx++] = pidProfile.simplified_pids_mode;
+					config.config_buffer[idx++] = pidProfile.simplified_d_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_pi_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_feedforward_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_d_max_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_i_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_roll_pitch_ratio;
+					config.config_buffer[idx++] = pidProfile.simplified_pitch_pi_gain;
+					config.config_buffer[idx++] = pidProfile.simplified_master_multiplier;
+
+					config.config_buffer[idx++] = pidProfile.feedforward_averaging;
+					config.config_buffer[idx++] = pidProfile.feedforward_max_rate_limit;
+					config.config_buffer[idx++] = pidProfile.feedforward_smooth_factor;
+					config.config_buffer[idx++] = pidProfile.feedforward_jitter_factor;
+					config.config_buffer[idx++] = pidProfile.feedforward_boost;
+
+					CK_FLASH_WriteParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE);
+
+					state = 2; // Send data is saved response
 
 				}
+
+				// Get config data
+				else if(config.term_buffer[2] == GUI_CONFIG_DATA){
+
+					state = 2;
+				}
+
+				// Get RC data
 				else if(config.term_buffer[2] == GUI_RC_DATA){
 
 					state = 2;
 				}
-				else if(config.term_buffer[2] == GUI_IMU_DATA){
+
+				// Get Settings data and set CK_SETTINGS
+				else if(config.term_buffer[2] == GUI_SETTINGS_DATA){
 
 					state = 2;
 				}
-				else if(config.term_buffer[2] == GUI_STATUS){
+
+				// Get Flight Modes to set such as acro level gps rescue along with switch range
+				else if(config.term_buffer[2] == GUI_MODES_DATA){
 
 					state = 2;
 				}
-				else if(config.term_buffer[2] == GUI_CONFIG){
 
-					state = 2;
+				// GUI sends get default pid data command. Send data to gui
+				else if (config.term_buffer[2] == GUI_GET_PID_DEFAULTS_CMD){
+
+					uint8_t pid_buffer[CONFIG_PID_BYTES];
+					uint8_t parameters_buffer[CONFIG_PID_BYTES + 5]; // CK COMMAND LEN PAYLOAD CRC
+					uint8_t parameter_idx = 0;
+
+					CK_FLASH_ReadParameters(TARGET_MCU_FLASH, pid_buffer, CONFIG_PID_BYTES, CONFIG_PID_OFFSET);
+
+					parameters_buffer[parameter_idx++] = 'C';
+					parameters_buffer[parameter_idx++] = 'K';
+					parameters_buffer[parameter_idx++] = GUI_GET_PID_DEFAULTS_CMD;
+					parameters_buffer[parameter_idx++] = CONFIG_PID_BYTES;
+
+					for(int r = 0; r < PID_ARRAY_ROW; r++){
+
+						for(int c = 0; c < PID_ARRAY_COLUMN; c++){
+
+							parameters_buffer[parameter_idx++] = pid_buffer[(r*PID_ARRAY_COLUMN) + c];
+
+						}
+					}
+
+					uint8_t idx = PID_ARRAY_ROW * PID_ARRAY_COLUMN;
+
+					parameters_buffer[parameter_idx++] = pid_buffer[idx]; 		// pidProfile.tpa_breakpoint
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 1]; 	// pidProfile.tpa_breakpoint
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 2]; 	// pidProfile.tpa_rate
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 3];	// pidProfile.tpa_mode
+
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 4];	// pidProfile.anti_gravity_cutoff_hz
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 5];	// pidProfile.anti_gravity_p_gain
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 6];	// pidProfile.anti_gravity_gain
+
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 7];	// pidProfile.simplified_pids_mode
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 8];	// pidProfile.simplified_d_gain
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 9];	// pidProfile.simplified_pi_gain
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 10];	// pidProfile.simplified_feedforward_gain
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 11];	// pidProfile.simplified_d_max_gain
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 12];	// pidProfile.simplified_i_gain
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 13];	// pidProfile.simplified_roll_pitch_ratio
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 14];	// pidProfile.simplified_pitch_pi_gain
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 15];	// pidProfile.simplified_master_multiplier
+
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 16];	// pidProfile.feedforward_averaging
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 17];	// pidProfile.feedforward_max_rate_limit
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 18];	// pidProfile.feedforward_smooth_factor
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 19];	// pidProfile.feedforward_jitter_factor
+					parameters_buffer[parameter_idx++] = pid_buffer[idx + 20];	// pidProfile.feedforward_boost
+
+					// Send data with packet format
+					// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
+					uint8_t crc = CK_CONFIGURATION_CalculateCRC(parameters_buffer, parameter_idx);
+
+					parameters_buffer[parameter_idx++] = crc;
+
+					for(int i = 0; i < parameter_idx; i++){
+
+						CK_USBD_IntPrint(parameters_buffer[i]);
+						CK_USBD_StringPrint("/");
+					}
+
+					CK_USBD_Transmit();
+
+					is_done = true;
+					is_packet_valid = true;
+
 				}
+
+				// GUI sends get default pid data command. Send data to gui
+				else if (config.term_buffer[2] == GUI_GET_RC_DEFAULTS_CMD){
+
+					uint8_t rc_buffer[CONFIG_PID_BYTES];
+					uint8_t parameters_buffer[CONFIG_PID_BYTES + 5]; // CK COMMAND LEN PAYLOAD CRC
+					uint8_t parameter_idx = 0;
+
+					CK_FLASH_ReadParameters(TARGET_MCU_FLASH, rc_buffer, CONFIG_RC_BYTES, CONFIG_RC_OFFSET);
+
+					parameters_buffer[parameter_idx++] = 'C';
+					parameters_buffer[parameter_idx++] = 'K';
+					parameters_buffer[parameter_idx++] = GUI_GET_RC_DEFAULTS_CMD;
+					parameters_buffer[parameter_idx++] = CONFIG_PID_BYTES;
+
+					parameters_buffer[parameter_idx++] = rc_buffer[0]; 		// rc_config.deadband
+					parameters_buffer[parameter_idx++] = rc_buffer[1]; 		// rc_config.yaw_deadband
+					parameters_buffer[parameter_idx++] = rc_buffer[2]; 		// (rc_config.midrc >> 8) & 0xFF
+					parameters_buffer[parameter_idx++] = rc_buffer[3];		// rc_config.midrc & 0xFF
+
+					parameters_buffer[parameter_idx++] = rc_buffer[4];		// (rc_config.rate_limit[ROLL] >> 8) & 0xFF
+					parameters_buffer[parameter_idx++] = rc_buffer[5];		// rc_config.rate_limit[ROLL] & 0xFF
+
+					parameters_buffer[parameter_idx++] = rc_buffer[6];		// (rc_config.rate_limit[PITCH] >> 8) & 0xFF
+					parameters_buffer[parameter_idx++] = rc_buffer[7];		// rc_config.rate_limit[PITCH] & 0xFF
+
+					parameters_buffer[parameter_idx++] = rc_buffer[8];		// (rc_config.rate_limit[YAW] >> 8) & 0xFF
+					parameters_buffer[parameter_idx++] = rc_buffer[9];		// rc_config.rate_limit[YAW] & 0xFF
+
+					parameters_buffer[parameter_idx++] = rc_buffer[10];	// rc_config.rcRates[ROLL]
+					parameters_buffer[parameter_idx++] = rc_buffer[11];	// rc_config.rcRates[PITCH]
+					parameters_buffer[parameter_idx++] = rc_buffer[12];	// rc_config.rcRates[YAW]
+
+					parameters_buffer[parameter_idx++] = rc_buffer[13];	// rc_config.rcExpo[ROLL]
+					parameters_buffer[parameter_idx++] = rc_buffer[14];	// rc_config.rcExpo[PITCH]
+					parameters_buffer[parameter_idx++] = rc_buffer[15];	// rc_config.rcExpo[YAW]
+
+					parameters_buffer[parameter_idx++] = rc_buffer[16];	// rc_config.rates[ROLL]
+					parameters_buffer[parameter_idx++] = rc_buffer[17];	// rc_config.rates[PITCH]
+					parameters_buffer[parameter_idx++] = rc_buffer[18];	// rc_config.rates[YAW]
+
+					parameters_buffer[parameter_idx++] = rc_buffer[19];	// rc_config.rc_smoothing_mode
+					parameters_buffer[parameter_idx++] = rc_buffer[20];	// rc_config.rc_smoothing_setpoint_cutoff
+					parameters_buffer[parameter_idx++] = rc_buffer[21];	// rc_config.rc_smoothing_feedforward_cutoff
+					parameters_buffer[parameter_idx++] = rc_buffer[22];	// rc_config.rc_smoothing_throttle_cutoff
+					parameters_buffer[parameter_idx++] = rc_buffer[23];	// rc_config.rc_smoothing_debug_axis
+					parameters_buffer[parameter_idx++] = rc_buffer[24];	// rc_config.rc_smoothing_auto_factor_rpy
+					parameters_buffer[parameter_idx++] = rc_buffer[25];	// rc_config.rc_smoothing_auto_factor_throttle
+
+					// Send data with packet format
+					// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
+					uint8_t crc = CK_CONFIGURATION_CalculateCRC(parameters_buffer, parameter_idx);
+
+					parameters_buffer[parameter_idx++] = crc;
+
+					for(int i = 0; i < parameter_idx; i++){
+
+						CK_USBD_IntPrint(parameters_buffer[i]);
+						CK_USBD_StringPrint("/");
+					}
+
+					CK_USBD_Transmit();
+
+					is_done = true;
+					is_packet_valid = true;
+
+				}
+
+				else if(config.term_buffer[2] == GUI_CONFIG_DONE_CMD && config.term_buffer[3] == GUI_CONFIG_DONE_DATA_LEN){
+
+					config.is_gui_done = config.term_buffer[4];
+					is_done = true;
+					is_packet_valid = true;
+				}
+
 				else{
 					is_done = true;
 					is_packet_valid = false;
 				}
 
+				break;
+
 			case 2:
 
-				// Call save to eeprom here
-				// Read the content of flash first to get parameters that are not changed.
-				CK_FLASH_ReadParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE, CONFIG_ID_OFFSET);
+				// Send a data is saved response to gui
+				uint8_t parameters_buffer[16]; // CK COMMAND LEN PAYLOAD CRC
+				uint8_t parameter_idx = 0;
 
-				uint8_t idx = CONFIG_PID_OFFSET + (PID_ARRAY_ROW * PID_ARRAY_COLUMN);
+				parameters_buffer[parameter_idx++] = 'C';
+				parameters_buffer[parameter_idx++] = 'K';
+				parameters_buffer[parameter_idx++] = GUI_FC_RESPONSE_CMD;
+				parameters_buffer[parameter_idx++] = GUI_FC_RESPONSE_DATA_LEN; // 1 payload
 
-				config.config_buffer[idx + 8]  = pidProfile.simplified_d_gain;
-				config.config_buffer[idx + 9]  = pidProfile.simplified_pi_gain;
-				config.config_buffer[idx + 10] = pidProfile.simplified_feedforward_gain;
-				config.config_buffer[idx + 11] = pidProfile.simplified_d_max_gain;
-				config.config_buffer[idx + 12] = pidProfile.simplified_i_gain;
-				config.config_buffer[idx + 13] = pidProfile.simplified_roll_pitch_ratio;
-				config.config_buffer[idx + 14] = pidProfile.simplified_pitch_pi_gain;
-				config.config_buffer[idx + 15] = pidProfile.simplified_master_multiplier;
+				parameters_buffer[parameter_idx++] = 0xFF;	// 0xFF saved
 
-				CK_FLASH_WriteParameters(TARGET_MCU_FLASH, config.config_buffer, EEPROM_BUFFER_SIZE);
+				// Send data with packet format
+				// Data structure: 2 byte packet header "CK" + 1 byte packet type code "PID, RC, etc" + 1 byte payload lenght + payload + 1 byte CRC
+				uint8_t crc = CK_CONFIGURATION_CalculateCRC(parameters_buffer, parameter_idx);
+
+				parameters_buffer[parameter_idx++] = crc;
+
+				for(int i = 0; i < parameter_idx; i++){
+
+					CK_USBD_IntPrint(parameters_buffer[i]);
+					CK_USBD_StringPrint("/");
+				}
+
+				CK_USBD_Transmit();
 
 				is_done = true;
 				is_packet_valid = true;
@@ -400,6 +635,7 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 				break;
 
 			default:
+
 				break;
 
 
@@ -410,11 +646,11 @@ bool CK_CONFIGURATION_DecodeGUIData(void){
 
 }
 
-uint8_t CK_CONFIGURATION_CalculateCRC(void){
+uint8_t CK_CONFIGURATION_CalculateCRC(uint8_t* buf, uint16_t len){
 
-	uint8_t crc = 0x00;
-	for(int i = 0; i < config.term_index - 1; i++){
-		crc += config.term_buffer[i];
+	uint16_t crc = 0x00;
+	for(int i = 0; i < len; i++){
+		crc += buf[i];
 	}
 
 	return (crc & 0xFF); // return mod 256 of crc

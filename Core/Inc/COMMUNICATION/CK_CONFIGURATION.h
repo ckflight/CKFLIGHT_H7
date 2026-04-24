@@ -24,11 +24,13 @@ void CK_CONFIGURATION_Init(void);
 
 void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size);
 
+void CK_CONFIGURATION_SendParametersToGui(void);
+
 void CK_CONFIGURATION_GuiCMD(void);
 
 bool CK_CONFIGURATION_DecodeGUIData(void);
 
-uint8_t CK_CONFIGURATION_CalculateCRC(void);
+uint8_t CK_CONFIGURATION_CalculateCRC(uint8_t* buf, uint16_t len);
 
 void CK_CONFIGURATION_TerminalCMD(void);
 

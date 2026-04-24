@@ -11,6 +11,23 @@
 #define GPS_Y 0
 #define GPS_MIN_SAT_COUNT 4     // number of sats to trigger low sat count sanity check
 
+// 2D Kalman filter state (lat, lon and their velocities)
+typedef struct {
+    int32_t lat;    // E7 format
+    int32_t lon;    // E7 format
+    int32_t v_lat;  // E7/sec
+    int32_t v_lon;  // E7/sec
+} KalmanState2D;
+
+// 2D Kalman filter structure
+typedef struct {
+    KalmanState2D state;   // State vector
+    float P[4][4];         // Covariance matrix
+    float Q[4][4];         // Process noise covariance
+    float R[2][2];         // Measurement noise covariance
+    float dt;              // Time delta (seconds)
+} KalmanFilter2D;
+
 typedef struct gpsSensor_s{
 
 	int         isGpsInit;
@@ -19,6 +36,24 @@ typedef struct gpsSensor_s{
     int32_t     current_lat;
     int32_t     destination_lat;
     int32_t     destination_lon;
+
+    int64_t 	lon_sum;
+    int64_t 	lat_sum;
+    uint16_t	sum_counter;
+
+    int32_t		average_lon;
+    int32_t		average_lat;
+
+    int64_t 	kalman_sum_lon;
+    int64_t		kalman_sum_lat;
+    int32_t 	kalman_average_lon;
+    int32_t		kalman_average_lat;
+    uint8_t		kalman_sum_counter;
+
+    bool 		kalman_init;
+
+    float		current_lon_degree_f;
+    float		current_lat_degree_f;
 
     int32_t     current_heightEllipsoid;
     int32_t     current_heightSeaLevel;
@@ -30,6 +65,8 @@ typedef struct gpsSensor_s{
     bool		isSatFixed;
 
     uint32_t    distanceToDestination;
+    uint32_t	distanceToAverage;
+    uint32_t 	distanceToKalman;
     int32_t     headingToDestination;
     int32_t     groundCourse;
     int32_t     headingOfVehicle;
@@ -42,6 +79,13 @@ typedef struct gpsSensor_s{
     int         lon_deg;
     int         lon_min;
     float       lon_sec;
+
+    // 2D Kalman filter for GPS smoothing (lat, lon, and velocities)
+    KalmanFilter2D kalmanFilter;
+
+    // Kalman filtered latitude and longitude (in degrees)
+    int32_t 	kalman_filtered_lat;
+    int32_t		kalman_filtered_lon;
 
 }gpsSensor_t;
 
@@ -125,6 +169,8 @@ void CK_GPS_Init(USART_TypeDef* uart_, sensorModel_e module_type);
 
 void CK_GPS_Update(void);
 
+void CK_GPS_CalculateAveragePosition(void);
+
 float gpsRescueGetImuYawCogGain(void);
 
 void CK_GPS_DecodePacket(void);
@@ -137,12 +183,14 @@ void CK_GPS_UBXNewByte(uint8_t data);
 
 void CK_GPS_CalculateDistanceAndHeading(float currentLat1, float currentLon1, float destinationLat2, float destinationLon2, uint32_t* dist, int32_t* bearing);
 
+void CK_GPS_CalculateDistanceAndHeading_E7(int32_t currentLat_e7, int32_t currentLon_e7,
+                                           int32_t destLat_e7, int32_t destLon_e7,
+                                           uint32_t* dist_cm, int32_t* bearing_100deg);
 void CK_GPS_InitConfig(void);
 
 void CK_GPS_SendUBXPacket(uint8_t* packet, int size);
 
 #endif /* CK_GPS_H_ */
-
 
 
 

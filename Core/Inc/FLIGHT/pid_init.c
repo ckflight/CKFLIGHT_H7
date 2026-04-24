@@ -574,7 +574,7 @@ uint16_t pidGetCurrentProfile(uint8_t* copy_buffer){
 
 	uint16_t buffer_size = 0;
 
-	for(int r = 0; r < PID_ARRAY_ROW + 1; r++){
+	for(int r = 0; r < PID_ARRAY_ROW; r++){
 		for(int c = 0; c < PID_ARRAY_COLUMN; c++){
 
 			copy_buffer[(r*PID_ARRAY_COLUMN) + c] = PID_SELECTED_PROFILE[r][c];
