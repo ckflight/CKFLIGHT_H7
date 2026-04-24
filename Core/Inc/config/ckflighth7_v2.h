@@ -32,6 +32,7 @@
 #define SPI1_MOSI_PIN					7
 #define SPI1_MOSI_AF					CK_GPIO_AF5
 
+
 #define USE_SPI2						true
 #define SPI2_SCK_GPIO 					GPIOB
 #define SPI2_SCK_PIN  					13
@@ -46,6 +47,20 @@
 #define SPI2_MOSI_AF					CK_GPIO_AF5
 
 
+#define USE_SPI4						true
+#define SPI4_SCK_GPIO 					GPIOE
+#define SPI4_SCK_PIN  					12
+#define SPI4_SCK_AF						CK_GPIO_AF5
+
+#define SPI4_MISO_GPIO					GPIOE
+#define SPI4_MISO_PIN					13
+#define SPI4_MISO_AF					CK_GPIO_AF5
+
+#define SPI4_MOSI_GPIO					GPIOE
+#define SPI4_MOSI_PIN					14
+#define SPI4_MOSI_AF					CK_GPIO_AF5
+
+
 #if GYRO1_SPI_
 	#define GYRO1_SPI           		SPI1
 	#define GYRO1_CS_PORT				GPIOA
@@ -58,9 +73,10 @@
 
 	#define USE_DMA_SENSOR				1
 	#define USE_DMA_SENSOR_ICM42688P	0
-	#define USE_DMA_SENSOR_ICM20602		1
+	#define USE_DMA_SENSOR_ICM20602		0
 	#define USE_DMA_SENSOR_IIM42652		0
 	#define USE_DMA_SENSOR_MPU6000		0
+	#define USE_DMA_SENSOR_ICM45686		1
 	#define SENSOR_DMA					DMA1
 	#define SENSOR_DMA_TX_Stream		DMA1_Stream6
 	#define SENSOR_DMA_RX_Stream		DMA1_Stream7
@@ -89,16 +105,17 @@
 	#define GYRO2_SPI           		SPI4
 	#define GYRO2_CS_PORT				GPIOD
 	#define GYRO2_CS_PIN				8
-	#define TARGET_GYRO2				ICM20602_GYRO // ICM45686
+	#define TARGET_GYRO2				ICM45686_GYRO // ICM45686
 
 	#define GYRO2_USE_INT				0
 	#define GYRO2_INT_PORT				GPIOE
 	#define GYRO2_INT_PIN				15
 
-	#define USE_DMA_SENSOR				1
+	#define USE_DMA_SENSOR				0
 	#define USE_DMA_SENSOR_ICM42688P	0
 	#define USE_DMA_SENSOR_ICM20602		0
 	#define USE_DMA_SENSOR_IIM42652		0
+	#define USE_DMA_SENSOR_ICM45686		1
 	#define SENSOR_DMA					DMA1
 	#define SENSOR_DMA_TX_Stream		DMA1_Stream6
 	#define SENSOR_DMA_RX_Stream		DMA1_Stream7
@@ -117,7 +134,7 @@
 	#define ACC2_SPI           			SPI4
 	#define ACC2_CS_PORT				GPIOD
 	#define ACC2_CS_PIN					8
-	#define TARGET_ACC2					ICM20602_ACC
+	#define TARGET_ACC2					ICM45686_ACC
 
 	#define ACC2_SPI_CLOCK				16000000L
 #endif

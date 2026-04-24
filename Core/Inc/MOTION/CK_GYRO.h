@@ -29,7 +29,8 @@ typedef enum{
 	DPS250					= 1,
 	DPS500					= 2,
 	DPS1000					= 3,
-	DPS2000					= 4
+	DPS2000					= 4,
+	DPS4000					= 5
 
 }gyroSensorDps_e;
 

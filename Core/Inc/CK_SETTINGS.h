@@ -3,11 +3,11 @@
 
 #define MAIN_INTERRUPT_			0
 
-#define GYRO1_SPI_				1
-#define ACC1_SPI_				1
+#define GYRO1_SPI_				0
+#define ACC1_SPI_				0
 
-#define GYRO2_SPI_				0
-#define ACC2_SPI_				0
+#define GYRO2_SPI_				1
+#define ACC2_SPI_				1
 
 #define EXT_SPI_				0 // External spi connection pinout exist on board
 #define EXT_CS1_				0 // External chip select pin exist on board
