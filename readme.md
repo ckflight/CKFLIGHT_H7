@@ -1,9 +1,9 @@
-# CKFLIGHT H7 Advanced Flight Controller Firmware (Light Version) as STM32CUBEIDE Project
+# CKFLIGHT H7 Advanced Flight Controller Firmware (Light Version) as a STM32CubeIDE Project
 
 <img width="2027" height="1139" alt="Image" src="https://github.com/user-attachments/assets/83101031-c83c-4fed-b8a0-d6efd2ead19e" />
 <img width="1526" height="844" alt="Image" src="https://github.com/user-attachments/assets/935bc549-ba67-491f-a17a-4a270db213b6" />
 
-High-performance bare-metal STM32H7 flight controller firmware developed for educational, hobbyist, and academic use.
+I decided to upload ligher version of my flight controller firmware High-performance bare-metal STM32H7 flight controller firmware developed for educational, hobbyist, and academic use. STM32CubeIDE is a great environment for easy debugging without getting into unnecessary details. Commercially available boards can be used with this software. Check Boad Selection part.
 
 CKFLIGHT H7 is designed as a simplified and readable version of the full CKFLIGHT firmware architecture while preserving modern flight-controller concepts including high-rate control loops, sensor fusion, digital ESC protocols, SD logging, USB communication, advanced PID algorithms, and real-time embedded control systems.
 
