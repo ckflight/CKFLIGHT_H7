@@ -81,6 +81,10 @@ The project focuses on readable implementation of real flight-controller concept
 
 The firmware performance and architecture are designed to be conceptually comparable to modern high-performance open-source flight-controller firmware while remaining easier to study and modify.
 
+# Real Flight Video
+
+https://github.com/user-attachments/assets/4c7df17b-40bc-41f8-9e52-42024572642d
+
 ---
 
 # Supported Hardware
