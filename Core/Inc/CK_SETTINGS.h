@@ -3,11 +3,11 @@
 
 #define MAIN_INTERRUPT_			0
 
-#define GYRO1_SPI_				1
-#define ACC1_SPI_				1
+#define GYRO1_SPI_				0
+#define ACC1_SPI_				0
 
-#define GYRO2_SPI_				0
-#define ACC2_SPI_				0
+#define GYRO2_SPI_				1
+#define ACC2_SPI_				1
 
 #define EXT_SPI_				0 // External spi connection pinout exist on board
 #define EXT_CS1_				0 // External chip select pin exist on board
@@ -20,32 +20,32 @@
 #define USE_BARO_				0
 
 #define MAG_SPI_				0	// Init peripheral CS important for common SPI
-#define MAG_I2C_				1
+#define MAG_I2C_				0
 #define USE_MAG_				0
 
 #define BNO055_					0
 
 #define GPS_					1
-#define GPS_MODULE				GPS_UBLOX7
+#define GPS_MODULE				GPS_UBLOX8
 
-#define LOG_SPI_				1
-#define LOG_SDIO_				0
+#define LOG_SPI_				0
+#define LOG_SDIO_				1
 #define LOG_FLASH_				0
 #define LOG_DUALBUFFER_			0
 #define LOG_MULTIWRITE_			0// spi works in single mode
 #define TEST_LOG				0
 
-#define BUZZER_PWM				0
-#define BUZZER_DC				1
+#define BUZZER_PWM				1
+#define BUZZER_DC				0
 
-#define OSD_ONBOARD_			0
+#define OSD_ONBOARD_			1
 #define OSD_PDB_				0
-#define OSD_DJI_				1
+#define OSD_DJI_				0
 
 #define RGB_					1
 
 #define LED1_					1
-#define LED2_					0
+#define LED2_					1
 
 #define RX_PWM_					0
 #define SBUS_					0
@@ -59,6 +59,8 @@
 #define SCOPE_CHECK_			0
 
 #define BUZZER_WARNING_			0
+
+#define BATTERY_CELL			6
 
 #if SCOPE_CHECK_
 	#define SCOPE_CHECK_OSD				0
@@ -90,6 +92,7 @@
 #define USE_ACC
 #define USE_THRUST_LINEARIZATION
 #define USE_SIMPLIFIED_TUNING
+//#define USE_BATTERY_VOLTAGE_SAG_COMPENSATION
 
 // I will allocate 34 bytes left from 128 byte log for debugging parameters.
 // I will implement debug section for each part i want to check and select them here

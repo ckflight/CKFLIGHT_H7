@@ -8,6 +8,7 @@
 #include "SENSORS/CK_IIM42652.h"
 #include "SENSORS/CK_ICM42688P.h"
 #include "SENSORS/CK_ICM42605.h"
+#include "SENSORS/CK_ICM45686.h"
 #include "SENSORS/mpu6000.h"
 #include "SENSORS/CK_L3GD20H.h"
 
@@ -210,6 +211,39 @@ void CK_GYRO_Init(SPI_TypeDef* spin_, GPIO_TypeDef* cs_gpio_, uint8_t cs_pin_, s
 		}
 		else if(dps == DPS2000){
 			gyro.gyroScale = 1.0f/16.4f;
+		}
+
+	}
+	else if(gyro.sensor == ICM45686_GYRO){
+
+		CK_PRINTER_PrintlnString("ICM45686_GYRO");
+
+		if(!CK_ICM45686_isGyroSensorInitialized()){
+			while(reinit_count--){
+				if(CK_ICM45686_GyroInit(MOTION_GYRO_SPI, MOTION_GYRO_CS_PORT, MOTION_GYRO_CS_PIN, gyro.sync.targetLoopTime)){
+					reinit_count = 0;
+					gyro.is_gyro_init = true;
+
+					CK_PRINTER_PrintlnString("GYRO INIT CORRECT");
+				}
+				else CK_PRINTER_PrintlnString("GYRO ERROR");
+			}
+		}
+
+		if (dps == DPS250) {
+		    gyro.gyroScale = 1.0f / 131.0f;
+		}
+		else if (dps == DPS500) {
+		    gyro.gyroScale = 1.0f / 65.5f;
+		}
+		else if (dps == DPS1000) {
+		    gyro.gyroScale = 1.0f / 32.8f;
+		}
+		else if (dps == DPS2000) {
+		    gyro.gyroScale = 1.0f / 16.4f;
+		}
+		else if (dps == DPS4000) {
+		    gyro.gyroScale = 1.0f / 8.2f;
 		}
 
 	}

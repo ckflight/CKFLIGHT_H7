@@ -57,6 +57,8 @@ typedef struct{
 
     bool BOX3D;
 
+    bool CRASH_FLIP;
+
 
 }RECEIVER_FLAGS_t;
 

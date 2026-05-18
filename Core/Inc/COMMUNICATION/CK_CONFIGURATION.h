@@ -9,7 +9,7 @@
 #define CONFIG_ID_BYTES			20 // 20 Bytes allocated
 
 #define CONFIG_PID_OFFSET		CONFIG_ID_OFFSET + CONFIG_ID_BYTES
-#define CONFIG_PID_BYTES		40 // 40 Bytes
+#define CONFIG_PID_BYTES		50 // 50 Bytes
 
 #define CONFIG_ACC_OFFSET		CONFIG_PID_OFFSET + CONFIG_PID_BYTES
 #define CONFIG_ACC_BYTES		6  // 6 Bytes
@@ -24,7 +24,15 @@ void CK_CONFIGURATION_Init(void);
 
 void CK_CONFIGURATION_DecodeInputStream(uint8_t* buffer, uint16_t buffer_size);
 
-void CK_CONFIGURATION_StartCMD(void);
+void CK_CONFIGURATION_SendParametersToGui(void);
+
+void CK_CONFIGURATION_GuiCMD(void);
+
+bool CK_CONFIGURATION_DecodeGUIData(void);
+
+uint8_t CK_CONFIGURATION_CalculateCRC(uint8_t* buf, uint16_t len);
+
+void CK_CONFIGURATION_TerminalCMD(void);
 
 uint8_t CK_CONFIGURATION_ConfigureParameters(void);
 

@@ -92,9 +92,7 @@ void CK_PRINTER_PrintNavigation(CK_PRINT_TIMEx time, uint32_t t);
 
 void CK_PRINTER_PrintGPS(CK_PRINT_TIMEx time, uint32_t t);
 
-void CK_PRINTER_PrintGPS2(CK_PRINT_TIMEx time, uint32_t t);
-
-void CK_PRINTER_PrintGPS3(CK_PRINT_TIMEx time, uint32_t t);
+void CK_PRINTER_AverageGPS(void);
 
 void CK_PRINTER_PrintMotorFinalResults(CK_PRINT_TIMEx time, uint32_t t);
 

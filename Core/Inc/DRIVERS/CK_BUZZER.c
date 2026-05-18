@@ -13,7 +13,7 @@
 #define BUZZER_TIME2    25
 
 // Buzzer is active low HAL library makes it BUZZER_ACTIVE_PWM_DUTY percent low which is what we want
-#define BUZZER_ACTIVE_PWM_DUTY		70
+#define BUZZER_ACTIVE_PWM_DUTY		50
 
 typedef enum{
 
@@ -123,6 +123,32 @@ void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, buzzer_mode_e md){
 
 	HAL_TIMEx_PWMN_Start(&htim_buzzer, BUZZER_TIM_CH);
 
+    /* H7_V1 PA15 HAL Init
+    TIM_MasterConfigTypeDef sMasterConfig = {0};
+    TIM_OC_InitTypeDef sConfigOC = {0};
+
+    htim_buzzer.Instance 				= TIM2;
+    htim_buzzer.Init.Prescaler 			= 0;
+    htim_buzzer.Init.CounterMode 		= TIM_COUNTERMODE_UP;
+    htim_buzzer.Init.Period 			= 59999;
+    htim_buzzer.Init.ClockDivision 		= TIM_CLOCKDIVISION_DIV2;
+    htim_buzzer.Init.AutoReloadPreload 	= TIM_AUTORELOAD_PRELOAD_DISABLE;
+    if (HAL_TIM_PWM_Init(&htim_buzzer) != HAL_OK);
+
+    sMasterConfig.MasterOutputTrigger 	= TIM_TRGO_RESET;
+    sMasterConfig.MasterSlaveMode 		= TIM_MASTERSLAVEMODE_DISABLE;
+    if (HAL_TIMEx_MasterConfigSynchronization(&htim_buzzer, &sMasterConfig) != HAL_OK);
+
+    sConfigOC.OCMode 		= TIM_OCMODE_PWM1;
+    sConfigOC.Pulse 		= 0;
+    sConfigOC.OCPolarity 	= TIM_OCPOLARITY_HIGH;
+    sConfigOC.OCFastMode 	= TIM_OCFAST_DISABLE;
+    HAL_TIM_PWM_ConfigChannel(&htim_buzzer, &sConfigOC, TIM_CHANNEL_1);
+
+    // Start PWM on TIM2 CH1
+    HAL_TIM_PWM_Start(&htim_buzzer, TIM_CHANNEL_1);
+	*/
+
 	buzzer.is_init = true;
 
 	CK_BUZZER_Disable();
@@ -132,6 +158,8 @@ void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, buzzer_mode_e md){
 #if BUZZER_DC
 
 	CK_BUZZER_Disable();
+
+	CK_BUZZER_Enable();
 
 	buzzer.is_init = true;
 

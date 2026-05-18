@@ -247,7 +247,7 @@ void CK_NAVIGATION_MAGHeadingHold(void){
     if(flags.MAG_HOLD){
 
         #if BNO055_
-            mag_heading_error = bno055.eulerAngles[AXIS_YAW] - mag_heading_setpoint;
+            mag_heading_error = bno055.eulerAngles[YAW] - mag_heading_setpoint;
 
             if(mag_heading_error >= +180.0f){
                 mag_heading_error -= 360.0f;
@@ -256,9 +256,8 @@ void CK_NAVIGATION_MAGHeadingHold(void){
                 mag_heading_error += 360.0f;
             }
 
-            mag_heading_correction = mag_heading_error * (float)PID_SELECTED_PROFILE[AXIS_NAVIGATION][PID_P] / 10.0f;
-
-            rcCommand[YAW] -= (int)mag_heading_correction;
+            //mag_heading_correction = mag_heading_error * (float)PID_SELECTED_PROFILE[AXIS_NAVIGATION][PID_P] / 10.0f;
+            //rcCommand[YAW] -= (int)mag_heading_correction;
 
         #endif
 

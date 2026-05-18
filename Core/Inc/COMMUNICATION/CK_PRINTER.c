@@ -156,6 +156,10 @@ void CK_PRINTER_Update(CK_PRINT_TIMEx print_freq, uint32_t compT){
 	else if(print_cmd == 'g' && is_printer_motor_mode_enabled == false){
 	    CK_PRINTER_PrintGPS(EVERY_100MS, compT);
 	}
+	else if(print_cmd == 'G' && is_printer_motor_mode_enabled == false){
+		CK_PRINTER_AverageGPS();
+		print_cmd = '.';// To not enter here again unless typed
+	}
 	else if(print_cmd == 'n' && is_printer_motor_mode_enabled == false){
 	    CK_PRINTER_PrintNavigation(EVERY_100MS, compT);
 	}
@@ -492,11 +496,17 @@ void CK_PRINTER_PrintGPS(CK_PRINT_TIMEx time, uint32_t t){
 
 		printerCounter = 0;
 
-		CK_USBD_StringPrint("Cur.Lat: ");CK_USBD_IntPrintln(gps.current_lat);
+		CK_USBD_StringPrint("Lat. Lon. Current: ");CK_USBD_IntPrint(gps.current_lat);CK_USBD_StringPrint(", ");CK_USBD_IntPrintln(gps.current_lon);
 
-		CK_USBD_StringPrint("Cur.Long: ");CK_USBD_IntPrintln(gps.current_lon);
+		CK_USBD_StringPrint("Lat. Lon. Average: ");CK_USBD_IntPrint(gps.average_lat);CK_USBD_StringPrint(", ");CK_USBD_IntPrintln(gps.average_lon);
+
+		CK_USBD_StringPrint("Lat. Lon. Kalman: ");CK_USBD_IntPrint(gps.kalman_filtered_lat);CK_USBD_StringPrint(", ");CK_USBD_IntPrintln(gps.kalman_filtered_lon);
+
+		CK_USBD_StringPrint("Distance to Aver.: ");CK_USBD_IntPrint(gps.distanceToAverage);CK_USBD_StringPrintln(" cm");
 
 		CK_USBD_StringPrint("Distance to Dest.: ");CK_USBD_IntPrint(gps.distanceToDestination);CK_USBD_StringPrintln(" cm");
+
+		CK_USBD_StringPrint("Distance to Kalman.: ");CK_USBD_IntPrint(gps.distanceToKalman);CK_USBD_StringPrintln(" cm");
 
 		CK_USBD_StringPrint("Heading to Dest.: ");CK_USBD_IntPrint(gps.headingToDestination/100);CK_USBD_StringPrintln(" deg");
 
@@ -514,6 +524,18 @@ void CK_PRINTER_PrintGPS(CK_PRINT_TIMEx time, uint32_t t){
 
 		CK_USBD_Transmit();
 	}
+
+}
+
+void CK_PRINTER_AverageGPS(void){
+
+	CK_GPS_CalculateAveragePosition();
+
+	CK_USBD_StringPrintln("GPS is calibrated");
+
+	CK_USBD_StringPrint("Average Lat: ");CK_USBD_IntPrintln(gps.average_lat);
+
+	CK_USBD_StringPrint("Average Long: ");CK_USBD_IntPrintln(gps.average_lon);
 
 }
 
