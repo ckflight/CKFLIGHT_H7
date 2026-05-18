@@ -3,7 +3,11 @@
 <img width="2027" height="1139" alt="Image" src="https://github.com/user-attachments/assets/83101031-c83c-4fed-b8a0-d6efd2ead19e" />
 <img width="1526" height="844" alt="Image" src="https://github.com/user-attachments/assets/935bc549-ba67-491f-a17a-4a270db213b6" />
 
-I decided to upload ligher version of my flight controller firmware High-performance bare-metal STM32H7 flight controller firmware developed for educational, hobbyist, and academic use. STM32CubeIDE is a great environment for easy debugging without getting into unnecessary details. Commercially available boards can be used with this software. Check Boad Selection part.
+I decided to upload lighter version of my flight controller firmware High-performance bare-metal STM32H7 flight controller firmware developed for educational, hobbyist, and academic use. 
+
+STM32CubeIDE is a great environment for easy debugging without getting into unnecessary details. 
+
+Commercially available boards can be used with this software: Check Boad Porting and Configuration Guide below.
 
 CKFLIGHT H7 is designed as a simplified and readable version of the full CKFLIGHT firmware architecture while preserving modern flight-controller concepts including high-rate control loops, sensor fusion, digital ESC protocols, SD logging, USB communication, advanced PID algorithms, and real-time embedded control systems.
 
@@ -88,20 +92,43 @@ Primary target:
 Supported sensors currently present in firmware:
 
 ## IMUs
-- MPU6000
-- ICM20602
-- ICM42605
-- ICM42688P
-- IIM42652
+- ICM20602_GYRO,
+- ICM45686_GYRO,
+- ICM42688P_GYRO,
+- L3GD20H_GYRO,
+- ICM42605_GYRO,
+- IIM42652_GYRO,
+- MPU6000_GYRO,
+
+- ICM20602_ACC,
+- ICM45686_ACC,
+- ICM42688P_ACC,
+- IIM42652_ACC,
+- LSM303D_ACC,
+- FXOS8700CQ_ACC,
+- ICM42605_ACC,
+- MPU6000_ACC,
+
+- BNO055_IMU
+
+## Magnetometers
+- MAG3110_MAGNETO,
+- LSM303D_MAGNETO,
+- FXOS8700CQ_MAGNETO,
+- HMC5983_MAGNETO,
+- QMC5883L_MAGNETO,
+- MLX90393_MAGNETO,
 
 ## Barometers
-- BMP280
-- MS5611
+- MS5607_BAROMETER,
+- BMP280_BAROMETER,
+- MS5611_BAROMETER,
+- DPS310_BAROMETER,
 
-## Additional Sensors
-- Magnetometer support
-- GPS modules
-
+## GPS
+- GPS_UBLOX7,
+- GPS_UBLOX8,
+- M10 Series
 ---
 
 # Board Porting and Configuration Guide
