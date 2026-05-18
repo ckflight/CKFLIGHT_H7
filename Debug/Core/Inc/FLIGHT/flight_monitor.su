@@ -1,0 +1,6 @@
+../Core/Inc/FLIGHT/flight_monitor.c:15:6:flight_monitor_init	16	static
+../Core/Inc/FLIGHT/flight_monitor.c:40:6:flight_monitor_update	8	static
+../Core/Inc/FLIGHT/flight_monitor.c:68:6:monitor_parameters_update	8	static
+../Core/Inc/FLIGHT/flight_monitor.c:106:6:warning_monitor_update	8	static
+../Core/Inc/FLIGHT/flight_monitor.c:125:6:monitor_set_gyroacc_temp	16	static
+../Core/Inc/FLIGHT/flight_monitor.c:130:7:monitor_get_gyroacc_temp	4	static

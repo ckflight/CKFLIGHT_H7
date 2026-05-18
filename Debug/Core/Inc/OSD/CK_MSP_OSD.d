@@ -1,6 +1,6 @@
 Core/Inc/OSD/CK_MSP_OSD.o: ../Core/Inc/OSD/CK_MSP_OSD.c \
  ../Core/Inc/OSD/CK_MSP_OSD.h ../Core/Inc/CK_DEFINITIONS.h \
- ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -47,10 +47,13 @@ Core/Inc/OSD/CK_MSP_OSD.o: ../Core/Inc/OSD/CK_MSP_OSD.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
- ../Core/Inc/OSD/CK_OSD.h ../Core/Inc/COMMUNICATION/CK_MSP.h
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/OSD/CK_OSD.h ../Core/Inc/COMMUNICATION/CK_MSP.h \
+ ../Core/Inc/DRIVERS/CK_ADC.h ../Core/Inc/FLIGHT/CK_CRSF.h \
+ ../Core/Inc/FLIGHT/CK_RECEIVER.h
 ../Core/Inc/OSD/CK_MSP_OSD.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -97,5 +100,10 @@ Core/Inc/OSD/CK_MSP_OSD.o: ../Core/Inc/OSD/CK_MSP_OSD.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/OSD/CK_OSD.h:
 ../Core/Inc/COMMUNICATION/CK_MSP.h:
+../Core/Inc/DRIVERS/CK_ADC.h:
+../Core/Inc/FLIGHT/CK_CRSF.h:
+../Core/Inc/FLIGHT/CK_RECEIVER.h:

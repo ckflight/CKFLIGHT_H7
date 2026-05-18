@@ -1,6 +1,6 @@
 Core/Inc/FLIGHT/CK_NAVIGATION.o: ../Core/Inc/FLIGHT/CK_NAVIGATION.c \
  ../Core/Inc/COMMON/maths.h ../Core/Inc/DRIVERS/CK_TIME_HAL.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -47,18 +47,19 @@ Core/Inc/FLIGHT/CK_NAVIGATION.o: ../Core/Inc/FLIGHT/CK_NAVIGATION.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
- ../Core/Inc/MOTION/CK_BNO055.h ../Core/Inc/common/axis.h \
- ../Core/Inc/MOTION/CK_IMU.h ../Core/Inc/common/vector.h \
- ../Core/Inc/ck_definitions.h ../Core/Inc/FLIGHT/CK_RECEIVER.h \
- ../Core/Inc/FLIGHT/CK_RC.h ../Core/Inc/COMMON/CK_FILTERS.h \
- ../Core/Inc/FLIGHT/CK_PID.h ../Core/Inc/MOTION/CK_ACC.h \
- ../Core/Inc/FLIGHT/CK_GPS.h ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/MOTION/CK_BNO055.h ../Core/Inc/COMMON/axis.h \
+ ../Core/Inc/MOTION/CK_IMU.h ../Core/Inc/COMMON/vector.h \
+ ../Core/Inc/FLIGHT/CK_RECEIVER.h ../Core/Inc/FLIGHT/CK_RC.h \
+ ../Core/Inc/COMMON/CK_FILTERS.h ../Core/Inc/FLIGHT/CK_PID.h \
+ ../Core/Inc/MOTION/CK_ACC.h ../Core/Inc/FLIGHT/CK_GPS.h \
+ ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h \
  ../Core/Inc/FLIGHT/CK_NAVIGATION.h ../Core/Inc/FLIGHT/CK_LAND.h \
  ../Core/Inc/COMMUNICATION/CK_PRINTER.h
 ../Core/Inc/COMMON/maths.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -105,11 +106,12 @@ Core/Inc/FLIGHT/CK_NAVIGATION.o: ../Core/Inc/FLIGHT/CK_NAVIGATION.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/MOTION/CK_BNO055.h:
-../Core/Inc/common/axis.h:
+../Core/Inc/COMMON/axis.h:
 ../Core/Inc/MOTION/CK_IMU.h:
-../Core/Inc/common/vector.h:
-../Core/Inc/ck_definitions.h:
+../Core/Inc/COMMON/vector.h:
 ../Core/Inc/FLIGHT/CK_RECEIVER.h:
 ../Core/Inc/FLIGHT/CK_RC.h:
 ../Core/Inc/COMMON/CK_FILTERS.h:

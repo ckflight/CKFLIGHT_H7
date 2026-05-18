@@ -1,5 +1,6 @@
 Core/Inc/DRIVERS/CK_BUZZER.o: ../Core/Inc/DRIVERS/CK_BUZZER.c \
- ../Core/Inc/DRIVERS/CK_BUZZER.h \
+ ../Core/Inc/DRIVERS/CK_BUZZER.h ../Core/Inc/CK_DEFINITIONS.h \
+ ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -46,10 +47,12 @@ Core/Inc/DRIVERS/CK_BUZZER.o: ../Core/Inc/DRIVERS/CK_BUZZER.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
- ../Core/Inc/DRIVERS/CK_TIME_HAL.h ../Core/Inc/CK_DEFINITIONS.h \
- ../Core/Inc/CK_SETTINGS.h ../Core/Inc/DRIVERS/CK_GPIO.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/DRIVERS/CK_TIME_HAL.h ../Core/Inc/DRIVERS/CK_GPIO.h \
  ../Core/Inc/DRIVERS/CK_SYSTEM.h ../Core/Inc/FLIGHT/CK_RECEIVER.h
 ../Core/Inc/DRIVERS/CK_BUZZER.h:
+../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -96,9 +99,9 @@ Core/Inc/DRIVERS/CK_BUZZER.o: ../Core/Inc/DRIVERS/CK_BUZZER.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
-../Core/Inc/DRIVERS/CK_TIME_HAL.h:
-../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/config/ckflighth7_v2.h:
 ../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/DRIVERS/CK_TIME_HAL.h:
 ../Core/Inc/DRIVERS/CK_GPIO.h:
 ../Core/Inc/DRIVERS/CK_SYSTEM.h:
 ../Core/Inc/FLIGHT/CK_RECEIVER.h:

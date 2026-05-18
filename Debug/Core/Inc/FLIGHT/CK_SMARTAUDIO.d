@@ -1,7 +1,7 @@
 Core/Inc/FLIGHT/CK_SMARTAUDIO.o: ../Core/Inc/FLIGHT/CK_SMARTAUDIO.c \
  ../Core/Inc/COMMON/maths.h ../Core/Inc/COMMON/crc.h \
  ../Core/Inc/FLIGHT/CK_SMARTAUDIO.h ../Core/Inc/CK_DEFINITIONS.h \
- ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -48,13 +48,14 @@ Core/Inc/FLIGHT/CK_SMARTAUDIO.o: ../Core/Inc/FLIGHT/CK_SMARTAUDIO.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/FLIGHT/CK_RECEIVER.h ../Core/Inc/DRIVERS/CK_SOFTSERIAL.h \
  ../Core/Inc/DRIVERS/CK_TIME_HAL.h ../Core/Inc/COMMUNICATION/CK_PRINTER.h
 ../Core/Inc/COMMON/maths.h:
 ../Core/Inc/COMMON/crc.h:
 ../Core/Inc/FLIGHT/CK_SMARTAUDIO.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -101,6 +102,8 @@ Core/Inc/FLIGHT/CK_SMARTAUDIO.o: ../Core/Inc/FLIGHT/CK_SMARTAUDIO.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/FLIGHT/CK_RECEIVER.h:
 ../Core/Inc/DRIVERS/CK_SOFTSERIAL.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:

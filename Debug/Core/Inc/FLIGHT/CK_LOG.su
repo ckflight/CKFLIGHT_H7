@@ -1,3 +1,3 @@
-../Core/Inc/FLIGHT/CK_LOG.c:73:6:CK_LOG_Init	24	static
-../Core/Inc/FLIGHT/CK_LOG.c:118:6:CK_LOG_Update	80	static
-../Core/Inc/FLIGHT/CK_LOG.c:557:6:CK_LOG_WriteInfoBuffer	32	static
+../Core/Inc/FLIGHT/CK_LOG.c:79:6:CK_LOG_Init	24	static
+../Core/Inc/FLIGHT/CK_LOG.c:124:6:CK_LOG_Update	80	static
+../Core/Inc/FLIGHT/CK_LOG.c:593:6:CK_LOG_WriteInfoBuffer	32	static

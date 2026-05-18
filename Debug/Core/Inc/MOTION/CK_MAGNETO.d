@@ -1,6 +1,6 @@
 Core/Inc/MOTION/CK_MAGNETO.o: ../Core/Inc/MOTION/CK_MAGNETO.c \
  ../Core/Inc/COMMON/maths.h ../Core/Inc/DRIVERS/CK_TIME_HAL.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -47,18 +47,18 @@ Core/Inc/MOTION/CK_MAGNETO.o: ../Core/Inc/MOTION/CK_MAGNETO.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/DRIVERS/CK_BUZZER.h ../Core/Inc/DRIVERS/CK_I2C.h \
  ../Core/Inc/DRIVERS/CK_SPI.h ../Core/Inc/SENSORS/CK_MAG3110.h \
  ../Core/Inc/SENSORS/CK_FXOS8700CQ.h ../Core/Inc/SENSORS/CK_LSM303D.h \
  ../Core/Inc/SENSORS/CK_HMC5983.h ../Core/Inc/SENSORS/CK_QMC5883L.h \
  ../Core/Inc/SENSORS/CK_MLX90393.h ../Core/Inc/MOTION/CK_MAGNETO.h \
- ../Core/Inc/common/axis.h ../Core/Inc/MOTION/CK_IMU.h \
- ../Core/Inc/common/vector.h ../Core/Inc/ck_definitions.h \
- ../Core/Inc/COMMUNICATION/CK_PRINTER.h
+ ../Core/Inc/COMMON/axis.h ../Core/Inc/MOTION/CK_IMU.h \
+ ../Core/Inc/COMMON/vector.h ../Core/Inc/COMMUNICATION/CK_PRINTER.h
 ../Core/Inc/COMMON/maths.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -105,6 +105,8 @@ Core/Inc/MOTION/CK_MAGNETO.o: ../Core/Inc/MOTION/CK_MAGNETO.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/DRIVERS/CK_BUZZER.h:
 ../Core/Inc/DRIVERS/CK_I2C.h:
 ../Core/Inc/DRIVERS/CK_SPI.h:
@@ -115,8 +117,7 @@ Core/Inc/MOTION/CK_MAGNETO.o: ../Core/Inc/MOTION/CK_MAGNETO.c \
 ../Core/Inc/SENSORS/CK_QMC5883L.h:
 ../Core/Inc/SENSORS/CK_MLX90393.h:
 ../Core/Inc/MOTION/CK_MAGNETO.h:
-../Core/Inc/common/axis.h:
+../Core/Inc/COMMON/axis.h:
 ../Core/Inc/MOTION/CK_IMU.h:
-../Core/Inc/common/vector.h:
-../Core/Inc/ck_definitions.h:
+../Core/Inc/COMMON/vector.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:

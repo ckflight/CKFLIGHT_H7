@@ -1,6 +1,6 @@
 Core/Inc/SENSORS/CK_BMP280.o: ../Core/Inc/SENSORS/CK_BMP280.c \
  ../Core/Inc/COMMON/maths.h ../Core/Inc/DRIVERS/CK_SPI.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -47,12 +47,13 @@ Core/Inc/SENSORS/CK_BMP280.o: ../Core/Inc/SENSORS/CK_BMP280.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/DRIVERS/CK_GPIO.h ../Core/Inc/DRIVERS/CK_BUZZER.h \
  ../Core/Inc/SENSORS/CK_BMP280.h ../Core/Inc/MOTION/CK_BAROMETER.h
 ../Core/Inc/COMMON/maths.h:
 ../Core/Inc/DRIVERS/CK_SPI.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -99,6 +100,8 @@ Core/Inc/SENSORS/CK_BMP280.o: ../Core/Inc/SENSORS/CK_BMP280.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/DRIVERS/CK_GPIO.h:
 ../Core/Inc/DRIVERS/CK_BUZZER.h:
 ../Core/Inc/SENSORS/CK_BMP280.h:

@@ -49,6 +49,7 @@ Core/Inc/FLASH/CK_FLASH.o: ../Core/Inc/FLASH/CK_FLASH.c \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_def.h \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_conf.h ../Core/Inc/main.h \
  ../Core/Inc/FLASH/CK_FLASH.h ../Core/Inc/CK_DEFINITIONS.h \
+ ../Core/Inc/git_commit_hash.h ../Core/Inc/config/ckflighth7_v2.h \
  ../Core/Inc/CK_SETTINGS.h ../Core/Inc/FLASH/CK_FLASH_INTERNAL.h \
  ../Core/Inc/FLASH/CK_FLASH_W25Q128FV.h ../Core/Inc/DRIVERS/CK_SPI.h \
  ../Core/Inc/DRIVERS/CK_TIME_HAL.h
@@ -104,6 +105,8 @@ Core/Inc/FLASH/CK_FLASH.o: ../Core/Inc/FLASH/CK_FLASH.c \
 ../Core/Inc/main.h:
 ../Core/Inc/FLASH/CK_FLASH.h:
 ../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
+../Core/Inc/config/ckflighth7_v2.h:
 ../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/FLASH/CK_FLASH_INTERNAL.h:
 ../Core/Inc/FLASH/CK_FLASH_W25Q128FV.h:

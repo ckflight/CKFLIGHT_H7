@@ -49,7 +49,8 @@ Core/Inc/DRIVERS/CK_MICROCARD.o: ../Core/Inc/DRIVERS/CK_MICROCARD.c \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_def.h \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_conf.h ../Core/Inc/main.h \
  ../Core/Inc/COMMUNICATION/CK_CONFIGURATION.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/COMMUNICATION/CK_PRINTER.h ../Core/Inc/DRIVERS/CK_SYSTEM.h \
  ../Core/Inc/DRIVERS/CK_TIME_HAL.h ../Core/Inc/DRIVERS/CK_GPIO.h \
  ../Core/Inc/DRIVERS/CK_SPI.h ../Core/Inc/DRIVERS/CK_SPI_DMA.h \
@@ -109,6 +110,8 @@ Core/Inc/DRIVERS/CK_MICROCARD.o: ../Core/Inc/DRIVERS/CK_MICROCARD.c \
 ../Core/Inc/main.h:
 ../Core/Inc/COMMUNICATION/CK_CONFIGURATION.h:
 ../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
+../Core/Inc/config/ckflighth7_v2.h:
 ../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:
 ../Core/Inc/DRIVERS/CK_SYSTEM.h:

@@ -1,6 +1,6 @@
 Core/Inc/SENSORS/CK_QMC5883L.o: ../Core/Inc/SENSORS/CK_QMC5883L.c \
  ../Core/Inc/DRIVERS/CK_I2C.h ../Core/Inc/CK_DEFINITIONS.h \
- ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -47,12 +47,13 @@ Core/Inc/SENSORS/CK_QMC5883L.o: ../Core/Inc/SENSORS/CK_QMC5883L.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/DRIVERS/CK_TIME_HAL.h ../Core/Inc/DRIVERS/CK_BUZZER.h \
  ../Core/Inc/SENSORS/CK_QMC5883L.h ../Core/Inc/MOTION/CK_MAGNETO.h \
- ../Core/Inc/common/axis.h ../Core/Inc/COMMUNICATION/CK_PRINTER.h
+ ../Core/Inc/COMMON/axis.h ../Core/Inc/COMMUNICATION/CK_PRINTER.h
 ../Core/Inc/DRIVERS/CK_I2C.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -99,9 +100,11 @@ Core/Inc/SENSORS/CK_QMC5883L.o: ../Core/Inc/SENSORS/CK_QMC5883L.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
 ../Core/Inc/DRIVERS/CK_BUZZER.h:
 ../Core/Inc/SENSORS/CK_QMC5883L.h:
 ../Core/Inc/MOTION/CK_MAGNETO.h:
-../Core/Inc/common/axis.h:
+../Core/Inc/COMMON/axis.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:

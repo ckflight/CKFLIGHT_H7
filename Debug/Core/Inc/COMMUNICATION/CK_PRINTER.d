@@ -50,6 +50,7 @@ Core/Inc/COMMUNICATION/CK_PRINTER.o: \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_def.h \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_conf.h ../Core/Inc/main.h \
  ../Core/Inc/COMMUNICATION/CK_BLHELIPASS.h ../Core/Inc/CK_DEFINITIONS.h \
+ ../Core/Inc/git_commit_hash.h ../Core/Inc/config/ckflighth7_v2.h \
  ../Core/Inc/CK_SETTINGS.h ../Core/Inc/COMMUNICATION/CK_PRINTER.h \
  ../Core/Inc/COMMUNICATION/CK_CONFIGURATION.h \
  ../Core/Inc/DRIVERS/CK_ADC.h ../Core/Inc/DRIVERS/CK_GPIO.h \
@@ -61,9 +62,9 @@ Core/Inc/COMMUNICATION/CK_PRINTER.o: \
  ../Core/Inc/FLIGHT/CK_ALTITUDE.h ../Core/Inc/FLIGHT/CK_GPS.h \
  ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h \
  ../Core/Inc/FLIGHT/CK_NAVIGATION.h ../Core/Inc/FLIGHT/CK_PID.h \
- ../Core/Inc/MOTION/CK_ACC.h ../Core/Inc/common/vector.h \
- ../Core/Inc/ck_definitions.h ../Core/Inc/FLIGHT/CK_ESC.h \
- ../Core/Inc/FLIGHT/CK_PWM.h ../Core/Inc/FLIGHT/CK_DSHOT.h \
+ ../Core/Inc/MOTION/CK_ACC.h ../Core/Inc/COMMON/vector.h \
+ ../Core/Inc/FLIGHT/CK_ESC.h ../Core/Inc/FLIGHT/CK_PWM.h \
+ ../Core/Inc/FLIGHT/CK_DSHOT.h ../Core/Inc/FLIGHT/flight_monitor.h \
  ../Core/Inc/MOTION/CK_IMU.h ../Core/Inc/MOTION/CK_BNO055.h \
  ../Core/Inc/MOTION/CK_MAGNETO.h ../Core/Inc/MOTION/CK_BAROMETER.h \
  ../Core/Inc/MOTION/CK_GYRO.h ../Core/Inc/FLASH/CK_FLASH.h \
@@ -122,6 +123,8 @@ Core/Inc/COMMUNICATION/CK_PRINTER.o: \
 ../Core/Inc/main.h:
 ../Core/Inc/COMMUNICATION/CK_BLHELIPASS.h:
 ../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
+../Core/Inc/config/ckflighth7_v2.h:
 ../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:
 ../Core/Inc/COMMUNICATION/CK_CONFIGURATION.h:
@@ -143,11 +146,11 @@ Core/Inc/COMMUNICATION/CK_PRINTER.o: \
 ../Core/Inc/FLIGHT/CK_NAVIGATION.h:
 ../Core/Inc/FLIGHT/CK_PID.h:
 ../Core/Inc/MOTION/CK_ACC.h:
-../Core/Inc/common/vector.h:
-../Core/Inc/ck_definitions.h:
+../Core/Inc/COMMON/vector.h:
 ../Core/Inc/FLIGHT/CK_ESC.h:
 ../Core/Inc/FLIGHT/CK_PWM.h:
 ../Core/Inc/FLIGHT/CK_DSHOT.h:
+../Core/Inc/FLIGHT/flight_monitor.h:
 ../Core/Inc/MOTION/CK_IMU.h:
 ../Core/Inc/MOTION/CK_BNO055.h:
 ../Core/Inc/MOTION/CK_MAGNETO.h:

@@ -1,5 +1,5 @@
 Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/CK_DEFINITIONS.h \
- ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -46,6 +46,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/CK_DEFINITIONS.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/COMMUNICATION/CK_MSP.h \
  ../Core/Inc/COMMUNICATION/CK_PRINTER.h \
  ../Core/Inc/COMMUNICATION/CK_INPUTSTREAM.h \
@@ -54,13 +55,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/CK_DEFINITIONS.h \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_def.h \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_conf.h ../Core/Inc/main.h \
  ../Core/Inc/DRIVERS/CK_SYSTEM.h ../Core/Inc/DRIVERS/CK_TIME_HAL.h \
- ../Core/Inc/DRIVERS/CK_ADC.h ../Core/Inc/DRIVERS/CK_LED.h \
- ../Core/Inc/DRIVERS/CK_BUZZER.h ../Core/Inc/DRIVERS/CK_MICROCARD.h \
- ../Core/Inc/DRIVERS/CK_GPIO.h ../Core/Inc/DRIVERS/CK_RGB.h \
- ../Core/Inc/DRIVERS/CK_SOFTSERIAL.h ../Core/Inc/MOTION/CK_GYRO.h \
- ../Core/Inc/COMMON/CK_FILTERS.h ../Core/Inc/COMMON/maths.h \
- ../Core/Inc/COMMON/axis.h ../Core/Inc/MOTION/CK_ACC.h \
- ../Core/Inc/common/vector.h ../Core/Inc/ck_definitions.h \
+ ../Core/Inc/DRIVERS/CK_LED.h ../Core/Inc/DRIVERS/CK_BUZZER.h \
+ ../Core/Inc/DRIVERS/CK_MICROCARD.h ../Core/Inc/DRIVERS/CK_GPIO.h \
+ ../Core/Inc/DRIVERS/CK_RGB.h ../Core/Inc/DRIVERS/CK_SOFTSERIAL.h \
+ ../Core/Inc/MOTION/CK_GYRO.h ../Core/Inc/COMMON/CK_FILTERS.h \
+ ../Core/Inc/COMMON/maths.h ../Core/Inc/COMMON/axis.h \
+ ../Core/Inc/MOTION/CK_ACC.h ../Core/Inc/COMMON/vector.h \
  ../Core/Inc/MOTION/CK_MAGNETO.h ../Core/Inc/MOTION/CK_BAROMETER.h \
  ../Core/Inc/MOTION/CK_IMU.h ../Core/Inc/MOTION/CK_BNO055.h \
  ../Core/Inc/FLIGHT/CK_RECEIVER.h ../Core/Inc/FLIGHT/CK_RC.h \
@@ -72,12 +72,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/CK_DEFINITIONS.h \
  ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h ../Core/Inc/FLIGHT/CK_LAND.h \
  ../Core/Inc/FLIGHT/CK_LOG.h ../Core/Inc/FLIGHT/CK_ADJUSTMENT.h \
  ../Core/Inc/FLIGHT/CK_DSHOT.h ../Core/Inc/FLIGHT/CK_PERIPHERAL.h \
- ../Core/Inc/FLIGHT/CK_SMARTAUDIO.h ../Core/Inc/FLASH/CK_FLASH.h \
- ../Core/Inc/FLASH/CK_FLASH_INTERNAL.h \
+ ../Core/Inc/FLIGHT/CK_SMARTAUDIO.h ../Core/Inc/FLIGHT/flight_monitor.h \
+ ../Core/Inc/FLASH/CK_FLASH.h ../Core/Inc/FLASH/CK_FLASH_INTERNAL.h \
  ../Core/Inc/FLASH/CK_FLASH_W25Q128FV.h ../Core/Inc/OSD/CK_OSD.h \
  ../Core/Inc/OSD/CK_MAX7456.h
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -124,6 +124,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/CK_DEFINITIONS.h \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/COMMUNICATION/CK_MSP.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:
 ../Core/Inc/COMMUNICATION/CK_INPUTSTREAM.h:
@@ -134,7 +136,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/CK_DEFINITIONS.h \
 ../Core/Inc/main.h:
 ../Core/Inc/DRIVERS/CK_SYSTEM.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
-../Core/Inc/DRIVERS/CK_ADC.h:
 ../Core/Inc/DRIVERS/CK_LED.h:
 ../Core/Inc/DRIVERS/CK_BUZZER.h:
 ../Core/Inc/DRIVERS/CK_MICROCARD.h:
@@ -146,8 +147,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/CK_DEFINITIONS.h \
 ../Core/Inc/COMMON/maths.h:
 ../Core/Inc/COMMON/axis.h:
 ../Core/Inc/MOTION/CK_ACC.h:
-../Core/Inc/common/vector.h:
-../Core/Inc/ck_definitions.h:
+../Core/Inc/COMMON/vector.h:
 ../Core/Inc/MOTION/CK_MAGNETO.h:
 ../Core/Inc/MOTION/CK_BAROMETER.h:
 ../Core/Inc/MOTION/CK_IMU.h:
@@ -171,6 +171,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/CK_DEFINITIONS.h \
 ../Core/Inc/FLIGHT/CK_DSHOT.h:
 ../Core/Inc/FLIGHT/CK_PERIPHERAL.h:
 ../Core/Inc/FLIGHT/CK_SMARTAUDIO.h:
+../Core/Inc/FLIGHT/flight_monitor.h:
 ../Core/Inc/FLASH/CK_FLASH.h:
 ../Core/Inc/FLASH/CK_FLASH_INTERNAL.h:
 ../Core/Inc/FLASH/CK_FLASH_W25Q128FV.h:

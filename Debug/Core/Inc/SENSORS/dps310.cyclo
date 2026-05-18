@@ -1,0 +1,14 @@
+../Core/Inc/SENSORS/dps310.c:80:16:twosComplement	2
+../Core/Inc/SENSORS/dps310.c:88:13:i2c_write	1
+../Core/Inc/SENSORS/dps310.c:93:13:i2c_read	1
+../Core/Inc/SENSORS/dps310.c:98:16:read_u8	1
+../Core/Inc/SENSORS/dps310.c:105:13:wait_ready	3
+../Core/Inc/SENSORS/dps310.c:118:13:check_whoami	1
+../Core/Inc/SENSORS/dps310.c:125:13:read_calibration	1
+../Core/Inc/SENSORS/dps310.c:151:13:configure_pressure	2
+../Core/Inc/SENSORS/dps310.c:167:13:configure_temperature	3
+../Core/Inc/SENSORS/dps310.c:190:6:CK_DPS310_Init	3
+../Core/Inc/SENSORS/dps310.c:238:6:CK_DPS310_isBaroSensorInitialized	1
+../Core/Inc/SENSORS/dps310.c:243:6:CK_DPS310_ReadBaro	5
+../Core/Inc/SENSORS/dps310.c:275:7:CK_DPS310_GetPressurePa	1
+../Core/Inc/SENSORS/dps310.c:280:7:CK_DPS310_GetTemperatureC	1

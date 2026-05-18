@@ -1,6 +1,6 @@
 Core/Inc/COMMUNICATION/CK_BLHELIPASS.o: \
  ../Core/Inc/COMMUNICATION/CK_BLHELIPASS.c ../Core/Inc/DRIVERS/CK_GPIO.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -47,6 +47,7 @@ Core/Inc/COMMUNICATION/CK_BLHELIPASS.o: \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/DRIVERS/CK_TIME_HAL.h \
  ../Core/Inc/COMMUNICATION/CK_BLHELIPASS.h \
  ../Core/Inc/COMMUNICATION/CK_PRINTER.h \
@@ -55,7 +56,7 @@ Core/Inc/COMMUNICATION/CK_BLHELIPASS.o: \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_conf.h ../Core/Inc/main.h
 ../Core/Inc/DRIVERS/CK_GPIO.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -102,6 +103,8 @@ Core/Inc/COMMUNICATION/CK_BLHELIPASS.o: \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
 ../Core/Inc/COMMUNICATION/CK_BLHELIPASS.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:

@@ -1,5 +1,5 @@
 Core/Inc/FLIGHT/CK_CRSF.o: ../Core/Inc/FLIGHT/CK_CRSF.c \
- ../Core/Inc/COMMON/maths.h ../Core/Inc/common/crc.h \
+ ../Core/Inc/COMMON/maths.h ../Core/Inc/COMMON/crc.h \
  ../Core/Inc/DRIVERS/CK_UART.h ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h \
  ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h \
  ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h \
@@ -47,12 +47,14 @@ Core/Inc/FLIGHT/CK_CRSF.o: ../Core/Inc/FLIGHT/CK_CRSF.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
- ../Core/Inc/DRIVERS/CK_GPIO.h ../Core/Inc/DRIVERS/CK_TIME_HAL.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/DRIVERS/CK_GPIO.h ../Core/Inc/DRIVERS/CK_GPIO.h \
+ ../Core/Inc/DRIVERS/CK_TIME_HAL.h \
  ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h ../Core/Inc/FLIGHT/CK_CRSF.h \
  ../Core/Inc/COMMUNICATION/CK_PRINTER.h
 ../Core/Inc/COMMON/maths.h:
-../Core/Inc/common/crc.h:
+../Core/Inc/COMMON/crc.h:
 ../Core/Inc/DRIVERS/CK_UART.h:
 ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h:
 ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h:
@@ -102,7 +104,10 @@ Core/Inc/FLIGHT/CK_CRSF.o: ../Core/Inc/FLIGHT/CK_CRSF.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
 ../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
+../Core/Inc/config/ckflighth7_v2.h:
 ../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/DRIVERS/CK_GPIO.h:
 ../Core/Inc/DRIVERS/CK_GPIO.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
 ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h:

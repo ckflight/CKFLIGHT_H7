@@ -51,7 +51,9 @@ Core/Inc/COMMUNICATION/USBD_CDC/usbd_conf.o: \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_core.h \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_ioreq.h \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_ctlreq.h \
- ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_cdc.h
+ ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_cdc.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h
 ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h:
 ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h:
 ../Drivers/CMSIS/Include/core_cm7.h:
@@ -105,3 +107,7 @@ Core/Inc/COMMUNICATION/USBD_CDC/usbd_conf.o: \
 ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_ioreq.h:
 ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_ctlreq.h:
 ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_cdc.h:
+../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:

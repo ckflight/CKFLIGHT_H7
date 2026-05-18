@@ -1,7 +1,8 @@
-../Core/Inc/MOTION/CK_BAROMETER.c:35:6:CK_BAROMETER_Init	24	static
-../Core/Inc/MOTION/CK_BAROMETER.c:81:6:CK_BAROMETER_Update	8	static
-../Core/Inc/MOTION/CK_BAROMETER.c:141:10:CK_BAROMETER_RecalculateTotal	32	static
-../Core/Inc/MOTION/CK_BAROMETER.c:165:9:CK_BAROMETER_ApplyMedianFilter	24	static
-../Core/Inc/MOTION/CK_BAROMETER.c:187:6:CK_BAROMETER_PerformBaroCalibration	16	static
-../Core/Inc/MOTION/CK_BAROMETER.c:260:9:CK_BAROMETER_CalculateAltitude	16	static
-../Core/Inc/MOTION/CK_BAROMETER.c:272:6:CK_BAROMETER_CheckTimeout	8	static
+../Core/Inc/MOTION/CK_BAROMETER.c:38:6:CK_BAROMETER_Init	24	static
+../Core/Inc/MOTION/CK_BAROMETER.c:84:6:CK_BAROMETER_Init2	24	static
+../Core/Inc/MOTION/CK_BAROMETER.c:131:6:CK_BAROMETER_Update	8	static
+../Core/Inc/MOTION/CK_BAROMETER.c:206:10:CK_BAROMETER_RecalculateTotal	32	static
+../Core/Inc/MOTION/CK_BAROMETER.c:230:9:CK_BAROMETER_ApplyMedianFilter	24	static
+../Core/Inc/MOTION/CK_BAROMETER.c:252:6:CK_BAROMETER_PerformBaroCalibration	16	static
+../Core/Inc/MOTION/CK_BAROMETER.c:347:9:CK_BAROMETER_CalculateAltitude	16	static
+../Core/Inc/MOTION/CK_BAROMETER.c:359:6:CK_BAROMETER_CheckTimeout	8	static

@@ -49,9 +49,11 @@ Core/Inc/COMMUNICATION/CK_MSP.o: ../Core/Inc/COMMUNICATION/CK_MSP.c \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_def.h \
  ../Core/Inc/COMMUNICATION/USBD_CDC/usbd_conf.h ../Core/Inc/main.h \
  ../Core/Inc/COMMUNICATION/CK_MSP.h ../Core/Inc/CK_DEFINITIONS.h \
+ ../Core/Inc/git_commit_hash.h ../Core/Inc/config/ckflighth7_v2.h \
  ../Core/Inc/CK_SETTINGS.h ../Core/Inc/COMMUNICATION/CK_PRINTER.h \
- ../Core/Inc/OSD/CK_OSD.h ../Core/Inc/DRIVERS/CK_GPIO.h \
- ../Core/Inc/DRIVERS/CK_SYSTEM.h ../Core/Inc/DRIVERS/CK_TIME_HAL.h
+ ../Core/Inc/OSD/CK_OSD.h ../Core/Inc/OSD/CK_MSP_OSD.h \
+ ../Core/Inc/DRIVERS/CK_GPIO.h ../Core/Inc/DRIVERS/CK_SYSTEM.h \
+ ../Core/Inc/DRIVERS/CK_TIME_HAL.h
 ../Core/Inc/COMMUNICATION/USBD_CDC/CK_USBD_INTERFACE.h:
 ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h:
 ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h:
@@ -104,9 +106,12 @@ Core/Inc/COMMUNICATION/CK_MSP.o: ../Core/Inc/COMMUNICATION/CK_MSP.c \
 ../Core/Inc/main.h:
 ../Core/Inc/COMMUNICATION/CK_MSP.h:
 ../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
+../Core/Inc/config/ckflighth7_v2.h:
 ../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:
 ../Core/Inc/OSD/CK_OSD.h:
+../Core/Inc/OSD/CK_MSP_OSD.h:
 ../Core/Inc/DRIVERS/CK_GPIO.h:
 ../Core/Inc/DRIVERS/CK_SYSTEM.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:

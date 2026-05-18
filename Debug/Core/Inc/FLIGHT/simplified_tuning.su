@@ -1,0 +1,9 @@
+../Core/Inc/COMMON/maths.h:135:19:constrain	24	static
+../Core/Inc/FLIGHT/simplified_tuning.c:9:6:calculateNewPidValues	96	static
+../Core/Inc/FLIGHT/simplified_tuning.c:43:13:calculateNewDTermFilterValues	16	static
+../Core/Inc/FLIGHT/simplified_tuning.c:59:13:calculateNewGyroFilterValues	16	static
+../Core/Inc/FLIGHT/simplified_tuning.c:77:6:applySimplifiedTuningPids	16	static
+../Core/Inc/FLIGHT/simplified_tuning.c:84:6:applySimplifiedTuningDtermFilters	16	static
+../Core/Inc/FLIGHT/simplified_tuning.c:91:6:applySimplifiedTuningGyroFilters	16	static
+../Core/Inc/FLIGHT/simplified_tuning.c:98:6:applySimplifiedTuning	16	static
+../Core/Inc/FLIGHT/simplified_tuning.c:105:6:disableSimplifiedTuning	16	static

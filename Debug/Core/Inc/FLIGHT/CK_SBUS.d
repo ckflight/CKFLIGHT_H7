@@ -47,8 +47,10 @@ Core/Inc/FLIGHT/CK_SBUS.o: ../Core/Inc/FLIGHT/CK_SBUS.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
- ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h ../Core/Inc/FLIGHT/CK_SBUS.h
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/DRIVERS/CK_GPIO.h ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h \
+ ../Core/Inc/FLIGHT/CK_SBUS.h
 ../Core/Inc/COMMON/maths.h:
 ../Core/Inc/DRIVERS/CK_UART.h:
 ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h:
@@ -99,6 +101,9 @@ Core/Inc/FLIGHT/CK_SBUS.o: ../Core/Inc/FLIGHT/CK_SBUS.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
 ../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
+../Core/Inc/config/ckflighth7_v2.h:
 ../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/DRIVERS/CK_GPIO.h:
 ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h:
 ../Core/Inc/FLIGHT/CK_SBUS.h:

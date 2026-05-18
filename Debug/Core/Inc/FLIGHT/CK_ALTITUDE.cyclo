@@ -1,6 +1,6 @@
 ../Core/Inc/COMMON/maths.h:135:19:constrain	3
 ../Core/Inc/FLIGHT/CK_ALTITUDE.c:46:6:CK_ALTITUDE_Update	1
-../Core/Inc/FLIGHT/CK_ALTITUDE.c:63:6:CK_ALTITUDE_CalculateVelocityAndAltitude	8
+../Core/Inc/FLIGHT/CK_ALTITUDE.c:63:6:CK_ALTITUDE_CalculateVelocityAndAltitude	7
 ../Core/Inc/FLIGHT/CK_ALTITUDE.c:163:9:CK_ALTITUDE_CalculateThrottleAdjustment_AltitudeHold	3
 ../Core/Inc/FLIGHT/CK_ALTITUDE.c:205:9:CK_ALTITUDE_CalculateThrottleAdjustment_Landing	1
 ../Core/Inc/FLIGHT/CK_ALTITUDE.c:245:6:CK_ALTITUDE_ApplyAltitudeHoldAdjustment	2

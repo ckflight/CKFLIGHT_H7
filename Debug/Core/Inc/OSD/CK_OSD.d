@@ -46,19 +46,20 @@ Core/Inc/OSD/CK_OSD.o: ../Core/Inc/OSD/CK_OSD.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
- ../Core/Inc/DRIVERS/CK_TIME_HAL.h ../Core/Inc/DRIVERS/CK_ADC.h \
- ../Core/Inc/COMMUNICATION/CK_PRINTER.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/DRIVERS/CK_GPIO.h ../Core/Inc/DRIVERS/CK_TIME_HAL.h \
+ ../Core/Inc/DRIVERS/CK_ADC.h ../Core/Inc/COMMUNICATION/CK_PRINTER.h \
  ../Core/Inc/COMMUNICATION/CK_MSP.h ../Core/Inc/FLIGHT/CK_GPS.h \
  ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h ../Core/Inc/FLIGHT/CK_ALTITUDE.h \
  ../Core/Inc/FLIGHT/CK_RECEIVER.h ../Core/Inc/FLIGHT/CK_RC.h \
  ../Core/Inc/COMMON/CK_FILTERS.h ../Core/Inc/COMMON/maths.h \
  ../Core/Inc/COMMON/axis.h ../Core/Inc/FLIGHT/CK_PID.h \
- ../Core/Inc/MOTION/CK_ACC.h ../Core/Inc/common/vector.h \
- ../Core/Inc/ck_definitions.h ../Core/Inc/FLIGHT/pid_init.h \
- ../Core/Inc/FLIGHT/CK_ADJUSTMENT.h ../Core/Inc/FLIGHT/CK_CRSF.h \
- ../Core/Inc/MOTION/CK_IMU.h ../Core/Inc/OSD/CK_OSD.h \
- ../Core/Inc/OSD/CK_MAX7456.h ../Core/Inc/OSD/CK_MSP_OSD.h
+ ../Core/Inc/MOTION/CK_ACC.h ../Core/Inc/COMMON/vector.h \
+ ../Core/Inc/FLIGHT/pid_init.h ../Core/Inc/FLIGHT/CK_ADJUSTMENT.h \
+ ../Core/Inc/FLIGHT/CK_CRSF.h ../Core/Inc/MOTION/CK_IMU.h \
+ ../Core/Inc/OSD/CK_OSD.h ../Core/Inc/OSD/CK_MAX7456.h \
+ ../Core/Inc/OSD/CK_MSP_OSD.h
 ../Core/Inc/DRIVERS/CK_UART.h:
 ../Core/Inc/DRIVERS/CK_CIRCULARBUFFER.h:
 ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h:
@@ -108,7 +109,10 @@ Core/Inc/OSD/CK_OSD.o: ../Core/Inc/OSD/CK_OSD.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
 ../Core/Inc/CK_DEFINITIONS.h:
+../Core/Inc/git_commit_hash.h:
+../Core/Inc/config/ckflighth7_v2.h:
 ../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/DRIVERS/CK_GPIO.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
 ../Core/Inc/DRIVERS/CK_ADC.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:
@@ -123,8 +127,7 @@ Core/Inc/OSD/CK_OSD.o: ../Core/Inc/OSD/CK_OSD.c \
 ../Core/Inc/COMMON/axis.h:
 ../Core/Inc/FLIGHT/CK_PID.h:
 ../Core/Inc/MOTION/CK_ACC.h:
-../Core/Inc/common/vector.h:
-../Core/Inc/ck_definitions.h:
+../Core/Inc/COMMON/vector.h:
 ../Core/Inc/FLIGHT/pid_init.h:
 ../Core/Inc/FLIGHT/CK_ADJUSTMENT.h:
 ../Core/Inc/FLIGHT/CK_CRSF.h:

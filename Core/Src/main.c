@@ -77,6 +77,10 @@ uint32_t computeStartTime, computeEndTime;
 
 // CK_NAVIGATION 259, 260 COMMENTED!!!
 
+// Python script run command for system:
+// Windows: Properties -> C/C++ Build -> Settings -> Build Steps -> Command: python "${ProjDirPath}/Core/Inc/git_hash.py"
+// Windows: Properties -> C/C++ Build -> Settings -> Build Steps -> Command: python "python3 "${ProjDirPath}/Core/Inc/git_hash.py"
+
 uint32_t main_t1, main_t2;
 int main(void){
 

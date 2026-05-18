@@ -1,6 +1,6 @@
 Core/Inc/FLIGHT/pid_init.o: ../Core/Inc/FLIGHT/pid_init.c \
- ../Core/Inc/COMMON/maths.h ../Core/Inc/motion/ck_gyro.h \
- ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/COMMON/maths.h ../Core/Inc/MOTION/CK_GYRO.h \
+ ../Core/Inc/CK_DEFINITIONS.h ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -47,18 +47,19 @@ Core/Inc/FLIGHT/pid_init.o: ../Core/Inc/FLIGHT/pid_init.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/DRIVERS/CK_TIME_HAL.h ../Core/Inc/COMMON/CK_FILTERS.h \
  ../Core/Inc/COMMON/axis.h ../Core/Inc/FLIGHT/pid_init.h \
  ../Core/Inc/FLIGHT/CK_PID.h ../Core/Inc/MOTION/CK_ACC.h \
- ../Core/Inc/common/vector.h ../Core/Inc/ck_definitions.h \
- ../Core/Inc/FLIGHT/CK_RECEIVER.h ../Core/Inc/FLASH/CK_FLASH.h \
+ ../Core/Inc/COMMON/vector.h ../Core/Inc/FLIGHT/CK_RECEIVER.h \
+ ../Core/Inc/FLIGHT/simplified_tuning.h ../Core/Inc/FLASH/CK_FLASH.h \
  ../Core/Inc/FLASH/CK_FLASH_INTERNAL.h \
  ../Core/Inc/FLASH/CK_FLASH_W25Q128FV.h \
  ../Core/Inc/COMMUNICATION/CK_CONFIGURATION.h
 ../Core/Inc/COMMON/maths.h:
-../Core/Inc/motion/ck_gyro.h:
+../Core/Inc/MOTION/CK_GYRO.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -105,15 +106,17 @@ Core/Inc/FLIGHT/pid_init.o: ../Core/Inc/FLIGHT/pid_init.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
 ../Core/Inc/COMMON/CK_FILTERS.h:
 ../Core/Inc/COMMON/axis.h:
 ../Core/Inc/FLIGHT/pid_init.h:
 ../Core/Inc/FLIGHT/CK_PID.h:
 ../Core/Inc/MOTION/CK_ACC.h:
-../Core/Inc/common/vector.h:
-../Core/Inc/ck_definitions.h:
+../Core/Inc/COMMON/vector.h:
 ../Core/Inc/FLIGHT/CK_RECEIVER.h:
+../Core/Inc/FLIGHT/simplified_tuning.h:
 ../Core/Inc/FLASH/CK_FLASH.h:
 ../Core/Inc/FLASH/CK_FLASH_INTERNAL.h:
 ../Core/Inc/FLASH/CK_FLASH_W25Q128FV.h:

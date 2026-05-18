@@ -1,6 +1,6 @@
 Core/Inc/FLIGHT/CK_LOG.o: ../Core/Inc/FLIGHT/CK_LOG.c \
  ../Core/Inc/DRIVERS/CK_SPI_DMA.h ../Core/Inc/CK_DEFINITIONS.h \
- ../Core/Inc/CK_SETTINGS.h \
+ ../Core/Inc/git_commit_hash.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -47,6 +47,7 @@ Core/Inc/FLIGHT/CK_LOG.o: ../Core/Inc/FLIGHT/CK_LOG.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
+ ../Core/Inc/config/ckflighth7_v2.h ../Core/Inc/CK_SETTINGS.h \
  ../Core/Inc/DRIVERS/CK_SPI.h ../Core/Inc/DRIVERS/CK_MICROCARD.h \
  ../Core/Inc/DRIVERS/CK_TIME_HAL.h ../Core/Inc/DRIVERS/CK_LED.h \
  ../Core/Inc/DRIVERS/CK_GPIO.h ../Core/Inc/FLIGHT/CK_LOG.h \
@@ -54,12 +55,12 @@ Core/Inc/FLIGHT/CK_LOG.o: ../Core/Inc/FLIGHT/CK_LOG.c \
  ../Core/Inc/FLIGHT/CK_RC.h ../Core/Inc/COMMON/CK_FILTERS.h \
  ../Core/Inc/COMMON/maths.h ../Core/Inc/COMMON/axis.h \
  ../Core/Inc/FLIGHT/CK_RECEIVER.h ../Core/Inc/FLIGHT/CK_PID.h \
- ../Core/Inc/MOTION/CK_ACC.h ../Core/Inc/common/vector.h \
- ../Core/Inc/ck_definitions.h ../Core/Inc/MOTION/CK_GYRO.h \
- ../Core/Inc/MOTION/CK_IMU.h ../Core/Inc/COMMUNICATION/CK_PRINTER.h
+ ../Core/Inc/MOTION/CK_ACC.h ../Core/Inc/COMMON/vector.h \
+ ../Core/Inc/MOTION/CK_GYRO.h ../Core/Inc/MOTION/CK_IMU.h \
+ ../Core/Inc/COMMUNICATION/CK_PRINTER.h
 ../Core/Inc/DRIVERS/CK_SPI_DMA.h:
 ../Core/Inc/CK_DEFINITIONS.h:
-../Core/Inc/CK_SETTINGS.h:
+../Core/Inc/git_commit_hash.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h:
@@ -106,6 +107,8 @@ Core/Inc/FLIGHT/CK_LOG.o: ../Core/Inc/FLIGHT/CK_LOG.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
+../Core/Inc/config/ckflighth7_v2.h:
+../Core/Inc/CK_SETTINGS.h:
 ../Core/Inc/DRIVERS/CK_SPI.h:
 ../Core/Inc/DRIVERS/CK_MICROCARD.h:
 ../Core/Inc/DRIVERS/CK_TIME_HAL.h:
@@ -121,8 +124,7 @@ Core/Inc/FLIGHT/CK_LOG.o: ../Core/Inc/FLIGHT/CK_LOG.c \
 ../Core/Inc/FLIGHT/CK_RECEIVER.h:
 ../Core/Inc/FLIGHT/CK_PID.h:
 ../Core/Inc/MOTION/CK_ACC.h:
-../Core/Inc/common/vector.h:
-../Core/Inc/ck_definitions.h:
+../Core/Inc/COMMON/vector.h:
 ../Core/Inc/MOTION/CK_GYRO.h:
 ../Core/Inc/MOTION/CK_IMU.h:
 ../Core/Inc/COMMUNICATION/CK_PRINTER.h:
