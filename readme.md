@@ -143,7 +143,7 @@ Supported sensors currently present in firmware:
 
 ## SPI Flash and SPI/SDIO SD Card
 
-Use this log analysis tool i have written for flight log analiysis: https://github.com/ckflight/Flight_Log_Tools
+Use this log analysis tool i have written for flight log analysis: https://github.com/ckflight/Flight_Log_Tools
 
 <img width="1440" height="900" alt="Image" src="https://github.com/user-attachments/assets/c2dae7aa-cf1c-408a-8b66-1965b458bf14" />
 <img width="1440" height="900" alt="Image" src="https://github.com/user-attachments/assets/2bfab410-94e1-4786-b5f5-ae395c77af66" />
