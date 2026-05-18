@@ -289,6 +289,21 @@ void CK_PERIPHERAL_Init(targetFreq_e target_period){
 	GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 	*/
+
+	/*
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+	__HAL_RCC_GPIOE_CLK_ENABLE();
+	__HAL_RCC_TIM15_CLK_ENABLE();
+
+	GPIO_InitStruct.Pin = GPIO_PIN_5;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	GPIO_InitStruct.Alternate = GPIO_AF4_TIM15;
+	HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+	*/
+
 #endif
 
 #if BUZZER_DC
@@ -333,7 +348,6 @@ void CK_PERIPHERAL_MainInterruptInit(targetFreq_e target_period){
 void CK_PERIPHERAL_StartInterrupt(void){
 	HAL_TIM_PWM_Start_IT(&htim_main_interrupt, MAIN_INTERRUPT_TIM_CH);
 }
-
 
 
 

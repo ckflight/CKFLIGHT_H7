@@ -115,6 +115,9 @@ void CK_SYSTEM_TIMER_ClockEnable(TIM_TypeDef* timer){
 	else if(timer == TIM8){
 		__HAL_RCC_TIM8_CLK_ENABLE();
 	}
+	else if(timer == TIM15){
+		__HAL_RCC_TIM15_CLK_ENABLE();
+	}
 	else if(timer == TIM16){
 		__HAL_RCC_TIM16_CLK_ENABLE();
 	}
@@ -196,7 +199,6 @@ uint32_t CK_SYSTEM_GetUARTClock(USART_TypeDef* uart){
 	return clock;
 
 }
-
 
 
 

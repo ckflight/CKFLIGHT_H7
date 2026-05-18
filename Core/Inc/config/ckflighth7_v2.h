@@ -32,7 +32,6 @@
 #define SPI1_MOSI_PIN					7
 #define SPI1_MOSI_AF					CK_GPIO_AF5
 
-
 #define USE_SPI2						true
 #define SPI2_SCK_GPIO 					GPIOB
 #define SPI2_SCK_PIN  					13
@@ -47,20 +46,6 @@
 #define SPI2_MOSI_AF					CK_GPIO_AF5
 
 
-#define USE_SPI4						true
-#define SPI4_SCK_GPIO 					GPIOE
-#define SPI4_SCK_PIN  					12
-#define SPI4_SCK_AF						CK_GPIO_AF5
-
-#define SPI4_MISO_GPIO					GPIOE
-#define SPI4_MISO_PIN					13
-#define SPI4_MISO_AF					CK_GPIO_AF5
-
-#define SPI4_MOSI_GPIO					GPIOE
-#define SPI4_MOSI_PIN					14
-#define SPI4_MOSI_AF					CK_GPIO_AF5
-
-
 #if GYRO1_SPI_
 	#define GYRO1_SPI           		SPI1
 	#define GYRO1_CS_PORT				GPIOA
@@ -73,10 +58,9 @@
 
 	#define USE_DMA_SENSOR				1
 	#define USE_DMA_SENSOR_ICM42688P	0
-	#define USE_DMA_SENSOR_ICM20602		0
+	#define USE_DMA_SENSOR_ICM20602		1
 	#define USE_DMA_SENSOR_IIM42652		0
 	#define USE_DMA_SENSOR_MPU6000		0
-	#define USE_DMA_SENSOR_ICM45686		1
 	#define SENSOR_DMA					DMA1
 	#define SENSOR_DMA_TX_Stream		DMA1_Stream6
 	#define SENSOR_DMA_RX_Stream		DMA1_Stream7
@@ -105,17 +89,16 @@
 	#define GYRO2_SPI           		SPI4
 	#define GYRO2_CS_PORT				GPIOD
 	#define GYRO2_CS_PIN				8
-	#define TARGET_GYRO2				ICM45686_GYRO // ICM45686
+	#define TARGET_GYRO2				ICM20602_GYRO // ICM45686
 
 	#define GYRO2_USE_INT				0
 	#define GYRO2_INT_PORT				GPIOE
 	#define GYRO2_INT_PIN				15
 
-	#define USE_DMA_SENSOR				0
+	#define USE_DMA_SENSOR				1
 	#define USE_DMA_SENSOR_ICM42688P	0
 	#define USE_DMA_SENSOR_ICM20602		0
 	#define USE_DMA_SENSOR_IIM42652		0
-	#define USE_DMA_SENSOR_ICM45686		1
 	#define SENSOR_DMA					DMA1
 	#define SENSOR_DMA_TX_Stream		DMA1_Stream6
 	#define SENSOR_DMA_RX_Stream		DMA1_Stream7
@@ -134,7 +117,7 @@
 	#define ACC2_SPI           			SPI4
 	#define ACC2_CS_PORT				GPIOD
 	#define ACC2_CS_PIN					8
-	#define TARGET_ACC2					ICM45686_ACC
+	#define TARGET_ACC2					ICM20602_ACC
 
 	#define ACC2_SPI_CLOCK				16000000L
 #endif
@@ -293,29 +276,29 @@
 
 	#define DSHOT1_DMA					DMA1
 	#define DSHOT1_DMA_Stream			DMA1_Stream0
-	#define DSHOT1_DMA_Request			DMA_REQUEST_TIM3_CH3
-	#define DSHOT1_DMA_ID				TIM_DMA_ID_CC3
+	#define DSHOT1_DMA_Request			DMA_REQUEST_TIM3_CH4
+	#define DSHOT1_DMA_ID				TIM_DMA_ID_CC4
 	#define DSHOT1_DMA_Handler			DMA1_Stream0_IRQHandler
 	#define DSHOT1_DMA_IRQn				DMA1_Stream0_IRQn
 
 	#define DSHOT2_DMA					DMA1
 	#define DSHOT2_DMA_Stream			DMA1_Stream1
-	#define DSHOT2_DMA_Request			DMA_REQUEST_TIM3_CH4
-	#define DSHOT2_DMA_ID				TIM_DMA_ID_CC4
+	#define DSHOT2_DMA_Request			DMA_REQUEST_TIM3_CH3
+	#define DSHOT2_DMA_ID				TIM_DMA_ID_CC3
 	#define DSHOT2_DMA_Handler			DMA1_Stream1_IRQHandler
 	#define DSHOT2_DMA_IRQn				DMA1_Stream1_IRQn
 
 	#define DSHOT3_DMA					DMA1
 	#define DSHOT3_DMA_Stream			DMA1_Stream2
-	#define DSHOT3_DMA_Request			DMA_REQUEST_TIM5_CH1
-	#define DSHOT3_DMA_ID				TIM_DMA_ID_CC1
+	#define DSHOT3_DMA_Request			DMA_REQUEST_TIM5_CH2
+	#define DSHOT3_DMA_ID				TIM_DMA_ID_CC2
 	#define DSHOT3_DMA_Handler			DMA1_Stream2_IRQHandler
 	#define DSHOT3_DMA_IRQn				DMA1_Stream2_IRQn
 
 	#define DSHOT4_DMA					DMA1
 	#define DSHOT4_DMA_Stream			DMA1_Stream3
-	#define DSHOT4_DMA_Request			DMA_REQUEST_TIM5_CH2
-	#define DSHOT4_DMA_ID				TIM_DMA_ID_CC2
+	#define DSHOT4_DMA_Request			DMA_REQUEST_TIM5_CH1
+	#define DSHOT4_DMA_ID				TIM_DMA_ID_CC1
 	#define DSHOT4_DMA_Handler			DMA1_Stream3_IRQHandler
 	#define DSHOT4_DMA_IRQn				DMA1_Stream3_IRQn
 

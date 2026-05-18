@@ -1,3 +1,3 @@
-#define CURRENT_COMMIT_HASH "8e07fc52"
+#define CURRENT_COMMIT_HASH "c0ab5faa"
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 0

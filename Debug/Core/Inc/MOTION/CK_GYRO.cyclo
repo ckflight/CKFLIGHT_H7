@@ -7,7 +7,7 @@
 ../Core/Inc/MOTION/CK_GYRO.c:567:10:calculateNyquistAdjustedNotchHz	3
 ../Core/Inc/MOTION/CK_GYRO.c:584:6:gyroInitFilterNotch1	4
 ../Core/Inc/MOTION/CK_GYRO.c:599:6:gyroInitFilterNotch2	4
-../Core/Inc/MOTION/CK_GYRO.c:614:6:CK_GYRO_ReadRaw	6
+../Core/Inc/MOTION/CK_GYRO.c:614:6:CK_GYRO_ReadRaw	5
 ../Core/Inc/MOTION/CK_GYRO.c:678:6:CK_GYRO_AllignSensor	2
 ../Core/Inc/MOTION/CK_GYRO.c:696:6:CK_GYRO_Update	8
 ../Core/Inc/MOTION/CK_GYRO.c:784:6:CK_GYRO_ResetGyroSum	1

@@ -3,11 +3,11 @@
 
 #define MAIN_INTERRUPT_			0
 
-#define GYRO1_SPI_				0
-#define ACC1_SPI_				0
+#define GYRO1_SPI_				1
+#define ACC1_SPI_				1
 
-#define GYRO2_SPI_				1
-#define ACC2_SPI_				1
+#define GYRO2_SPI_				0
+#define ACC2_SPI_				0
 
 #define EXT_SPI_				0 // External spi connection pinout exist on board
 #define EXT_CS1_				0 // External chip select pin exist on board
@@ -38,9 +38,9 @@
 #define BUZZER_PWM				1
 #define BUZZER_DC				0
 
-#define OSD_ONBOARD_			1
+#define OSD_ONBOARD_			0
 #define OSD_PDB_				0
-#define OSD_DJI_				0
+#define OSD_DJI_				1
 
 #define RGB_					1
 
@@ -167,6 +167,5 @@
 
 
 #endif
-
 
 

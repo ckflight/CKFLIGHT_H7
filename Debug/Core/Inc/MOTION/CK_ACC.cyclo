@@ -2,7 +2,7 @@
 ../Core/Inc/MOTION/CK_ACC.c:243:6:CK_ACC_Init2	6
 ../Core/Inc/MOTION/CK_ACC.c:316:6:CK_ACC_Update	5
 ../Core/Inc/MOTION/CK_ACC.c:377:6:CK_ACC_UpdateFilter	2
-../Core/Inc/MOTION/CK_ACC.c:386:6:CK_ACC_ReadACCRaw	7
+../Core/Inc/MOTION/CK_ACC.c:386:6:CK_ACC_ReadACCRaw	5
 ../Core/Inc/MOTION/CK_ACC.c:451:6:CK_ACC_ResetAccEarthSum	1
 ../Core/Inc/MOTION/CK_ACC.c:459:6:CK_ACC_PerformCalibration	14
 ../Core/Inc/MOTION/CK_ACC.c:533:6:CK_ACC_BiquadLPFInit	2

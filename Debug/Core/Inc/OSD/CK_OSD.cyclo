@@ -1,7 +1,8 @@
 ../Core/Inc/OSD/CK_OSD.c:55:6:CK_OSD_Init	1
-../Core/Inc/OSD/CK_OSD.c:189:6:CK_OSD_Update	2
+../Core/Inc/OSD/CK_OSD.c:189:6:CK_OSD_Update	3
 ../Core/Inc/OSD/CK_OSD.c:276:6:CK_OSD_SetFlightData	1
 ../Core/Inc/OSD/CK_OSD.c:373:6:CK_OSD_WriteUartBuffer	1
 ../Core/Inc/OSD/CK_OSD.c:464:6:CK_OSD_SendPacketPolling	2
 ../Core/Inc/OSD/CK_OSD.c:475:6:CK_OSD_SendPacketInterrupt	1
 ../Core/Inc/OSD/CK_OSD.c:488:6:CK_OSD_ResetBuffer	2
+../Core/Inc/OSD/CK_OSD.c:505:6:USART2_IRQHandler	3

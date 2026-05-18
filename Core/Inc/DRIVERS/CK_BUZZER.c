@@ -121,13 +121,14 @@ void CK_BUZZER_Init(GPIO_TypeDef* gpio_, uint8_t gpio_pin_, buzzer_mode_e md){
 	sConfigOC.OCNIdleState 		= TIM_OCNIDLESTATE_RESET;
 	HAL_TIM_PWM_ConfigChannel(&htim_buzzer, &sConfigOC, BUZZER_TIM_CH);
 
-	HAL_TIMEx_PWMN_Start(&htim_buzzer, BUZZER_TIM_CH);
+	//HAL_TIMEx_PWMN_Start(&htim_buzzer, BUZZER_TIM_CH);
+	HAL_TIM_PWM_Start(&htim_buzzer, BUZZER_TIM_CH);
 
     /* H7_V1 PA15 HAL Init
     TIM_MasterConfigTypeDef sMasterConfig = {0};
     TIM_OC_InitTypeDef sConfigOC = {0};
 
-    htim_buzzer.Instance 				= TIM2;
+    htim_buzzer.Instance 				= TIM15;
     htim_buzzer.Init.Prescaler 			= 0;
     htim_buzzer.Init.CounterMode 		= TIM_COUNTERMODE_UP;
     htim_buzzer.Init.Period 			= 59999;
@@ -336,7 +337,6 @@ void CK_BUZZER_Tone4(void){
 	}
 
 }
-
 
 
 
