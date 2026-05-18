@@ -1,4 +1,7 @@
-# CKFLIGHT H7 Advanced Flight Controller Firmware (Light Version)
+# CKFLIGHT H7 Advanced Flight Controller Firmware (Light Version) as STM32CUBEIDE Project
+
+<img width="2027" height="1139" alt="Image" src="https://github.com/user-attachments/assets/83101031-c83c-4fed-b8a0-d6efd2ead19e" />
+<img width="1526" height="844" alt="Image" src="https://github.com/user-attachments/assets/935bc549-ba67-491f-a17a-4a270db213b6" />
 
 High-performance bare-metal STM32H7 flight controller firmware developed for educational, hobbyist, and academic use.
 
@@ -116,6 +119,9 @@ Core/Inc/config/
 ---
 
 ## Board Selection
+
+<img width="2494" height="1404" alt="Image" src="https://github.com/user-attachments/assets/e4420c43-7bd6-4e89-9a34-cfe242fd0568" />
+<img width="2494" height="1404" alt="Image" src="https://github.com/user-attachments/assets/2db4f87e-cab1-49af-92f2-14391fc41286" />
 
 `CK_DEFINITIONS.h` selects the target board and MCU family.
 
