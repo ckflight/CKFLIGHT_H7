@@ -99,7 +99,6 @@ Supported sensors currently present in firmware:
 - ICM42605_GYRO,
 - IIM42652_GYRO,
 - MPU6000_GYRO,
-
 - ICM20602_ACC,
 - ICM45686_ACC,
 - ICM42688P_ACC,
@@ -108,7 +107,6 @@ Supported sensors currently present in firmware:
 - FXOS8700CQ_ACC,
 - ICM42605_ACC,
 - MPU6000_ACC,
-
 - BNO055_IMU
 
 ## Magnetometers
