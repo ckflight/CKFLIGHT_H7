@@ -127,6 +127,15 @@ Supported sensors currently present in firmware:
 - GPS_UBLOX7,
 - GPS_UBLOX8,
 - M10 Series
+
+## SPI Flash and SPI Or SDIO SD Card
+
+Use this log analysis tool i have written for flight log analiysis: https://github.com/ckflight/Flight_Log_Tools
+
+<img width="1440" height="900" alt="Image" src="https://github.com/user-attachments/assets/c2dae7aa-cf1c-408a-8b66-1965b458bf14" />
+<img width="1440" height="900" alt="Image" src="https://github.com/user-attachments/assets/2bfab410-94e1-4786-b5f5-ae395c77af66" />
+<img width="1440" height="900" alt="Image" src="https://github.com/user-attachments/assets/65a67220-2bfc-44e3-8488-375f693efad6" />
+
 ---
 
 # Board Porting and Configuration Guide
