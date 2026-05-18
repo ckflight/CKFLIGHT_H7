@@ -2,7 +2,7 @@
 
 <img width="2027" height="1139" alt="Image" src="https://github.com/user-attachments/assets/83101031-c83c-4fed-b8a0-d6efd2ead19e" />
 
-I decided to upload lighter version of my flight controller firmware High-performance bare-metal STM32H7 flight controller firmware developed for educational, hobbyist, and academic use. 
+I have decided to upload the lighter version of my flight controller firmware: High-performance bare-metal 16K loop time capable STM32H7 flight controller firmware close to betaflight in flight performance developed for educational, hobbyist, and academic use by me. 
 
 STM32CubeIDE is a great environment for easy debugging without getting into unnecessary details. 
 
