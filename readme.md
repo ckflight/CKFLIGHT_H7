@@ -6,7 +6,7 @@ I have decided to upload the lighter version of my flight controller firmware: H
 
 STM32CubeIDE is a great environment for easy debugging without getting into unnecessary details. 
 
-Commercially available boards can be used with this software: Check Boad Porting and Configuration Guide below.
+Commercially available flight controller boards can be used with this firmware: Check Boad Porting and Configuration Guide below.
 
 CKFLIGHT H7 is designed as a simplified and readable version of the full CKFLIGHT firmware architecture while preserving modern flight-controller concepts including high-rate control loops, sensor fusion, digital ESC protocols, SD logging, USB communication, advanced PID algorithms, and real-time embedded control systems.
 
